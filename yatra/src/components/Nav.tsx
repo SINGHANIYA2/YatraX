@@ -30,7 +30,7 @@ export default function Navbar() {
           duration: 0.6,
           ease: "easeOut",
         }}
-        className="fixed top-0 left-0 right-0 z-50"
+        className="fixed top-0 left-0 right-0 z-50 font-sans"
       >
         <div className="mx-auto max-w-7xl px-4 py-4">
           <div

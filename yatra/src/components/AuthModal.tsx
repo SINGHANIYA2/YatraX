@@ -1,6 +1,6 @@
 import React from 'react'
 
-function AuthModal() {
+function AuthModal({ open, onClose }: { open: boolean, onClose: () => void }) {
   return (
     <div>AuthModal</div>
   )
