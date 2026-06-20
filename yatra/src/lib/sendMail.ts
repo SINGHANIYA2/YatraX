@@ -18,7 +18,7 @@ export async function sendMail(
 ) {
   try {
     await transporter.sendMail({
-      from: `RYDEX <${process.env.SMTP_EMAIL}>`,
+      from: `YatraX <${process.env.SMTP_EMAIL}>`,
       to,
       subject,
       html: Verification_Email_Template(verificationCode),

@@ -1,21 +1,17 @@
 "use client"
 import React, { useState } from 'react'
-import HeroSection from './HomeSection'
-
-import AuthModal from './AuthModal'
 import Footer from './Footer'
-import HomeSection from './HomeSection'
+import HeroSection from './HeroSection'
+import AuthModal from './AuthModal'
+
 
 function PublicHome() {
-    const [authOpen,setAuthOpen]=useState(true)
+  const [authOpen, setAuthOpen] = useState(true)
   return (
     <>
-
-      <HomeSection onAuthRequired={()=>setAuthOpen(true)}/>
-
-      <Footer/>
-      <AuthModal open={authOpen} onClose={()=>setAuthOpen(false)}/>
+      <HeroSection/>
       
+      <Footer />
     </>
   )
 }

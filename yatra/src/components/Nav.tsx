@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { Bus, Menu, X } from "lucide-react";
 import { useState } from "react";
+import AuthModal from "./AuthModal";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -20,6 +21,27 @@ const navItems = [
 export default function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [authOpen ,setAuthOpen] = useState(false)
+  const [steps,setStep] = useState("")
+  
+
+  const handleSignup = () => {
+    try {
+      setStep("signup")
+      setAuthOpen(true);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  const handleLogin = () => {
+    try {
+      setStep("login")
+      setAuthOpen(true);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  
 
   return (
     <>
@@ -38,10 +60,11 @@ export default function Navbar() {
               flex items-center justify-between
               rounded-2xl
               border border-white/10
-              bg-black/70
+              bg-black/80
               backdrop-blur-xl
               px-6 py-4
               shadow-[0_0_50px_rgba(0,0,0,0.6)]
+              
             "
           >
             {/* Logo */}
@@ -115,6 +138,7 @@ export default function Navbar() {
                   hover:border-blue-500
                   hover:bg-blue-500/10
                 "
+                onClick={handleLogin}
               >
                 Login
               </button>
@@ -133,6 +157,7 @@ export default function Navbar() {
                   transition-all
                   hover:scale-105
                 "
+                onClick={handleSignup}
               >
                 Sign Up
               </button>
@@ -148,6 +173,7 @@ export default function Navbar() {
           </div>
         </div>
       </motion.nav>
+
 
       {/* Mobile Menu */}
       {menuOpen && (
@@ -189,11 +215,14 @@ export default function Navbar() {
             ))}
 
             <div className="mt-4 flex flex-col gap-3">
-              <button className="rounded-xl border border-white/10 py-3 text-white">
+              <button className="rounded-xl border border-white/10 py-3 text-white"
+                 onClick={handleLogin}
+              >
                 Login
               </button>
 
               <button
+               
                 className="
                   rounded-xl
                   bg-gradient-to-r
@@ -203,6 +232,7 @@ export default function Navbar() {
                   font-medium
                   text-white
                 "
+                onClick={handleSignup}
               >
                 Sign Up
               </button>
@@ -210,6 +240,8 @@ export default function Navbar() {
           </div>
         </motion.div>
       )}
+    
+      <AuthModal open={authOpen} steps={steps} onClose={() => setAuthOpen(false)} />
     </>
   );
 }

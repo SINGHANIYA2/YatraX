@@ -1,62 +1,91 @@
-import mongoose from "mongoose"
-import { number } from "motion"
+import mongoose, { Document, Model, Schema } from "mongoose";
 
+export interface IVehicle extends Document {
+    partner: mongoose.Types.ObjectId;
 
-type vehicleType = "bike" | "car" | "loading" | "truck" | "auto"
+    vehicleNumber: string;
+    vehicleName: string;
 
-interface IVehicle{
-    owner:mongoose.Types.ObjectId
-    type: vehicleType
-    vehicleModel: string
-    number:string
-    imageUrl?:string
-    baseFare?:number
-    pricePerKM?:number
-    waitingCharge:number
-    status: "approved" | "pending" | "rejected"
-    rejectionReason?:string
-    isActive: boolean
-    createdAt:Date
-    updatedAt:Date
+    vehicleType:
+    | "bus"
+    | "auto"
+    | "cab"
+    | "tempo"
+    | "mini_bus";
+
+    totalSeats: number;
+    availableSeats: number;
+
+    rcDocument: string;
+    insuranceDocument: string;
+    permitDocument: string;
+
+    vehicleImages: string[];
+
+    status:
+    | "active"
+    | "inactive"
+    | "maintenance";
 }
 
-const vehicleSchema=new mongoose.Schema<IVehicle>({
-    owner:{
-        type : mongoose.Schema.Types.ObjectId,
-        ref:"User",
-        required:true
-    },
-    type:{
-        type:String,
-        enum:["bike" ,"car","auto","loading","truck"],
-        required:true
-    },
-    number:{
-        type:String,
-        required:true,
-        unique:true
-    },
-    vehicleModel:{
-        type:String,
-        required:true
-    },
-    imageUrl:String,
-    baseFare:Number,
-    pricePerKM:Number,
-    waitingCharge:Number,
-    status:{
-        type:String,
-        enum:["approved" , "rejected" ,"pending"],
-        default:"pending"
-    },
-    rejectionReason:String,
-    isActive:{
-        type:Boolean,
-        default:true
-    },
-   
-},{timestamps:true})
+const vehicleSchema = new Schema<IVehicle>(
+    {
+        partner: {
+            type: Schema.Types.ObjectId,
+            ref: "Partner",
+            required: false,
+        },
 
-const Vehicle = mongoose.models.Vehicle || mongoose.model("Vehicle",vehicleSchema)
 
-export default Vehicle
+        vehicleNumber: {
+            type: String,
+            required: true,
+            unique: true,
+        },
+
+        vehicleName: String,
+
+        vehicleType: {
+            type: String,
+            enum: [
+                "bus",
+                "auto",
+                "cab",
+                "tempo",
+                "mini_bus",
+            ],
+            required: true,
+        },
+
+        totalSeats: Number,
+
+        availableSeats: Number,
+
+        rcDocument: String,
+
+        insuranceDocument: String,
+
+        permitDocument: String,
+
+        vehicleImages: [String],
+
+        status: {
+            type: String,
+            enum: [
+                "active",
+                "inactive",
+                "maintenance",
+            ],
+            default: "active",
+        },
+
+
+    },
+    {
+        timestamps: true,
+    }
+);
+
+const Vehicle: Model<IVehicle> = mongoose.models.Vehicle || mongoose.model<IVehicle>("Vehicle", vehicleSchema);
+
+export default Vehicle;
