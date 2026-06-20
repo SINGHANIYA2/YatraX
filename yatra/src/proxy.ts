@@ -49,7 +49,7 @@ export async function proxy(req:NextRequest){
     console.log(pathname)
 }
 
-//middleware kiske ni chlana hai that is decided by below config  
+//middleware jise ni permissison dena ha iss api ka,that is decided by below config  
 export const config={
     matcher:["/((?!_next/static|_next/image|favicon.ico).*)"]
 }

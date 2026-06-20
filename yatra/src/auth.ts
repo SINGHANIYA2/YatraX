@@ -22,8 +22,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         },
 
         async authorize(credentials, request) {
-            const email = credentials.email
-            const password = credentials.password as string
+            const email = credentials?.email
+            const password = credentials?.password as string
             
             if(!email || !password){
                 throw Error("MIssing Details")
@@ -50,8 +50,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         },
     }),
     Google ({
-        clientId:process.env.AUTH_GOOGLE_ID,
-        clientSecret:process.env.AUTH_GOOGLE_SECRET
+        clientId:process.env.AUTH_GOOGLE_ID!,
+        clientSecret:process.env.AUTH_GOOGLE_SECRET!
     })
 ],
     callbacks:{
@@ -102,7 +102,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     
     pages:{
         signIn:"/signin",
-        error:"signin"
+        error:"/signin"
     },
     session:{
         strategy:"jwt",

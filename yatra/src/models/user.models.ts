@@ -1,5 +1,5 @@
 import mongoose , {Mongoose} from "mongoose"
-import { userAgent } from "next/server";
+
 
 export interface IUser extends Document{
     name:string;
@@ -9,10 +9,14 @@ export interface IUser extends Document{
     updatedAt:Date;
     role:string;
     isEmailVerified?:boolean,
+    isMobileVerified?:boolean,
     partnerOnboardingSteps:number,
-    otp?:string,
+    emailOtp:string
+    mobileOtp:string
     otpExpiresAt?:Date
     mobileNumber?:string
+    isVerified?: boolean;
+    
 }
 
 const userSchema=new mongoose.Schema<IUser>({
@@ -43,16 +47,27 @@ const userSchema=new mongoose.Schema<IUser>({
         type:Boolean,
         default:false
     },
-    otp:{
+    isMobileVerified:{
+        type:Boolean,
+        default:false
+    },
+    emailOtp:{
         type:String
     },
+    mobileOtp:{
+        type:String
+    },
+    
     otpExpiresAt:{
-        type:Date,
+        type:Date
         // default:null
     },mobileNumber:{
         type:String
-    }
-
+    },
+    isVerified: {
+  type: Boolean,
+  default: false,
+},
    
 },{timestamps:true})
 const User = mongoose.models.User || mongoose.model("User", userSchema);

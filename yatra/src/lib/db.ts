@@ -1,9 +1,6 @@
 import mongoose, { Connection } from "mongoose";
-const mongodbUrl=process.env.MONGODB_URL
+const mongodbUrl = process.env.MONGODB_URL
 
-// if(!mongodbUrl){
-//     throw new Error("DB url not found")
-// }
 
 // used to store db server
 let cached=global.mongooseConn
@@ -13,6 +10,9 @@ if(!cached){
 }
 
 const connectDb= async () =>{
+    if (!mongodbUrl) {
+        throw new Error("DB url not found")
+    }
     if(cached.conn){
         console.log("Cached Connection")
         return cached.conn
