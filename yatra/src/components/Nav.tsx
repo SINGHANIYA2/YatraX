@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AnimatePresence, motion } from "motion/react";
+import {  motion } from "motion/react";
 import { Bus, Menu, X } from "lucide-react";
 import { useState } from "react";
 import AuthModal from "./AuthModal";
@@ -54,7 +54,7 @@ export default function Navbar() {
         }}
         className="fixed top-0 left-0 right-0 z-50"
       >
-        <div className="mx-auto max-w-7xl px-4 py-4">
+        <div className="mx-auto max-w-7xl px-4 py-0.5">
           <div
             className="
               flex items-center justify-between
