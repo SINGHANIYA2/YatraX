@@ -2,28 +2,28 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import { Bus, Menu, X } from "lucide-react";
 import { useState } from "react";
 import AuthModal from "./AuthModal";
 
 const navItems = [
   { name: "Home", href: "/" },
-  { name: "Routes", href: "/routes" },
-  { name: "Track Vehicle", href: "/track" },
+  // { name: "Routes", href: "/routes" },
+  { name: "Track Vehicle", href: "/tracking" },
   { name: "Book Tickets", href: "/booking" },
   { name: "Fleet Management", href: "/fleet" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
-  { name: "Alert", href: "/alert" },
+  // { name: "Alert", href: "/alert" },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [authOpen ,setAuthOpen] = useState(false)
-  const [steps,setStep] = useState("")
-  
+  const [authOpen, setAuthOpen] = useState(false)
+  const [steps, setStep] = useState("")
+
 
   const handleSignup = () => {
     try {
@@ -41,7 +41,7 @@ export default function Navbar() {
       console.log(error)
     }
   }
-  
+
 
   return (
     <>
@@ -52,15 +52,17 @@ export default function Navbar() {
           duration: 0.6,
           ease: "easeOut",
         }}
-        className="fixed top-0 left-0 right-0 z-50 font-sans"
+        className="fixed top-0 left-0 
+        right-0 z-50 font-sans
+        "
       >
-        <div className="mx-auto max-w-7xl px-4 py-4">
+        <div className="mx-auto max-w-7xl my-3 px-4 py-0.5">
           <div
             className="
               flex items-center justify-between
               rounded-2xl
               border border-white/10
-              bg-black/80
+            bg-[#030712]
               backdrop-blur-xl
               px-6 py-4
               shadow-[0_0_50px_rgba(0,0,0,0.6)]
@@ -102,8 +104,8 @@ export default function Navbar() {
                     <motion.span
                       whileHover={{ scale: 1.05 }}
                       className={`text-sm font-medium transition-all duration-300 ${active
-                          ? "text-blue-500"
-                          : "text-gray-300 hover:text-white"
+                        ? "text-blue-500"
+                        : "text-gray-300 hover:text-white"
                         }`}
                     >
                       {item.name}
@@ -216,13 +218,13 @@ export default function Navbar() {
 
             <div className="mt-4 flex flex-col gap-3">
               <button className="rounded-xl border border-white/10 py-3 text-white"
-                 onClick={handleLogin}
+                onClick={handleLogin}
               >
                 Login
               </button>
 
               <button
-               
+
                 className="
                   rounded-xl
                   bg-gradient-to-r
@@ -240,7 +242,7 @@ export default function Navbar() {
           </div>
         </motion.div>
       )}
-    
+
       <AuthModal open={authOpen} steps={steps} onClose={() => setAuthOpen(false)} />
     </>
   );

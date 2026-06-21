@@ -3,15 +3,21 @@ import Footer from "@/components/Footer";
 import Nav from "@/components/Nav";
 import Booking from '@/components/BookingSection'
 import PublicHome from "@/components/PublicHome";
-import LiveTracking from "@/components/Live Tracking/LiveTracking";
+import LiveTracking from "@/components/tracking/LiveTracking";
+import FleetManagement from "@/components/fleet/FleetManagement";
+import AboutPage from "@/components/aboutsection/AboutPage";
+import ContactPage from "@/components/contact/ContactPage";
 
 export default function Home() {
   return (
-    <div className="w-full min-h-screen bg-[#030712]">
-      <Nav />
-      {/* <Booking /> */}
-      <LiveTracking />
-      {/* <PublicHome /> */}
+    <div className="w-full min-h-screen bg-[#030712] scroll-thin">
+      {/* <LiveTracking></LiveTracking> */}
+      {/* <FleetManagement/> */}
+      <PublicHome />
+      {/* <Booking></Booking> */}
+      {/* <Footer></Footer> */}
+      {/* <AboutPage></AboutPage> */}
+      {/* <ContactPage></ContactPage> */}
     </div>
   );
 }

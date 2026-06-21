@@ -5,7 +5,6 @@ import { CircleDashed, Lock, Mail, Phone, User, X } from 'lucide-react'
 import Image from 'next/image'
 import { signIn, useSession } from 'next-auth/react'
 import axios from 'axios'
-import { div } from 'motion/react-client'
 import { GrUserAdmin } from 'react-icons/gr'
 
 type propType = {
@@ -15,6 +14,7 @@ type propType = {
 }
 
 type stepType = "login" | "otp" | "signup" | null
+
 function AuthModal({ open, steps, onClose }: propType) {
     const [step, setStep] = useState<stepType>("login")
     const [name, setName] = useState("")
@@ -49,42 +49,6 @@ function AuthModal({ open, steps, onClose }: propType) {
 
         }
     }
-    // const handleVerify = async () => {
-    //     setLoading(true)
-    //     try {
-    //         const { data } = await axios.post("/api/auth/verify-email", {
-    //             email, emailOtp: emailOtp.join("")
-    //         })
-    //         console.log(data)
-    //         setEmailOtp(["", "", "", "", "", ""])
-    //         setErr("")
-    //         setStep("login")
-    //         setLoading(false);
-    //     } catch (error: any) {
-    //         setLoading(false);
-    //         setErr(`${error.response.data.message ?? error.message}`)
-
-    //     }
-    // }
-
-    // const handleVerifyMobileNumber = async () => {
-    //     setLoading(true)
-    //     try {
-    //         const { data } = await axios.post("/api/auth/verify-mobileNumber", {
-    //             mobileNumber, mobileOtp: mobileOtp.join()
-    //         })
-    //         console.log(data)
-    //         setMobileOtp(["", "", "", "", "", ""])
-    //         setErr("")
-    //         setStep("login")
-    //         setLoading(false);
-    //     } catch (error: any) {
-    //         setLoading(false);
-    //         setErr(`${error.response.data.message ?? error.message}`)
-
-    //     }
-    // }
-
 
     const handleLogIn = async () => {
         setLoading(true)
@@ -101,42 +65,42 @@ function AuthModal({ open, steps, onClose }: propType) {
     }
 
     const handleOtpKeyDown = (
-  e: React.KeyboardEvent<HTMLInputElement>,
-  index: number,
-  type: "email" | "mobile"
-) => {
-  if (e.key !== "Backspace") return;
+        e: React.KeyboardEvent<HTMLInputElement>,
+        index: number,
+        type: "email" | "mobile"
+    ) => {
+        if (e.key !== "Backspace") return;
 
-  const value = (e.target as HTMLInputElement).value;
+        const value = (e.target as HTMLInputElement).value;
 
-  // If current box has a value, clear it first
-  if (value) {
-    const updated =
-      type === "email" ? [...emailOtp] : [...mobileOtp];
+        // If current box has a value, clear it first
+        if (value) {
+            const updated =
+                type === "email" ? [...emailOtp] : [...mobileOtp];
 
-    updated[index] = "";
+            updated[index] = "";
 
-    if (type === "email") {
-      setEmailOtp(updated);
-    } else {
-      setMobileOtp(updated);
-    }
+            if (type === "email") {
+                setEmailOtp(updated);
+            } else {
+                setMobileOtp(updated);
+            }
 
-    return;
-  }
+            return;
+        }
 
-  // Move to previous box if current is already empty
-  if (index > 0) {
-    const prevId =
-      type === "email"
-        ? `emailOtp-${index - 1}`
-        : `mobileOtp-${index - 1}`;
+        // Move to previous box if current is already empty
+        if (index > 0) {
+            const prevId =
+                type === "email"
+                    ? `emailOtp-${index - 1}`
+                    : `mobileOtp-${index - 1}`;
 
-    (
-      document.getElementById(prevId) as HTMLInputElement
-    )?.focus();
-  }
-};
+            (
+                document.getElementById(prevId) as HTMLInputElement
+            )?.focus();
+        }
+    };
 
     const handleChangeEmailOtp = (index: number, value: string) => {
         if (!/^[0-9]?$/.test(value)) return
@@ -151,7 +115,7 @@ function AuthModal({ open, steps, onClose }: propType) {
             document.getElementById(`emailOtp-${index - 1}`)?.focus()
         }
     }
-    const handleChangeMobileOtp =  (index: number, value: string) => {
+    const handleChangeMobileOtp = (index: number, value: string) => {
         if (!/^[0-9]?$/.test(value)) return
 
         const updated = [...mobileOtp]
@@ -166,39 +130,39 @@ function AuthModal({ open, steps, onClose }: propType) {
     }
 
     const handleVerification = async () => {
-    setLoading(true);
-    setErr("");
+        setLoading(true);
+        setErr("");
 
-    try {
-        const payload = {
-            email,
-            emailOtp: emailOtp.join(""),
-            mobileNumber,
-            mobileOtp: mobileOtp.join(""),
-        };
+        try {
+            const payload = {
+                email,
+                emailOtp: emailOtp.join(""),
+                mobileNumber,
+                mobileOtp: mobileOtp.join(""),
+            };
 
-        const { data } = await axios.post(
-            "/api/auth/verify",
-            payload
-        );
+            const { data } = await axios.post(
+                "/api/auth/verify",
+                payload
+            );
 
-        console.log(data);
+            console.log(data);
 
-        setEmailOtp(["", "", "", "", "", ""]);
-        setMobileOtp(["", "", "", "", "", ""]);
-        setStep(null);
-    } catch (error: any) {
-        console.error(error);
+            setEmailOtp(["", "", "", "", "", ""]);
+            setMobileOtp(["", "", "", "", "", ""]);
+            setStep(null);
+        } catch (error: any) {
+            console.error(error);
 
-        setErr(
-            error?.response?.data?.message ||
-            error?.message ||
-            "Verification failed"
-        );
-    } finally {
-        setLoading(false);
-    }
-};
+            setErr(
+                error?.response?.data?.message ||
+                error?.message ||
+                "Verification failed"
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
     return (
         <AnimatePresence>
             {open && step != null && (
@@ -433,10 +397,10 @@ function AuthModal({ open, steps, onClose }: propType) {
                                                     id={`emailOtp-${i}`}
                                                     value={digit}
                                                     onKeyDown={(e) =>
-                                                            handleOtpKeyDown(e, i, "email")
-                                                        }
+                                                        handleOtpKeyDown(e, i, "email")
+                                                    }
                                                     onChange={(e) => handleChangeEmailOtp(i, e.target.value)}
-                                                                                                    className="
+                                                    className="
                                                         w-12 h-12
                                                         rounded-xl
                                                         text-center
@@ -471,9 +435,9 @@ function AuthModal({ open, steps, onClose }: propType) {
                                                             outline-none
                                                             focus:border-blue-500
                                                             "
-                                                            onKeyDown={(e) =>
-                                                                handleOtpKeyDown(e, i, "mobile")
-                                                            }
+                                                    onKeyDown={(e) =>
+                                                        handleOtpKeyDown(e, i, "mobile")
+                                                    }
                                                 />
 
                                             ))}

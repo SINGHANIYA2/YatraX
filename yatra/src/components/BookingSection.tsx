@@ -7,13 +7,14 @@ import SummarySection from './SummarySection'
 
 function Booking() {
     return (
-        <>
+        <div className='bg-[#030712]'>
             <motion.div
                 initial={{ y: 40, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6 }}
-                className=" mx-auto mt-28 px-[40px] font-sans"
+                className=" mx-auto mt-28 px-[40px] font-sans text-white mb-8"
             >
+
                 {/* search bar */}
 
                 <div className="bg-[#07142C]  rounded-2xl p-[22px] grid grid-cols-6 gap-4 border shadow-[0_0_15px_rgba(59,130,246,0.15)] border-blue-500/10 bg-[#0F172A] ">
@@ -72,9 +73,9 @@ function Booking() {
                 </div>
 
 
-                <div className="mx-auto mt-4 flex justify-between">
+                <div className="mx-auto mt-4 flex justify-between gap-4">
 
-                    <div className="space-y-[6px] w-[42%]">
+                    <div className="space-y-3 w-[42%]">
                         {vehicles.map((vehicle) => (
                             <VehicleCard
                                 key={vehicle.id}
@@ -92,7 +93,7 @@ function Booking() {
 
                 </div>
             </motion.div>
-        </>
+        </div>
     )
 }
 

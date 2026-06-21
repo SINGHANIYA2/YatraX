@@ -107,7 +107,7 @@ export async function POST(req: Request) {
     user.isVerified = true
 
     if (!user.isVerified) {
-     throw new Error("Please verify your account first");
+      throw new Error("Please verify your account first");
     }
 
     await user.save();
