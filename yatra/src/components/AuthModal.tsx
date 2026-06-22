@@ -10,10 +10,10 @@ import { GrUserAdmin } from 'react-icons/gr'
 type propType = {
     open: boolean,
     onClose: () => void
-    steps: stepType
+    steps: string
 }
 
-type stepType = "login" | "otp" | "signup" | null
+type stepType = "login" | "otp" | "signup" | null | "adminDetail"
 
 function AuthModal({ open, steps, onClose }: propType) {
     const [step, setStep] = useState<stepType>("login")
@@ -26,10 +26,33 @@ function AuthModal({ open, steps, onClose }: propType) {
     const [emailOtp, setEmailOtp] = useState(["", "", "", "", "", ""])
     const [role, setRole] = useState("user")
     const [mobileOtp, setMobileOtp] = useState(["", "", "", "", "", ""])
+    const [adminData, setAdminData] = useState({
+        organizationName: "",
+        organizationType: "",
+        gstNumber: "",
+        panNumber: "",
+        registrationNumber: "",
 
+        contactPerson: "",
+        alternatePhone: "",
+
+        addressLine1: "",
+        city: "",
+        state: "",
+        pincode: "",
+
+        totalVehicles: "",
+
+        bankName: "",
+        accountHolderName: "",
+        accountNumber: "",
+        ifscCode: "",
+        upiId: "",
+    });
+    
     React.useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setStep(steps)
+        setStep(steps as stepType)
     }, [steps])
     const { data } = useSession()
 
@@ -101,7 +124,37 @@ function AuthModal({ open, steps, onClose }: propType) {
             )?.focus();
         }
     };
+    const handleAdminDetailsSubmit = async () => {
+        try {
+            setLoading(true);
 
+            const payload = {
+                email,
+                ...adminData,
+            };
+
+            const { data } = await axios.post(
+                "/api/admin/create-profile",
+                payload
+            );
+
+            console.log(data);
+
+            setLoading(false);
+            setAdminDetail(false);
+            setStep(null)
+            onClose();
+
+        } catch (error: any) {
+            setLoading(false);
+
+            setErr(
+                error?.response?.data?.message ||
+                error?.message ||
+                "Something went wrong"
+            );
+        }
+    };
     const handleChangeEmailOtp = (index: number, value: string) => {
         if (!/^[0-9]?$/.test(value)) return
 
@@ -150,7 +203,8 @@ function AuthModal({ open, steps, onClose }: propType) {
 
             setEmailOtp(["", "", "", "", "", ""]);
             setMobileOtp(["", "", "", "", "", ""]);
-            setStep(null);
+            setStep("adminDetail");
+            setAdminDetail(true)
         } catch (error: any) {
             console.error(error);
 
@@ -242,9 +296,6 @@ function AuthModal({ open, steps, onClose }: propType) {
                                         animate={{ opacity: 1, x: 0 }}
                                     >
                                         <h1 className='text-xl font-semibold'>Welcome back</h1>
-
-
-
                                         <div className='mt-5 space-y-4'>
                                             <div className='flex items-center gap-3 border border-white/10 bg-white/5 rounded-xl px-4 py-3'>
                                                 <Mail size={18} className='text-gray-400' />
@@ -455,6 +506,7 @@ function AuthModal({ open, steps, onClose }: propType) {
                                                     text-white font-semibold
                                                     "
 
+
                                         >
 
                                             Verify OTP & Create Account </button>
@@ -464,6 +516,143 @@ function AuthModal({ open, steps, onClose }: propType) {
                                 )
                             }
 
+                            {step == "adminDetail" && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="max-h-[70vh] overflow-y-auto space-y-4"
+                                >
+
+                                    <h2 className="text-2xl font-bold text-white">
+                                        Organization Details
+                                    </h2>
+
+                                    <input
+                                        placeholder="Organization Name"
+                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        value={adminData.organizationName}
+                                        onChange={(e) => setAdminData({ ...adminData, organizationName: e.target.value })}
+                                    />
+
+                                    <select
+                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        value={adminData.organizationType}
+                                        onChange={(e) => setAdminData({ ...adminData, organizationType: e.target.value })}
+                                    >
+                                        <option value="">Select Organization Type</option>
+                                        <option value="Bus Operator">Bus Operator</option>
+                                        <option value="Travel Agency">Travel Agency</option>
+                                        <option value="Fleet Owner">Fleet Owner</option>
+                                    </select>
+
+                                    <input
+                                        placeholder="GST Number"
+                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        value={adminData.gstNumber}
+                                        onChange={(e) => setAdminData({ ...adminData, gstNumber: e.target.value })}
+                                    />
+
+                                    <input
+                                        placeholder="PAN Number"
+                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        value={adminData.panNumber}
+                                        onChange={(e) => setAdminData({ ...adminData, panNumber: e.target.value })}
+                                    />
+
+                                    <input
+                                        placeholder="Registration Number"
+                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        value={adminData.registrationNumber}
+                                        onChange={(e) => setAdminData({ ...adminData, registrationNumber: e.target.value })}
+                                    />
+
+                                    <input
+                                        placeholder="Address"
+                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        value={adminData.addressLine1}
+                                        onChange={(e) => setAdminData({ ...adminData, addressLine1: e.target.value })}
+                                    />
+
+                                    <div className="grid grid-cols-2 gap-3">
+
+                                        <input
+                                            placeholder="City"
+                                            className="border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                            value={adminData.city}
+                                            onChange={(e) => setAdminData({ ...adminData, city: e.target.value })}
+                                        />
+
+                                        <input
+                                            placeholder="State"
+                                            className="border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                            value={adminData.state}
+                                            onChange={(e) => setAdminData({ ...adminData, state: e.target.value })}
+                                        />
+
+                                    </div>
+
+                                    <input
+                                        placeholder="Pincode"
+                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        value={adminData.pincode}
+                                        onChange={(e) => setAdminData({ ...adminData, pincode: e.target.value })}
+                                    />
+
+                                    <input
+                                        placeholder="Total Vehicles"
+                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        value={adminData.totalVehicles}
+                                        onChange={(e) => setAdminData({ ...adminData, totalVehicles: e.target.value })}
+                                    />
+
+                                    <h3 className="text-lg font-semibold text-white mt-4">
+                                        Bank Details
+                                    </h3>
+
+                                    <input
+                                        placeholder="Bank Name"
+                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        value={adminData.bankName}
+                                        onChange={(e) => setAdminData({ ...adminData, bankName: e.target.value })}
+                                    />
+
+                                    <input
+                                        placeholder="Account Holder Name"
+                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        value={adminData.accountHolderName}
+                                        onChange={(e) => setAdminData({ ...adminData, accountHolderName: e.target.value })}
+                                    />
+
+                                    <input
+                                        placeholder="Account Number"
+                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        value={adminData.accountNumber}
+                                        onChange={(e) => setAdminData({ ...adminData, accountNumber: e.target.value })}
+                                    />
+
+                                    <input
+                                        placeholder="IFSC Code"
+                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        value={adminData.ifscCode}
+                                        onChange={(e) => setAdminData({ ...adminData, ifscCode: e.target.value })}
+                                    />
+
+                                    <input
+                                        placeholder="UPI ID"
+                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        value={adminData.upiId}
+                                        onChange={(e) => setAdminData({ ...adminData, upiId: e.target.value })}
+                                    />
+
+                                    <button
+                                        className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 font-semibold mt-4"
+                                        onClick={handleAdminDetailsSubmit}
+                                    >
+                                        Submit
+                                    </button>
+
+                                </motion.div>
+                            )}
 
                         </div>
 
