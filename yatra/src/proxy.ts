@@ -11,6 +11,11 @@ const PUBLIC_ROUTES = [
     "/booking",
     "/routes",
     "/notifications",
+    "/admin",
+    "/admin/drivers",
+    "/admin/fleet",
+    "/admin/revenue",
+    "/admin/alerts"
 ]
 const PUBLIC_API = ["/api/auth"]
 
@@ -26,6 +31,9 @@ export async function proxy(req: NextRequest) {
     if (PUBLIC_ROUTES.includes(pathname) || (pathname.startsWith("/api/auth"))) {
         return NextResponse.next()
     }
+
+
+
     const session = await auth()
     if (!session) {
         return NextResponse.redirect(new URL("/", req.url))

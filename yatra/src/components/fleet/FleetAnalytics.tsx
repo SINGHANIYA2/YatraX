@@ -51,7 +51,7 @@ export default function FleetAnalytics({
     ]
 
     return (
-        <div className="grid grid-cols-3 gap-8 mt-8">
+        <div className="grid grid-cols-3 gap-7 mt-6">
 
             {/* Fuel Usage */}
             <div

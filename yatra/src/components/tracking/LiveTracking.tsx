@@ -1,12 +1,24 @@
 'use client'
 import { motion } from "motion/react"
+import { useState } from "react"
+
 import VehicleSidebar from "./VehicleSidebar"
 import LiveMap from "./LiveMap"
 import VehicleDetails from "./VehicleDetails"
+import { trackingVehicles } from './demo'
 
 
 export default function LiveTracking() {
+    const [vehicles, setVehicles] =
+        useState(trackingVehicles)
+
+    const [selectedVehicle, setSelectedVehicle] =
+        useState(trackingVehicles[0])
+
+
     return (
+
+
         <div className="bg-[#030712]">
             <motion.div
                 initial={{ y: 100, opacity: 0 }}
@@ -16,7 +28,9 @@ export default function LiveTracking() {
                     ease: "easeOut"
                 }}
                 className="
-            text-white
+                text-white
+                font-sans
+                text-white
                 mx-auto
                 mt-30
                 px-[40px]
@@ -34,19 +48,19 @@ export default function LiveTracking() {
                 <div className="relative z-10 mx-auto justify-between"></div>
 
                 {/* Left */}
-                <div className="w-[36%] h-full">
-                    <VehicleSidebar />
-                </div>
+                <VehicleSidebar
+                    vehicles={vehicles}
+                    selectedVehicle={selectedVehicle}
+                    setSelectedVehicle={setSelectedVehicle}
+                />
 
 
                 {/* Center */}
-                <div className="w-[44%] h-full">
                     <LiveMap />
-                </div>
 
                 {/* Right */}
                 <div className="w-[20%] h-full">
-                    <VehicleDetails />
+                    <VehicleDetails vehicle={selectedVehicle} />
                 </div>
 
 

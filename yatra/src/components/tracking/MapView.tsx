@@ -22,9 +22,9 @@ export default function MapView() {
             zoom={9}
             className="self-stretch flex"
         >
-            <TileLayer
+            {/* <TileLayer
                 url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
-            />
+            /> */}
 
             <Polyline
                 positions={route as any}

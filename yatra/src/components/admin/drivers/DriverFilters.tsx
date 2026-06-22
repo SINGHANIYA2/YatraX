@@ -2,13 +2,9 @@
 
 import { Search, ChevronDown, Plus } from 'lucide-react'
 
-
 type Props = {
-    vehicles: any[]
-    setVehicles: React.Dispatch<React.SetStateAction<any[]>>
-
-    selectedType: string
-    setSelectedType: React.Dispatch<React.SetStateAction<string>>
+    drivers: any[]
+    setDrivers: React.Dispatch<React.SetStateAction<any[]>>
 
     selectedStatus: string
     setSelectedStatus: React.Dispatch<React.SetStateAction<string>>
@@ -17,92 +13,61 @@ type Props = {
     setSearch: React.Dispatch<React.SetStateAction<string>>
 }
 
-export default function FleetFilters({
-    vehicles,
-    setVehicles,
-
-    selectedType,
-    setSelectedType,
+export default function DriverFilters({
+    drivers,
+    setDrivers,
 
     selectedStatus,
     setSelectedStatus,
 
     search,
-    setSearch
+    setSearch,
 }: Props) {
 
-    function handleAddVehicle() {
+    function handleAddDriver() {
 
-        const newVehicle = {
+        const newDriver = {
             id: crypto.randomUUID(),
-            type: 'Bus',
-            driver: 'New Driver',
-            route: 'Delhi → Jaipur',
-            status: 'Active',
-            updated: 'Just now',
-            fuelUsed: [0, 0, 0, 0, 0, 0],
-            revenue: [0, 0, 0, 0, 0, 0],
-            activeDays: 0,
+
+            name: 'New Driver',
+            vehicle: 'Not Assigned',
+
+            phone: '+91 9876543210',
+
+            rating: 4.5,
+
+            status: 'Off Duty',
+
+            experience: '1 Year',
+
+            trips: 0,
         }
 
-        setVehicles(prev => [...prev, newVehicle])
+        setDrivers(prev => [...prev, newDriver])
     }
 
     return (
         <div
             className="
+            mt-4
             rounded-2xl
             border
             border-blue-500/10
-            bg-[#071427]
+            bg-[#0b1220]
             p-4
-            mt-5
-            shadow-[0_0_15px_rgba(59,130,246,0.15)]
+            shadow-[0_0_15px_rgba(59,130,246,0.08)]
             "
         >
             <div className="flex items-center gap-4">
 
-                {/* Vehicle Type */}
+                {/* Status Filter */}
                 <div className="relative w-52">
-                    <select
-                        value={selectedType}
-                        onChange={(e) => {
-                            setSelectedType(e.target.value)
-                        }}
-                        className="
-                        w-full
-                            appearance-none
-                            rounded-xl
-                            border
-                            border-slate-700
-                            bg-slate-900
-                            px-4
-                            py-3
-                            text-sm
-                            text-white
-                            outline-none
-                        "
-                    >
-                        <option>All Types</option>
-                        <option>Bus</option>
-                        <option>Taxi</option>
-                        <option>Van</option>
-                        <option>Truck</option>
-                    </select>
 
-                    <ChevronDown
-                        size={18}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"
-                    />
-                </div>
-
-                {/* Status */}
-                <div className="relative w-52">
                     <select
                         value={selectedStatus}
-                        onChange={(e) => {
+                        onChange={(e) =>
                             setSelectedStatus(e.target.value)
-                        }}
+                        }
                         className="
                         w-full
                         appearance-none
@@ -118,32 +83,43 @@ export default function FleetFilters({
                         "
                     >
                         <option>All Status</option>
-                        <option>Active</option>
-                        <option>In Transit</option>
-                        <option>Maintenance</option>
-                        <option>Offline</option>
+                        <option>On Duty</option>
+                        <option>Off Duty</option>
                     </select>
 
                     <ChevronDown
                         size={18}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"
+                        className="
+                        absolute
+                        right-4
+                        top-1/2
+                        -translate-y-1/2
+                        text-slate-400
+                        "
                     />
                 </div>
 
                 {/* Search */}
                 <div className="relative flex-1">
+
                     <Search
                         size={16}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
+                        className="
+                        absolute
+                        left-4
+                        top-1/2
+                        -translate-y-1/2
+                        text-slate-500
+                        "
                     />
 
                     <input
                         value={search}
-                        onChange={(e) => {
+                        onChange={(e) =>
                             setSearch(e.target.value)
-                        }}
+                        }
                         type="text"
-                        placeholder="Search vehicle..."
+                        placeholder="Search driver..."
                         className="
                         w-full
                         rounded-xl
@@ -160,9 +136,9 @@ export default function FleetFilters({
                     />
                 </div>
 
-                {/* Add Vehicle */}
+                {/* Add Driver */}
                 <button
-                    onClick={handleAddVehicle}
+                    onClick={handleAddDriver}
                     className="
                     flex
                     items-center
@@ -179,7 +155,7 @@ export default function FleetFilters({
                     "
                 >
                     <Plus size={18} />
-                    Add Vehicle
+                    Add Driver
                 </button>
 
             </div>

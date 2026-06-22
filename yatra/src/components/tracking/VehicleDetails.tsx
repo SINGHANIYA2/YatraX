@@ -1,10 +1,17 @@
 'use client'
 
-import { Phone, Star } from 'lucide-react'
+import { trackingVehicles } from './demo'
 
+import { Phone, Star } from 'lucide-react'
 import { motion } from "motion/react"
 
-export default function VehicleDetails() {
+type Props = {
+    vehicle: any
+}
+
+export default function VehicleDetails({
+    vehicle
+}: Props) {
     return (
         <motion.div
             initial={{ x: 120, opacity: 0 }}
@@ -29,7 +36,7 @@ export default function VehicleDetails() {
                 {/* Header */}
                 <div className="mb-4 flex items-center justify-between">
                     <h2 className="text-sm font-semibold">
-                        JH01AB1234
+                        {vehicle.id}
                     </h2>
 
                     <span className="rounded-full bg-green-500/20 px-3 py-1 text-xs font-medium text-green-400">
@@ -45,7 +52,7 @@ export default function VehicleDetails() {
 
                     <div>
                         <h3 className="font-medium">
-                            Volvo AC Sleeper
+                            {vehicle.model}
                         </h3>
                     </div>
                 </div>
@@ -61,7 +68,7 @@ export default function VehicleDetails() {
 
                         <div>
                             <h3 className="text-sm font-medium">
-                                Rahul Kumar
+                                {vehicle.driver.name}
                             </h3>
 
                             <div className="flex items-center gap-1 text-yellow-400">
@@ -88,12 +95,12 @@ export default function VehicleDetails() {
 
                     <div>
                         <p className="text-slate-400">Speed</p>
-                        <p className="mt-1 font-semibold">58 km/h</p>
+                        <p className="mt-1 font-semibold">{vehicle.speed} km/h</p>
                     </div>
 
                     <div>
                         <p className="text-slate-400">Fuel</p>
-                        <p className="mt-1 font-semibold">68%</p>
+                        <p className="mt-1 font-semibold">{vehicle.fuel}%</p>
                     </div>
 
                     <div>

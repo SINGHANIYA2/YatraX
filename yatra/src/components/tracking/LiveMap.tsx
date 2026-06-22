@@ -9,7 +9,7 @@ const MapView = dynamic(
 
 export default function LiveMap() {
     return (
-        <div className="relative h-full w-full overflow-hidden rounded-2xl border border-slate-800 self-stretch">
+        <div className="relative h-full w-[44%] overflow-hidden rounded-2xl border border-slate-800 self-stretch">
             <MapView />
         </div>
     )

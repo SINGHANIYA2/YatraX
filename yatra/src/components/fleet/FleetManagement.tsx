@@ -7,6 +7,7 @@ import FleetStats from './FleetStats'
 import FleetFilters from './FleetFilters'
 import FleetTable from './FleetTable'
 import FleetAnalytics from './FleetAnalytics'
+import FleetTopBar from './FleetTopBar'
 
 import { fleetVehicles } from './demo'
 
@@ -68,32 +69,26 @@ export default function FleetManagement() {
 
     return (
 
-        <motion.div
-            initial={{ y: 40, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            className='bg-[#030712]'
-        >
+        <div>
+            <div className="mb-6 fixed top-0 w-full z-40">
+                <FleetTopBar />
+            </div>
+            <motion.div
+                initial={{ y: 40, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6 }}
+                className='bg-[#030712]'
+            >
 
-            <div className="mt-24 px-10 bg-[#030712] pb-10 px-20 font-sans">
 
-                {/* Heading */}
-                <div className="mb-6">
-                    <h1 className="text-3xl font-bold text-white">
-                        Fleet Management
-                    </h1>
+                <div className="mt-34 mb-10 px-10 bg-[#030712] font-sans">
 
-                    <p className="text-slate-400 mt-1">
-                        Manage and monitor your entire fleet
-                    </p>
-                </div>
 
-                {/* Stats */}
-                <FleetStats
-                    vehicles={vehicles} />
+                    {/* Stats */}
+                    <FleetStats
+                        vehicles={vehicles} />
 
-                {/* Filters */}
-                <div className="mt-6">
+                    {/* Filters */}
                     <FleetFilters
                         vehicles={vehicles}
                         setVehicles={setVehicles}
@@ -106,19 +101,19 @@ export default function FleetManagement() {
 
                         search={search}
                         setSearch={setSearch} />
-                </div>
 
-                {/* Table */}
-                <div className="mt-6">
+                    {/* Table */}
                     <FleetTable
                         vehicles={filteredVehicles}
                         setVehicles={setVehicles}
                     />
+
+                    {/* Fleet Analytics */}
+                    <FleetAnalytics vehicles={filteredVehicles} />
+
                 </div>
+            </motion.div>
+        </div>
 
-                <FleetAnalytics vehicles={filteredVehicles} />
-
-            </div>
-        </motion.div>
     )
 }
