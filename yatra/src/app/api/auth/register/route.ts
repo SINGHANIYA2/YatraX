@@ -1,5 +1,4 @@
 import connectDb from "@/lib/db";
-import Verification from "@/models/verification.models";
 import User from "@/models/user.models";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
@@ -13,9 +12,7 @@ export async function POST(req: NextRequest) {
 
         await connectDb();
 
-        if (!name || !email ||
-            !password ||
-            !mobileNumber
+        if (!name || !email || !password || !mobileNumber
         ) {
             return NextResponse.json(
                 {

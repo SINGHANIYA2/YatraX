@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger, } from "@/components/ui/popover";
+import LiveMap from "./LiveMap";
 
 
 
@@ -57,12 +58,14 @@ export default function HeroRight() {
             <div className="relative h-[280px] sm:h-[330px] lg:h-[420px] rounded-2xl overflow-hidden border border-white/10">
 
                 <Image
-                    src="/hero-map.png"
+                    src="/hero_map.png"
                     alt="Map"
                     fill
                     priority
                     className="object-cover"
+                    sizes="full"
                 />
+                {/* <LiveMap/> */}
 
                 <div className="absolute inset-0 bg-black/20" />
 
@@ -270,7 +273,7 @@ export default function HeroRight() {
                                         w-auto
                                         p-0
                                         border-white/10
-                                        bg-[#08111F]
+                                        bg-[#4e5766]
                                 "
                             >
                                 <Calendar
