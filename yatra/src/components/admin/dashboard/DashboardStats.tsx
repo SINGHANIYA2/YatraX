@@ -34,7 +34,7 @@ const stats = [
     },
 
     {
-        title: 'Open Alerts',
+        title: 'Pending Requests',
         value: 5,
         icon: TriangleAlert,
         color: 'text-red-400',

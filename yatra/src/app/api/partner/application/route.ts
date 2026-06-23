@@ -9,6 +9,9 @@ export async function POST(req: NextRequest) {
     try {
 
         const body = await req.json();
+        console.log("BODY RECEIVED:");
+        console.log(body);
+
         await connectDb()
         const session = await auth();
 
@@ -24,6 +27,9 @@ export async function POST(req: NextRequest) {
             email: session.user.email,
         });
 
+        console.log("USER:", user);
+        console.log("MOBILE:", user?.mobileNumber);
+
         if (!user) {
             return Response.json(
                 { message: "User not found" },
@@ -32,6 +38,8 @@ export async function POST(req: NextRequest) {
         }
 
         const { documents, bankDetails, locationId, adminId, ...driverDetails } = body;
+
+        console.log("DOCUMENTS:", documents);
 
         if (!adminId || !locationId || !bankDetails || !driverDetails.dlNumber || !documents ||
             !documents?.profilePhoto || !documents?.aadharFront || !documents?.aadharBack ||
@@ -46,32 +54,27 @@ export async function POST(req: NextRequest) {
                 }
             );
         }
-        // console.log("Driver:", driverDetails);
-
-        // console.log("Documents:", documents);
-
-        // console.log("Bank:", bankDetails);
 
         const admin = await Admin.findById(adminId);
 
         if (!admin) {
-        return Response.json(
-            {
-                message: "Admin not found",
-            },
-            {
-                status: 404,
-            }
-        );
+            return Response.json(
+                {
+                    message: "Admin not found",
+                },
+                {
+                    status: 404,
+                }
+            );
         }
         if (!admin.locations.some((id: any) => id.toString() === locationId)) {
             return Response.json(
                 {
-                message:
-                    "Selected admin does not serve this location",
+                    message:
+                        "Selected admin does not serve this location",
                 },
                 {
-                status: 400,
+                    status: 400,
                 }
             );
         }
@@ -79,11 +82,9 @@ export async function POST(req: NextRequest) {
         let application = await partnerApplicationModels.findOne({
             userId: user._id,
             status: {
-                $in: ["pending", "under_review","approved"],
+                $in: ["pending", "under_review", "approved"],
             },
         });
-
-
 
         if (application) {
             return Response.json(
@@ -98,7 +99,7 @@ export async function POST(req: NextRequest) {
             locationId,
 
             name: user.name,
-            phone: user.mobileNumber,
+            phone: driverDetails.emergencyContact,
             email: user.email,
 
             dob: driverDetails.dob,
@@ -134,7 +135,7 @@ export async function POST(req: NextRequest) {
 
             status: "pending",
         });
-        
+
         await Admin.findByIdAndUpdate(
             adminId,
             {
@@ -149,6 +150,8 @@ export async function POST(req: NextRequest) {
 
         await user.save();
 
+        console.log("FINAL DOCUMENTS:", documents);
+
         return Response.json(
             {
                 success: true,
@@ -156,7 +159,8 @@ export async function POST(req: NextRequest) {
             },
             { status: 201, }
         );
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
 
         return Response.json(
@@ -166,6 +170,32 @@ export async function POST(req: NextRequest) {
             {
                 status: 500,
             }
+        );
+    }
+}
+
+export async function GET() {
+    try {
+        await connectDb();
+
+        const applications =
+            await partnerApplicationModels.find()
+                .sort({ createdAt: -1 });
+
+        return Response.json({
+            success: true,
+            applications
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        return Response.json(
+            {
+                success: false,
+                message: "Internal Server Error"
+            },
+            { status: 500 }
         );
     }
 }

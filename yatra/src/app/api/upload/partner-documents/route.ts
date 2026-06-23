@@ -55,53 +55,61 @@ export async function POST(req: NextRequest) {
 
         const documents: any = {};
 
-        const aadharBackUrl = await uploadOnCloudinary(aadharBack);
+        const aadharBackData = await uploadOnCloudinary(aadharBack);
+        console.log("AADHAR BACK:", aadharBackData);
 
-        if (!aadharBackUrl)
+        if (!aadharBackData) {
             return Response.json(
                 { message: "Failed to upload Aadhaar Back" },
                 { status: 500 }
             );
+        }
 
-        documents.aadharBack = {
-            url: aadharBackUrl,
-        };
+        documents.aadharBack = aadharBackData;
 
-        const aadharFrontUrl = await uploadOnCloudinary(aadharFront);
 
-        if (!aadharFrontUrl)
+
+        const aadharFrontData = await uploadOnCloudinary(aadharFront);
+        console.log("AADHAR FRONT:", aadharFrontData);
+
+        if (!aadharFrontData) {
             return Response.json(
                 { message: "Failed to upload Aadhaar Front" },
                 { status: 500 }
             );
+        }
 
-        documents.aadharFront = {
-            url: aadharFrontUrl,
-        };
+        documents.aadharFront = aadharFrontData;
 
-        const drivingLicenseUrl = await uploadOnCloudinary(drivingLicense);
 
-        if (!drivingLicenseUrl)
+
+        const drivingLicenseData = await uploadOnCloudinary(drivingLicense);
+        console.log("DL:", drivingLicenseData);
+
+        if (!drivingLicenseData) {
             return Response.json(
                 { message: "Failed to upload Driving License" },
                 { status: 500 }
             );
+        }
 
-        documents.drivingLicense = {
-            url: drivingLicenseUrl,
-        };
+        documents.drivingLicense = drivingLicenseData;
 
-        const profilePhotoUrl = await uploadOnCloudinary(profilePhoto);
 
-        if (!profilePhotoUrl)
+
+        const profilePhotoData = await uploadOnCloudinary(profilePhoto);
+        console.log("PHOTO:", profilePhotoData);
+
+        if (!profilePhotoData) {
             return Response.json(
                 { message: "Failed to upload Profile Photo" },
                 { status: 500 }
             );
+        }
 
-        documents.profilePhoto = {
-            url: profilePhotoUrl,
-        };
+        documents.profilePhoto = profilePhotoData;
+
+        console.log("FINAL DOCUMENTS:", documents);
 
         console.log("Documents uploaded successfully");
 

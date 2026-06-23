@@ -15,7 +15,13 @@ const PUBLIC_ROUTES = [
     "/admin/drivers",
     "/admin/fleet",
     "/admin/revenue",
-    "/admin/alerts"
+    "/admin/alerts",
+    "/admin/applications",
+    "/partner/onboarding",
+    "/partner/onboarding/bank-details",
+    "/partner/onboarding/documents",
+    "/partner/onboarding/driver-details",
+    "/partner/onboarding/location-admin",
 ]
 const PUBLIC_API = ["/api/auth"]
 

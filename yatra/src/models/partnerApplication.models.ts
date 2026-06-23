@@ -2,6 +2,8 @@ import mongoose, { Schema } from "mongoose";
 import { FileSchema } from "./FileSchema.models";
 import partnerApplicationModels from '@/models/partnerApplication.models';
 
+
+
 const PartnerApplicationSchema = new Schema(
   {
     // Relations
