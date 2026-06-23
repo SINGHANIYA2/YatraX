@@ -1,4 +1,5 @@
 import mongoose , {Mongoose} from "mongoose"
+import partnerApplicationModels from '@/models/partnerApplication.models';
 
 
 export interface IUser extends Document{
@@ -10,12 +11,13 @@ export interface IUser extends Document{
     role:string;
     isEmailVerified?:boolean,
     isMobileVerified?:boolean,
-    partnerOnboardingSteps:number,
     emailOtp:string
     mobileOtp:string
     otpExpiresAt?:Date
     mobileNumber?:string
     isVerified?: boolean;
+    partnerApplication?:number,
+    partnerStatus?:string
     
 }
 
@@ -32,10 +34,8 @@ const userSchema=new mongoose.Schema<IUser>({
     password:{
         type:String
     },
-    partnerOnboardingSteps:{
+    partnerApplication:{
         type:Number,
-        min:0,
-        max:8,
         default:0
     },
     role:{
@@ -63,12 +63,16 @@ const userSchema=new mongoose.Schema<IUser>({
         // default:null
     },mobileNumber:{
         type:String
+    },partnerStatus:{
+        type:String,
+        enum : ["pending" ,"success"],
+        default : "pending" 
     },
     isVerified: {
-  type: Boolean,
-  default: false,
-},
-   
+        type: Boolean,
+        default: false,
+    },
+    
 },{timestamps:true})
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 

@@ -1,91 +1,60 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
+import { FileSchema } from "./FileSchema.models";
 
-export interface IVehicle extends Document {
-    partner: mongoose.Types.ObjectId;
-
-    vehicleNumber: string;
-    vehicleName: string;
-
-    vehicleType:
-    | "bus"
-    | "auto"
-    | "cab"
-    | "tempo"
-    | "mini_bus";
-
-    totalSeats: number;
-    availableSeats: number;
-
-    rcDocument: string;
-    insuranceDocument: string;
-    permitDocument: string;
-
-    vehicleImages: string[];
-
-    status:
-    | "active"
-    | "inactive"
-    | "maintenance";
-}
-
-const vehicleSchema = new Schema<IVehicle>(
+const VehicleSchema = new Schema(
     {
-        partner: {
+        adminId: {
             type: Schema.Types.ObjectId,
-            ref: "Partner",
-            required: false,
+            ref: "Admin",
+            required: true
         },
 
+        assignedPartnerId: {
+            type: Schema.Types.ObjectId,
+            ref: "Partner",
+            default: null
+        },
+
+        vehicleType: {
+            type: String,
+            enum: ["bike", "auto", "car"],
+            required: true
+        },
+
+        brand: String,
+
+        model: String,
 
         vehicleNumber: {
             type: String,
             required: true,
-            unique: true,
+            unique: true
         },
 
-        vehicleName: String,
+        documents: {
+            rc: FileSchema,
 
-        vehicleType: {
-            type: String,
-            enum: [
-                "bus",
-                "auto",
-                "cab",
-                "tempo",
-                "mini_bus",
-            ],
-            required: true,
+            insurance: FileSchema,
+
+            pollution: FileSchema,
+
+            vehiclePhoto: FileSchema
         },
-
-        totalSeats: Number,
-
-        availableSeats: Number,
-
-        rcDocument: String,
-
-        insuranceDocument: String,
-
-        permitDocument: String,
-
-        vehicleImages: [String],
 
         status: {
             type: String,
             enum: [
-                "active",
-                "inactive",
-                "maintenance",
+                "available",
+                "assigned",
+                "maintenance"
             ],
-            default: "active",
+            default: "available"
         },
 
-
+        assignedAt: Date
     },
     {
-        timestamps: true,
-    }
-);
+        timestamps: true
+    });
 
-const Vehicle: Model<IVehicle> = mongoose.models.Vehicle || mongoose.model<IVehicle>("Vehicle", vehicleSchema);
-
-export default Vehicle;
+export default mongoose.models.Vehicle || mongoose.model("Vehicle", VehicleSchema);

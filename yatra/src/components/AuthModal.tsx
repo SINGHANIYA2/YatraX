@@ -141,7 +141,7 @@ function AuthModal({ open, steps, onClose }: propType) {
             console.log(data);
 
             setLoading(false);
-            setAdminDetail(false);
+            // setAdminDetail(false);
             setStep(null)
             onClose();
 
@@ -204,7 +204,7 @@ function AuthModal({ open, steps, onClose }: propType) {
             setEmailOtp(["", "", "", "", "", ""]);
             setMobileOtp(["", "", "", "", "", ""]);
             setStep("adminDetail");
-            setAdminDetail(true)
+            // setAdminDetail(true)
         } catch (error: any) {
             console.error(error);
 
@@ -515,6 +515,8 @@ function AuthModal({ open, steps, onClose }: propType) {
                                     </motion.div>
                                 )
                             }
+
+                            {/* Admin detail */}
 
                             {step == "adminDetail" && (
                                 <motion.div
