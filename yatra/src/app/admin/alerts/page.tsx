@@ -9,8 +9,6 @@ import AlertTable from '@/components/admin/alerts/AlertTable'
 export default function AlertsPage() {
     return (
         <div className='bg-[#030712] h-screen'>
-
-            {/* Fixed Topbar */}
             <div className="w-full fixed top-0 z-40">
                 <AlertTopBar />
             </div>
