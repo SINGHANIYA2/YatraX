@@ -1,0 +1,62 @@
+import {
+    Bus,
+    Car,
+    Truck,
+} from "lucide-react";
+
+const vehicles = [
+    {
+        id: 1,
+        name: "Bus",
+        type: "Volvo AC Sleeper",
+        image: "/vehicles/bus.png",
+        from: "Ranchi",
+        to: "Jamshedpur",
+        icon: Bus,
+        departureTime: "2:45 PM",
+        arrivalTime: "5:30 PM",
+        availableSeats: 24,
+        price: 180,
+    },
+    {
+        id: 2,
+        name: "Taxi",
+        type: "Sedan",
+        image: "/vehicles/taxi.png",
+        from: "Ranchi",
+        to: "Jamshedpur",
+        icon: Car,
+        departureTime: "3:10 PM",
+        arrivalTime: "5:00 PM",
+        availableSeats: 4,
+        price: 120,
+    },
+    {
+        id: 3,
+        name: "Van",
+        type: "Tempo Traveller",
+        image: "/.png",
+        from: "Ranchi",
+        to: "Jamshedpur",
+        icon: Truck,
+        departureTime: "3:30 PM",
+        arrivalTime: "5:45 PM",
+        availableSeats: 8,
+        price: 250,
+    },
+    {
+        id: 4,
+        name: "Auto",
+        type: "Auto Rickshaw",
+        image: "/vehicles/auto.png",
+        from: "Ranchi",
+        to: "Jamshedpur",
+        icon: Bus,
+        departureTime: "3:15 PM",
+        arrivalTime: "4:45 PM",
+        availableSeats: 3,
+        price: 80,
+    },
+];
+
+export default vehicles;

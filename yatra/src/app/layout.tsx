@@ -34,9 +34,9 @@ export default function RootLayout({
     >
       <body className="min-h-screen bg-background flex flex-col">
         <Provider>
+   
         <ReduxProvider>
            <InitUser/>
-            
               {children}
           </ReduxProvider>
         </Provider>

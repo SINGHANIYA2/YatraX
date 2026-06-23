@@ -13,6 +13,7 @@ function PublicHome() {
     <>
       <HeroSection />
       {/* <HowItWork/> */}
+      {/* <Footer /> */}
 
       <Footer />
     </>

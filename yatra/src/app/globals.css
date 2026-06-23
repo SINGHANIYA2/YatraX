@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
@@ -48,9 +47,52 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+.recharts-wrapper,
+.recharts-surface,
+.recharts-responsive-container,
+.recharts-wrapper * {
+  outline: none !important;
+}
+
+.recharts-wrapper:focus,
+.recharts-surface:focus,
+.recharts-responsive-container:focus {
+  outline: none !important;
+  border: none !important;
+}
+
+.recharts-wrapper,
+.recharts-surface,
+.recharts-text,
+.recharts-cartesian-axis-tick-value,
+.recharts-label,
+.recharts-tooltip-wrapper {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
 /* Chrome, Edge, Safari */
 ::-webkit-scrollbar {
   display: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 /* Firefox */
@@ -62,6 +104,7 @@ html {
 body {
   -ms-overflow-style: none;
 }
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -141,9 +184,11 @@ body {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }

@@ -14,13 +14,13 @@ import { AppDispatch, RootState } from '../redux/store';
 
 const navItems = [
   { name: "Home", href: "/" },
-  { name: "Routes", href: "/routes" },
-  { name: "Track Vehicle", href: "/track" },
+  // { name: "Routes", href: "/routes" },
+  { name: "Track Vehicle", href: "/tracking" },
   { name: "Book Tickets", href: "/booking" },
   { name: "Fleet Management", href: "/fleet" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
-  { name: "Alert", href: "/alert" },
+  // { name: "Alert", href: "/alert" },
 ];
 
 export default function Navbar() {
@@ -72,15 +72,17 @@ export default function Navbar() {
           duration: 0.6,
           ease: "easeOut",
         }}
-        className="fixed top-0 left-0 right-0 z-50"
+        className="fixed top-0 left-0 
+        right-0 z-50 font-sans
+        "
       >
-        <div className="mx-auto max-w-7xl px-4 py-0.5">
+        <div className="mx-auto max-w-7xl my-3 px-4 py-0.5">
           <div
             className="
               flex items-center justify-between
               rounded-2xl
               border border-white/10
-              bg-black/80
+            bg-[#030712]
               backdrop-blur-xl
               px-6 py-4
               shadow-[0_0_50px_rgba(0,0,0,0.6)]

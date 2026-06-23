@@ -1,9 +1,5 @@
-import React from 'react'
+import LiveTracking from "@/components/tracking/LiveTracking";
 
-function page() {
-  return (
-    <div>page</div>
-  )
+export default function Page() {
+  return <LiveTracking />;
 }
-
-export default page
