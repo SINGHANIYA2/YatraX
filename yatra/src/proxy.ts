@@ -25,10 +25,10 @@ const PUBLIC_ROUTES = [
     "/api/profile-update/admin",
     "/api/profile-update/user",
     "/api/profile-update/partner",
-    "/api/admins/vehicle",
-    "/api/admins/vehicle/assign",
-    "/api/admins/location",
-    "/api/admins/routes",
+    "/api/admin/vehicle",
+    "/api/admin/vehicle/assign",
+    "/api/admin/location",
+    "/api/admin/routes",
     "/api/route/search",
     "/api/vehicle/search",
 ]
@@ -48,7 +48,7 @@ export async function proxy(req: NextRequest) {
     }
 
 
-    if (pathname.startsWith("/api/admins/vehicle")) {
+    if (pathname.startsWith("/api/admin/vehicle")) {
         return NextResponse.next();
     }
 

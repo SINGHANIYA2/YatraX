@@ -1,12 +1,17 @@
 import connectDb from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
+import mongoose from "mongoose";
 import Vehicle from "@/models/vehicle.models";
+import Route from "@/models/Route.models";
+import Location from "@/models/location.models";
+import Partner from "@/models/partner.models";
 
 export async function POST(req: NextRequest) {
     try {
         await connectDb();
 
         const { routeIds } = await req.json();
+
 
         if (
             !Array.isArray(routeIds) ||

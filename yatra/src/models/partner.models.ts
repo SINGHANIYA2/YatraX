@@ -219,4 +219,4 @@ const PartnerSchema = new Schema({
 );
 
 const Partner = mongoose.models.Partner || mongoose.model("Partner", PartnerSchema);
-export default Partner
+export default Partner;
