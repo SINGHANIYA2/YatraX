@@ -14,51 +14,124 @@ export default function VehicleDetails({
 }: Props) {
     return (
         <motion.div
-            initial={{ x: 120, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
+            initial={{
+opacity:0,
+scale:.96
+}}
+
+animate={{
+opacity:1,
+scale:1
+}}
             transition={{
-                duration: 0.7,
-                ease: "easeOut",
-                delay: 0.2
-            }}
-            className="rounded-2xl border
-            border-blue-500/10
-            bg-[#071427]
-            p-[1px]
-            shadow-[0_0_15px_rgba(59,130,246,0.15)]
-            text-white font-sans"
-        >
-            <div className="rounded-2xl border border-blue-500/10
-             bg-[#071427] p-4 border
-            shadow-[0_0_15px_rgba(59,130,246,0.15)]
-             text-white font-sans">
+duration:.35
+}}
+            className="
+                w-full
+                h-full
+                rounded-2xl
+                border
+                border-blue-500/10
+                bg-[#071427]
+                p-[1px]
+                shadow-[0_0_20px_rgba(59,130,246,0.12)]
+                backdrop-blur-xl
+                text-white
+                font-sans
+                overflow-hidden
+                "
+            >
+            <div className="
+                rounded-2xl
+                border
+                border-blue-500/10
+                bg-[#071427]
+                p-4
+                sm:p-5
+                lg:p-6
+                shadow-[0_0_20px_rgba(59,130,246,0.12)]
+                text-white
+                font-sans
+            ">
 
                 {/* Header */}
-                <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-sm font-semibold">
+                <div
+                    className="
+                        mb-4
+                        flex
+                        flex-wrap
+                        items-center
+                        justify-between
+                        gap-2
+                        "
+                >
+                    <h2
+                        className="
+                            text-sm
+                            sm:text-base
+                            font-semibold
+                            break-all
+                            "
+                    >
                         {vehicle.id}
                     </h2>
 
-                    <span className="rounded-full bg-green-500/20 px-3 py-1 text-xs font-medium text-green-400">
+                    <span
+                        className="
+                            rounded-full
+                            bg-green-500/20
+                            px-2
+                            sm:px-3
+                            py-1
+                            text-[10px]
+                            sm:text-xs
+                            font-medium
+                            text-green-400
+                            "
+                    >
                         Live
                     </span>
                 </div>
 
                 {/* Vehicle */}
-                <div className="mb-5 flex items-center gap-3">
+                <div
+                    className="
+                        mb-5
+                        flex
+                        items-center
+                        gap-3
+                        min-w-0
+                        "
+                >
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/20 text-xl">
                         🚌
                     </div>
 
                     <div>
-                        <h3 className="font-medium">
+                        <h3
+                            className="
+                                font-medium
+                                truncate
+                                "
+                        >
                             {vehicle.model}
                         </h3>
                     </div>
                 </div>
 
                 {/* Driver */}
-                <div className="mb-5 flex items-center justify-between">
+                <div
+                    className="
+                        mb-5
+                        flex
+                        flex-col
+                        sm:flex-row
+                        items-start
+                        sm:items-center
+                        justify-between
+                        gap-4
+                        "
+                >
                     <div className="flex items-center gap-3">
                         <img
                             src="https://i.pravatar.cc/100"
@@ -67,7 +140,13 @@ export default function VehicleDetails({
                         />
 
                         <div>
-                            <h3 className="text-sm font-medium">
+                            <h3
+                                className="
+                                    text-sm
+                                    font-medium
+                                    break-words
+                                    "
+                            >
                                 {vehicle.driver.name}
                             </h3>
 
@@ -83,7 +162,24 @@ export default function VehicleDetails({
                         </div>
                     </div>
 
-                    <button className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700">
+                    <button
+                        className="
+                            flex
+                            h-10
+                            w-10
+                            items-center
+                            justify-center
+                            rounded-full
+                            bg-blue-600
+                            hover:bg-blue-700
+                            transition-all
+                            duration-300
+                            hover:scale-110
+                            active:scale-95
+                            shadow-lg
+                            shadow-blue-500/20
+                            "
+                    >
                         <Phone size={16} />
                     </button>
                 </div>
@@ -91,11 +187,28 @@ export default function VehicleDetails({
                 <div className="mb-5 border-t border-slate-800" />
 
                 {/* Stats */}
-                <div className="grid grid-cols-2 gap-y-5 text-sm">
+                <div
+                    className="
+                        grid
+                        grid-cols-2
+                        sm:grid-cols-2
+                        gap-4
+                        sm:gap-5
+                        text-xs
+                        sm:text-sm
+                        "
+                >
 
                     <div>
                         <p className="text-slate-400">Speed</p>
-                        <p className="mt-1 font-semibold">{vehicle.speed} km/h</p>
+                        <p
+                            className="
+                                mt-1
+                                font-semibold
+                                break-words
+                                "
+                        >
+                            {vehicle.speed} km/h</p>
                     </div>
 
                     <div>
@@ -139,6 +252,6 @@ export default function VehicleDetails({
 
                 </div>
             </div>
-        </motion.div>
+        </motion.div >
     )
 }

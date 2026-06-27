@@ -16,9 +16,9 @@ export interface IUser extends Document {
     otpExpiresAt?: Date
     mobileNumber?: string
     isVerified?: boolean;
-    partnerApplication?: number,
-    partnerStatus?: string
-
+    partnerApplication?: mongoose.Types.ObjectId;
+    partnerStatus?: string;
+    partnerId?: string
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -33,11 +33,6 @@ const userSchema = new mongoose.Schema<IUser>({
     },
     password: {
         type: String
-    },
-    partnerApplication: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "PartnerApplication",
-        default: null
     },
     role: {
         type: String,
@@ -64,23 +59,30 @@ const userSchema = new mongoose.Schema<IUser>({
         // default:null
     }, mobileNumber: {
         type: String
+    }, partnerApplication: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "PartnerApplication",
+        default: null,
     },
+
     partnerStatus: {
         type: String,
         enum: [
-            "none",
             "pending",
             "approved",
-            "rejected"
+            "rejected",
         ],
-        default: "none"
+        default: "pending",
     },
     isVerified: {
         type: Boolean,
         default: false,
     },
-
-
+    partnerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Partner",
+        default: null,
+    },
 }, { timestamps: true })
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 

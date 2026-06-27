@@ -101,66 +101,44 @@ export default function ReviewPage() {
         setLoading(true);
 
         try {
+            const formData = new FormData();
+
+            // Driver Details
+            formData.append("driverDetails", JSON.stringify(driver));
+
+            // Bank Details
+            formData.append("bankDetails", JSON.stringify(bank));
+
+            // Location
+            formData.append("locationAdmin", JSON.stringify(locationAdmin));
+
+            // Files
+            formData.append("profilePhoto", documents.profilePhoto);
+
+            formData.append("aadharFront", documents.aadharFront);
+
+            formData.append("aadharBack", documents.aadharBack);
+            formData.append("drivingLicense", documents.drivingLicense);
+
+            console.log("documents", documents);
+            console.log("bank", bank);
+            console.log("admin", locationAdmin);
 
             await axios.post(
                 "/api/partner/application",
                 {
-                    ...driver,
-
-                    adminId: locationAdmin.adminId,
-                    locationId: locationAdmin.locationId,
-
+                    documents,
                     bankDetails: bank,
-
-                    documents: {
-                        profilePhoto: documents.profilePhoto,
-                        aadharFront: documents.aadharFront,
-                        aadharBack: documents.aadharBack,
-                        drivingLicense: documents.drivingLicense,
-                    },
+                    locationId: locationAdmin.locationId,
+                    adminId: locationAdmin.adminId,
+                    ...driver,
                 }
             );
 
             localStorage.clear();
 
             router.push("/partner/onboarding/success");
-
-        }
-
-        // try {
-        //     // const formData = new FormData();
-
-        //     // // Driver Details
-        //     // formData.append("driverDetails",JSON.stringify(driver));
-
-        //     // // Bank Details
-        //     // formData.append("bankDetails", JSON.stringify(bank));
-
-        //     // // Location
-        //     // formData.append("locationAdmin",JSON.stringify(locationAdmin));
-
-        //     // // Files
-        //     // formData.append("profilePhoto",documents.profilePhoto );
-
-        //     // formData.append("aadharFront", documents.aadharFront);
-
-        //     // formData.append("aadharBack", documents.aadharBack);
-        //     // formData.append( "drivingLicense", documents.drivingLicense);
-
-        //     await axios.post("/api/partner/application", formData,
-        //         {
-        //             headers: {
-        //                 "Content-Type":
-        //                     "multipart/form-data",
-        //             },
-        //         }
-        //     );
-
-        //     localStorage.clear();
-
-        //     router.push("/partner/onboarding/success");
-        // } 
-        catch (error) {
+        } catch (error) {
             console.log(error);
         } finally {
             setLoading(false);
@@ -348,4 +326,3 @@ export default function ReviewPage() {
         </div>
     );
 }
-

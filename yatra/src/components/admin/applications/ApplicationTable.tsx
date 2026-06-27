@@ -1,9 +1,7 @@
 'use client'
 
 import {
-    Eye,
-    Check,
-    X
+    Eye
 } from 'lucide-react'
 
 interface Props {
@@ -121,31 +119,43 @@ export default function ApplicationTable({
                                         cursor-pointer
                                         text-slate-400
                                         hover:text-blue-400
-                                        "
-                                    />
+                                        "/>
 
-
-                                    <button
-                                        onClick={() => onApprove(app)}
-                                        className="
+                                    {app.status === "pending" && (
+                                        <>
+                                            <button
+                                                onClick={() => onApprove(app)}
+                                                className="
                                         px-3 py-1.5 rounded-lg
                                         bg-green-500/15
                                         text-green-400
                                         "
-                                    >
-                                        Approve
-                                    </button>
+                                            >
+                                                Approve
+                                            </button>
 
-                                    <button
-                                        onClick={() => onReject(app)}
-                                        className="
-                                        px-3 py-1.5 rounded-lg
+                                            <button
+                                                onClick={() => onReject(app)}
+                                                className={`px-3 py-1.5 rounded-lg
                                         bg-red-500/15
-                                        text-red-400
-                                        "
-                                    >
-                                        Reject
-                                    </button>
+                                        text-red-400`}
+                                            >
+                                                Reject
+                                            </button>
+                                        </>
+                                    )}
+
+                                    {app.status === "approved" && (
+                                        <span className="text-green-400">
+                                            Approved
+                                        </span>
+                                    )}
+
+                                    {app.status === "rejected" && (
+                                        <span className="text-red-400">
+                                            Rejected
+                                        </span>
+                                    )}
 
                                 </div>
                             </td>

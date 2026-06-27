@@ -1,6 +1,7 @@
 'use client'
 
 import { X } from 'lucide-react'
+import { motion } from 'motion/react'
 
 interface Props {
     application: any
@@ -21,6 +22,7 @@ export default function ApplicationDetailsModal({
     return (
         <div
             className="
+            font-sans
             fixed inset-0 z-[100]
             flex items-center justify-center
             bg-black/70
@@ -156,6 +158,7 @@ export default function ApplicationDetailsModal({
 
                 </div>
 
+                {/* profile photo */}
                 <div className="mb-6">
 
                     <h3
@@ -224,39 +227,64 @@ export default function ApplicationDetailsModal({
 
                 <div className="flex justify-end gap-3">
 
-                    <button
-                        onClick={() =>
-                            onReject(application)
-                        }
+                    <motion.button
+                        whileHover={{
+                            scale: 1.05,
+                            y: -2,
+                        }}
+                        whileTap={{
+                            scale: 0.95,
+                        }}
+                        transition={{
+                            type: "spring",
+                            stiffness: 400,
+                            damping: 15,
+                        }}
+                        onClick={() => onReject(application)}
                         className="
-                        px-5
-                        py-2.5
-                        rounded-xl
-                        bg-red-500/15
-                        border
-                        border-red-500/20
-                        text-red-400
-                        "
-                    >
+                            px-5
+                            py-2.5
+                            cursor-pointer
+                            rounded-xl
+                            bg-red-500/15
+                            border
+                            border-red-500/20
+                            text-red-400
+                            shadow-red-500/20
+                            hover:shadow-lg
+                        ">
                         Reject
-                    </button>
+                    </motion.button>
 
-                    <button
-                        onClick={() =>
-                            onApprove(application)
-                        }
+                    <motion.button
+                        whileHover={{
+                            scale: 1.05,
+                            y: -2,
+                        }}
+                        whileTap={{
+                            scale: 0.95,
+                        }}
+                        transition={{
+                            type: "spring",
+                            stiffness: 400,
+                            damping: 15,
+                        }}
+                        onClick={() => onApprove(application)}
                         className="
-                        px-5
-                        py-2.5
-                        rounded-xl
-                        bg-green-500/15
-                        border
-                        border-green-500/20
-                        text-green-400
-                        "
+                            px-5
+                            py-2.5
+                            cursor-pointer
+                            rounded-xl
+                            bg-green-500/15
+                            border
+                            border-green-500/20
+                            text-green-400
+                            shadow-green-500/20
+                            hover:shadow-lg
+                            "
                     >
                         Approve
-                    </button>
+                    </motion.button>
 
                 </div>
 

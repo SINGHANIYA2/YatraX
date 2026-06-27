@@ -1,5 +1,42 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 import { FileSchema } from "./FileSchema.models";
+
+import { IFile } from "./FileSchema.models";
+
+interface IBankDetails {
+  accountHolder?: string;
+  accountNumber?: string;
+  ifsc?: string;
+  bankName?: string;
+  upiId?: string;
+}
+
+export interface IAdmin extends Document {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  role:string
+
+  profilePhoto?: IFile;
+
+  organizationName?: string;
+  organizationType?: string;
+  gstNumber?: string;
+  registrationNumber?: string;
+  alternatePhone?: string;
+
+  bankDetails?: IBankDetails;
+
+  aadharNumber: string;
+  panNumber: string;
+
+  documents: {
+    aadhar?: IFile;
+    panCard?: IFile;
+  };
+}
+
 
 const AdminSchema = new Schema({
   name: {
@@ -13,6 +50,40 @@ const AdminSchema = new Schema({
     required: true,
     unique: true,
     lowercase: true,
+    trim: true,
+  },
+  organizationName: {
+    type: String,
+    default: "",
+    trim: true,
+  },
+
+  organizationType: {
+    type: String,
+    default: "",
+    trim: true,
+  },
+
+  gstNumber: {
+    type: String,
+    default: "",
+    trim: true,
+  },
+  role: {
+    type: String,
+    default: "admin",
+    enum: ["admin"],
+  },
+
+  registrationNumber: {
+    type: String,
+    default: "",
+    trim: true,
+  },
+
+  alternatePhone: {
+    type: String,
+    default: "",
     trim: true,
   },
 

@@ -73,7 +73,7 @@ export default function VehicleSidebar({
     }, [filteredVehicles])
 
     return (
-        <div className='w-[36%] h-full'>
+        <div className="w-full h-full">
             <motion.div
                 initial={{ x: -120, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
@@ -81,7 +81,7 @@ export default function VehicleSidebar({
                     duration: 0.9,
                     ease: "easeOut"
                 }}
-                className="flex flex-col font-sans h-full rounded-2xl"
+                className="flex flex-col  text-white font-sans h-full rounded-2xl"
             >
 
                 {/* Top Section */}
@@ -97,7 +97,7 @@ export default function VehicleSidebar({
                 >
 
                     <div className="flex items-center gap-2">
-                        <h2 className="text-xl font-bold">
+                        <h2 className="text-lg sm:text-xl font-bold">
                             Live Vehicles
                         </h2>
 
@@ -185,12 +185,16 @@ export default function VehicleSidebar({
                     flex
                     flex-col
                     rounded-2xl
+                    flex-1
+                    overflow-y-auto
+                    scrollbar-hide
                     overflow-hidden
                     border
                     border-blue-500/10
                     bg-gradient-to-b
-                    from-[#10284f]
-                    to-[#0b1f3d]
+                    from-[#0b1730]
+                    via-[#0a1b38]
+                    to-[#081426]
                     mt-[4px]
                     "
                 >
@@ -215,15 +219,14 @@ export default function VehicleSidebar({
                                 <motion.div
                                     key={vehicle.id}
                                     onClick={() => {
-                                        alert(vehicle.id)
                                         setSelectedVehicle(vehicle)
                                     }}
                                     initial={{ opacity: 0, y: 30 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     transition={{
-                                        duration: 0.2,
-                                        delay: 0,
-                                    }}
+duration:.25,
+delay:index*0.04
+}}
                                     whileHover={{
                                         y: -2,
                                         scale: 1.01,
@@ -236,14 +239,34 @@ export default function VehicleSidebar({
                                         transition-all
 
                                         ${(selectedVehicle.id === vehicle.id)
-                                            ? 'border-blue-500 bg-slate-900 ring-2 ring-blue-500/30'
-                                            : 'border-slate-800 bg-[#071427]'
+                                            ? 'border-blue-500 bg-slate-900 ring-2 ring-blue-500/30 shadow-[0_0_25px_rgba(59,130,246,.25)]'
+                                            : 'border-slate-800 bg-[#071427] shadow-[0_0_25px_rgba(59,130,246,.15)]'
                                         }
+
+                                        hover:border-blue-500/20
+                                            transition-all
+                                            duration-300
                                     `}
                                 >
-                                    <div className="flex items-start justify-between">
+                                    <div
+                                        className="
+                                        flex
+                                        flex-col
+                                        sm:flex-row
+                                        sm:items-start
+                                        justify-between
+                                        gap-3
+                                        "
+                                    >
 
-                                        <div className="flex gap-3">
+                                        <div
+                                            className="
+                                            flex
+                                            items-start
+                                            gap-3
+                                            min-w-0
+                                            "
+                                        >
                                             <div
                                                 className={`flex h-12 w-12 items-center justify-center rounded-xl bg-slate-800 ${vehicle.color}`}
                                             >
@@ -251,23 +274,57 @@ export default function VehicleSidebar({
                                             </div>
 
                                             <div>
-                                                <h3 className="font-semibold">
+                                                <h3
+                                                    className="
+                                                        font-semibold
+                                                        truncate
+                                                        max-w-[140px]
+                                                        sm:max-w-none
+                                                        "
+                                                >
                                                     {vehicle.id}
                                                 </h3>
 
-                                                <p className="text-sm text-slate-400">
+                                                <p
+                                                    className="
+                                                        text-xs
+                                                        sm:text-sm
+                                                        text-slate-400
+                                                        break-words
+                                                        "
+                                                >
                                                     {vehicle.type} • {vehicle.model}
                                                 </p>
                                             </div>
                                         </div>
 
-                                        <span className="rounded-full bg-green-500/20 px-3 py-1 text-xs text-green-400">
+                                        <span
+                                            className="
+                                                self-start
+                                                rounded-full
+                                                bg-green-500/20
+                                                px-2 sm:px-3
+                                                py-1
+                                                text-[10px]
+                                                sm:text-xs
+                                                text-green-400
+                                                "
+                                        >
                                             {vehicle.status}
                                         </span>
 
                                     </div>
 
-                                    <div className="mt-4 flex items-center justify-between text-sm">
+                                    <div
+                                        className="
+                                            mt-4
+                                            grid
+                                            grid-cols-2
+                                            gap-4
+                                            text-xs
+                                            sm:text-sm
+                                            "
+                                    >
 
                                         <div>
                                             <p className="text-slate-500">
@@ -299,6 +356,7 @@ export default function VehicleSidebar({
                 </div>
 
             </motion.div>
+
         </div>
     )
 }

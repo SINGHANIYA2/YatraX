@@ -1,5 +1,5 @@
 'use client'
-// import MapView from './MapView'
+
 import dynamic from 'next/dynamic'
 
 const MapView = dynamic(
@@ -9,7 +9,18 @@ const MapView = dynamic(
 
 export default function LiveMap() {
     return (
-        <div className="relative h-full w-[44%] overflow-hidden rounded-2xl border border-slate-800 self-stretch">
+        <div
+            className="
+                relative
+                h-full
+                w-full
+                overflow-hidden
+                rounded-2xl
+                border
+                border-blue-500/10
+                bg-[#071427]
+            "
+        >
             <MapView />
         </div>
     )

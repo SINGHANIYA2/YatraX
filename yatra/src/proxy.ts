@@ -22,6 +22,15 @@ const PUBLIC_ROUTES = [
     "/partner/onboarding/documents",
     "/partner/onboarding/driver-details",
     "/partner/onboarding/location-admin",
+    "/api/profile-update/admin",
+    "/api/profile-update/user",
+    "/api/profile-update/partner",
+    "/api/admins/vehicle",
+    "/api/admins/vehicle/assign",
+    "/api/admins/location",
+    "/api/admins/routes",
+    "/api/route/search",
+    "/api/vehicle/search",
 ]
 const PUBLIC_API = ["/api/auth"]
 
@@ -39,6 +48,9 @@ export async function proxy(req: NextRequest) {
     }
 
 
+    if (pathname.startsWith("/api/admins/vehicle")) {
+        return NextResponse.next();
+    }
 
     const session = await auth()
     if (!session) {

@@ -2,7 +2,7 @@ import connectDb from "@/lib/db";
 import Admin from "@/models/admin.models";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET( req: NextRequest,{params,}: {params: Promise<{ locationId: string;}>;}) {
+export async function GET(req: NextRequest, { params, }: { params: Promise<{ locationId: string; }>; }) {
     try {
         await connectDb();
 
@@ -31,18 +31,13 @@ export async function GET( req: NextRequest,{params,}: {params: Promise<{ locati
             standAddress
             city
             totalVehicles
-            activePartners
-        `
-            ).lean();
-
-        
+            activePartners`
+        ).lean();
 
         return NextResponse.json({
             success: true,
             admins,
         });
-
-
     } catch (error) {
         console.log(error);
 

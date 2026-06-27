@@ -8,13 +8,10 @@ import ApplicationTopBar from "@/components/admin/applications/ApplicationTopBar
 import ApplicationStats from "@/components/admin/applications/ApplicationStats";
 import ApplicationFilters from "@/components/admin/applications/ApplicationFilters";
 import ApplicationTable from "@/components/admin/applications/ApplicationTable";
-import ApplicationDetailsModal
-    from "@/components/admin/applications/ApplicationDetailsModal"
+import ApplicationDetailsModal from "@/components/admin/applications/ApplicationDetailsModal"
 
-import RejectModal
-    from "@/components/admin/applications/RejectModal"
+import RejectModal from "@/components/admin/applications/RejectModal"
 
-import { applications } from "@/components/admin/applications/demo";
 export default function ApplicationsPage() {
 
     const [search, setSearch] = useState("");
@@ -23,36 +20,33 @@ export default function ApplicationsPage() {
     const [applications, setApplications] =
         useState<any[]>([])
 
-    const [loading, setLoading] =
-        useState(true)
+    const [loading, setLoading] = useState(true)
 
     const [selectedApplication, setSelectedApplication] =
         useState<any>(null)
 
-    useEffect(() => {
+    async function fetchApplications() {
 
-        async function fetchApplications() {
+        try {
 
-            try {
-
-                const res =
-                    await axios.get(
-                        "/api/partner/application"
-                    );
-
-                setApplications(
-                    res.data.applications
+            const res =
+                await axios.get(
+                    "/api/partner/application"
                 );
 
-            } catch (error) {
-                console.log(error);
-            } finally {
-                setLoading(false);
-            }
+            setApplications(
+                res.data.applications
+            );
+
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
         }
+    }
 
+    useEffect(() => {
         fetchApplications();
-
     }, []);
 
     const filteredApplications = useMemo(() => {
@@ -94,8 +88,40 @@ export default function ApplicationsPage() {
         setShowDetails(true)
     }
 
-    function handleApprove(application: any) {
-        console.log("Approved:", application)
+    async function handleApprove(application: any) {
+
+        try {
+
+            await axios.patch(
+                `/api/partner/application/${application._id}`,
+                {
+                    status: "approved"
+                }
+            );
+
+            alert("Application Approved");
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function confirmReject(reason: string) {
+        try {
+
+            await axios.patch(
+                `/api/partner/application/${selectedApplication._id}`,
+                {
+                    status: "rejected",
+                    reason,
+                }
+            );
+
+            alert("Application Rejected");
+
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     function handleReject(application: any) {
@@ -163,16 +189,15 @@ export default function ApplicationsPage() {
                 showReject && (
                     <RejectModal
                         onClose={() => setShowReject(false)}
-                        onSubmit={(reason) => {
+                        onSubmit={async (reason) => {
 
-                            console.log(
-                                "Rejected:",
-                                selectedApplication,
-                                reason
-                            )
+                            await confirmReject(reason);
 
-                            setShowReject(false)
-                            setSelectedApplication(null)
+                            await fetchApplications();
+
+                            setShowReject(false);
+
+                            setSelectedApplication(null);
 
                         }}
                     />

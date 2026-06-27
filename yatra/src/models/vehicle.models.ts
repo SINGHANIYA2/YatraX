@@ -41,6 +41,8 @@ const VehicleSchema = new Schema(
             vehiclePhoto: FileSchema
         },
 
+        seatingCapacity: Number,
+
         status: {
             type: String,
             enum: [
@@ -49,6 +51,12 @@ const VehicleSchema = new Schema(
                 "maintenance"
             ],
             default: "available"
+        },
+        
+        routeId: {
+            type: Schema.Types.ObjectId,
+            ref: "Route",
+            default: null,
         },
 
         assignedAt: Date

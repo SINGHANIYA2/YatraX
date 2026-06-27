@@ -52,11 +52,11 @@ export const adminMenu = [
         icon: IndianRupee,
     },
 
-    {
-        title: "Alerts",
-        href: "/admin/alerts",
-        icon: TriangleAlert,
-    },
+    // {
+    //     title: "Alerts",
+    //     href: "/admin/alerts",
+    //     icon: TriangleAlert,
+    // },
 
     {
         section: "Settings",
