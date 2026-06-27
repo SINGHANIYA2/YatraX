@@ -11,20 +11,25 @@ import {
 import 'leaflet/dist/leaflet.css'
 
 export default function MapView() {
+
     const route = [
-        [23.3441, 85.3096], // Ranchi
-        [22.8046, 86.2029], // Jamshedpur
+        [23.3441, 85.3096],
+        [22.8046, 86.2029],
     ]
 
     return (
         <MapContainer
             center={[23.1, 85.8]}
             zoom={9}
-            className="self-stretch flex"
+            className="
+                h-full
+                w-full
+                rounded-2xl
+            "
         >
-            {/* <TileLayer
+            <TileLayer
                 url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
-            /> */}
+            />
 
             <Polyline
                 positions={route as any}
@@ -45,6 +50,7 @@ export default function MapView() {
             <Marker position={[23.05, 85.75]}>
                 <Popup>Bus - Live</Popup>
             </Marker>
+
         </MapContainer>
     )
 }

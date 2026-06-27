@@ -6,6 +6,7 @@ import {
     IndianRupee,
     TriangleAlert,
     Settings,
+    FileCheck
 } from "lucide-react"
 
 export const adminMenu = [
@@ -36,7 +37,11 @@ export const adminMenu = [
         href: "/admin/drivers",
         icon: Users,
     },
-
+    {
+        title: "Applications",
+        href: "/admin/applications",
+        icon: FileCheck
+    },
     {
         section: "Insights",
     },
@@ -47,11 +52,11 @@ export const adminMenu = [
         icon: IndianRupee,
     },
 
-    {
-        title: "Alerts",
-        href: "/admin/alerts",
-        icon: TriangleAlert,
-    },
+    // {
+    //     title: "Alerts",
+    //     href: "/admin/alerts",
+    //     icon: TriangleAlert,
+    // },
 
     {
         section: "Settings",

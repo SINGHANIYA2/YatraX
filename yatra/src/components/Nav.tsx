@@ -22,7 +22,7 @@ const navItems = [
   // { name: "Routes", href: "/routes" },
   { name: "Track Vehicle", href: "/tracking" },
   { name: "Book Tickets", href: "/booking" },
-  { name: "Fleet Management", href: "/fleet" },
+  // { name: "Fleet Management", href: "/admin/fleet" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
   // { name: "Alert", href: "/alert" },

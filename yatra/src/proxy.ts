@@ -24,10 +24,10 @@ const PUBLIC_ROUTES = [
     "/api/profile-update/admin",
     "/api/profile-update/user",
     "/api/profile-update/partner",
-    "/api/admins/vehicle",
-    "/api/admins/vehicle/assign",
-    "/api/admins/location",
-    "/api/admins/routes",
+    "/api/admin/vehicle",
+    "/api/admin/vehicle/assign",
+    "/api/admin/location",
+    "/api/admin/routes",
     "/api/route/search",
     "/api/vehicle/search",
     "/api/track/getlocation",
@@ -111,4 +111,3 @@ export const config = {
         "/((?!_next/static|_next/image|favicon.ico).*)",
     ],
 };
-

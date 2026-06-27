@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import connectDb from "@/lib/db";
 import Admin from "@/models/admin.models";
+import Partner from "@/models/partner.models";
 import partnerApplicationModels from "@/models/partnerApplication.models";
 import User from "@/models/user.models";
 import { NextRequest } from "next/server";
@@ -140,7 +141,8 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        application = await partnerApplicationModels.create({
+        application =
+            await partnerApplicationModels.create({
                 userId: user._id,
                 adminId,
                 locationId,
@@ -252,3 +254,34 @@ export async function POST(req: NextRequest) {
         );
     }
 }
+
+export async function GET() {
+    try {
+
+        await connectDb();
+
+        const applications =
+            await partnerApplicationModels.find()
+                .sort({ createdAt: -1 });
+
+        return Response.json({
+            success: true,
+            applications,
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        return Response.json(
+            {
+                success: false,
+                message: "Internal Server Error",
+            },
+            {
+                status: 500,
+            }
+        );
+    }
+}
+

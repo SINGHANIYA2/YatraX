@@ -115,16 +115,18 @@ export default function ReviewPage() {
             formData.append("aadharBack", documents.aadharBack);
             formData.append("drivingLicense", documents.drivingLicense);
 
-            // console.log("documents", documents);
-            // console.log("bank", bank);
-            // console.log("admin", locationAdmin);
+            console.log("documents", documents);
+            console.log("bank", bank);
+            console.log("admin", locationAdmin);
 
-            await axios.post("/api/partner/application",{
-                    ...driver,
+            await axios.post(
+                "/api/partner/application",
+                {
                     documents,
                     bankDetails: bank,
-                    adminId: locationAdmin.adminId,
                     locationId: locationAdmin.locationId,
+                    adminId: locationAdmin.adminId,
+                    ...driver,
                 }
             );
             localStorage.clear();
@@ -319,4 +321,3 @@ export default function ReviewPage() {
         </div>
     );
 }
-
