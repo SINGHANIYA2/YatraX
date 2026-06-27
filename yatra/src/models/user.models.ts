@@ -20,7 +20,8 @@ export interface IUser extends Document {
     isVeriApplication?: mongoose.Types.ObjectId;
     partnerStatus?: string
     mobileNumber:string
-    partnerApplication:PartnerApplication
+    isVerified:boolean
+    partnerApplication: mongoose.Types.ObjectId | null
 }
 
 const userSchema = new mongoose.Schema<IUser>({
