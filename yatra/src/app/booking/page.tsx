@@ -4,6 +4,7 @@ import Booking from '@/components/BookingSection'
 function page() {
   return (
     <Booking />
+    
   )
 }
 

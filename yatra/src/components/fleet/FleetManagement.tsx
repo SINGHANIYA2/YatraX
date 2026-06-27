@@ -44,13 +44,7 @@ export default function FleetManagement() {
         if (search.trim()) {
             filtered = filtered.filter(
                 vehicle =>
-                    vehicle.id
-                        .toLowerCase()
-                        .includes(search.toLowerCase()) ||
-
-                    vehicle.driver
-                        .toLowerCase()
-                        .includes(search.toLowerCase())
+                    vehicle.id.toLowerCase().includes(search.toLowerCase()) || vehicle.driver.toLowerCase().includes(search.toLowerCase())
             )
         }
 
@@ -58,6 +52,7 @@ export default function FleetManagement() {
     }
 
     const filteredVehicles = useMemo(
+        // eslint-disable-next-line react-hooks/use-memo
         applyFilters,
         [
             vehicles,

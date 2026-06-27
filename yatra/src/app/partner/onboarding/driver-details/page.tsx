@@ -93,7 +93,7 @@ export default function DriverDetailsPage() {
         <div className="min-h-[80%] bg-[#020617] relative overflow-auto">
 
             {/* Glow */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#2563eb55,transparent_55%)]" />
+            <div className="absolute inset-0 " />
 
             <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-10">
 

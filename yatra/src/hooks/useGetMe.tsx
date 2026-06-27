@@ -18,7 +18,7 @@ function useGetMe(enabled:boolean) {
             }
         }
         getMe()
-    },[enabled])
+    },[enabled,dispatch])
 }
 
 export default useGetMe

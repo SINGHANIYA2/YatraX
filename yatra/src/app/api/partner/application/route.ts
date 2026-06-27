@@ -7,11 +7,11 @@ import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
     try {
+        await connectDb();
 
         const body = await req.json();
-        await connectDb()
-        const session = await auth();
 
+        const session = await auth();
 
         if (!session?.user?.email) {
             return Response.json(
@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
                 { status: 401 }
             );
         }
+
 
         const user = await User.findOne({
             email: session.user.email,
@@ -31,12 +32,16 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const { documents, bankDetails, locationId, adminId, ...driverDetails } = body;
+        const {
+            documents,
+            bankDetails,
+            locationId,
+            adminId,
+            ...driverDetails
+        } = body;
 
-        if (!adminId || !locationId || !bankDetails || !driverDetails.dlNumber || !documents ||
-            !documents?.profilePhoto || !documents?.aadharFront || !documents?.aadharBack ||
-            !documents?.drivingLicense
-        ) {
+        if (!adminId || !locationId || !bankDetails || !driverDetails.dlNumber || !documents || !documents?.profilePhoto || !documents?.aadharFront || !documents?.aadharBack ||
+            !documents?.drivingLicense) {
             return Response.json(
                 {
                     message: "Missing required fields",
@@ -46,105 +51,180 @@ export async function POST(req: NextRequest) {
                 }
             );
         }
-        // console.log("Driver:", driverDetails);
 
-        // console.log("Documents:", documents);
-
-        // console.log("Bank:", bankDetails);
+        // if (
+        //     !adminId ||
+        //     !locationId ||
+        //     !bankDetails ||
+        //     !driverDetails.dlNumber ||
+        //     !documents?.profilePhoto ||
+        //     !documents?.aadharFront ||
+        //     !documents?.aadharBack ||
+        //     !documents?.drivingLicense
+        // ) {
+        //     return Response.json(
+        //         {
+        //             message: "Missing required fields",
+        //         },
+        //         {
+        //             status: 400,
+        //         }
+        //     );
+        // }
 
         const admin = await Admin.findById(adminId);
 
         if (!admin) {
-        return Response.json(
-            {
-                message: "Admin not found",
-            },
-            {
-                status: 404,
-            }
-        );
-        }
-        if (!admin.locations.some((id: any) => id.toString() === locationId)) {
             return Response.json(
                 {
-                message:
-                    "Selected admin does not serve this location",
+                    message: "Admin not found",
                 },
                 {
-                status: 400,
+                    status: 404,
                 }
             );
         }
 
-        let application = await partnerApplicationModels.findOne({
-            userId: user._id,
-            status: {
-                $in: ["pending", "under_review","approved"],
-            },
-        });
+        if (
+            !admin.locations.some(
+                (id: any) => id.toString() === locationId
+            )
+        ) {
+            return Response.json(
+                {
+                    message:
+                        "Selected admin does not serve this location",
+                },
+                {
+                    status: 400,
+                }
+            );
+        }
 
-
+        let application =
+            await partnerApplicationModels.findOne({
+                userId: user._id,
+                status: {
+                    $in: [
+                        "pending",
+                        "under_review",
+                        "approved",
+                    ],
+                },
+            });
 
         if (application) {
             return Response.json(
-                { message: "Application already submitted", },
-                { status: 400 }
+                {
+                    message:
+                        "Application already submitted",
+                },
+                {
+                    status: 400,
+                }
+            );
+        }
+        if (
+            isNaN(
+                Number(driverDetails.experience)
+            )
+        ) {
+            return Response.json(
+                {
+                    message:
+                        "Experience must be a number",
+                },
+                {
+                    status: 400,
+                }
             );
         }
 
         application = await partnerApplicationModels.create({
-            userId: user._id,
-            adminId,
-            locationId,
+                userId: user._id,
+                adminId,
+                locationId,
 
-            name: user.name,
-            phone: user.mobileNumber,
-            email: user.email,
+                name: user.name,
+                phone: user.mobileNumber || driverDetails.emergencyContact,
+                email: user.email,
 
-            dob: driverDetails.dob,
-            gender: driverDetails.gender,
+                dob: driverDetails.dob,
+                gender: driverDetails.gender,
 
-            profilePhoto: documents.profilePhoto,
+                profilePhoto:
+                    documents.profilePhoto,
 
-            dlNumber: driverDetails.dlNumber,
-            experience: driverDetails.experience,
+                dlNumber:
+                    driverDetails.dlNumber,
 
-            emergencyContact: driverDetails.emergencyContact,
+                experience:
+                    Number(
+                        driverDetails.experience
+                    ),
 
-            address: driverDetails.address,
-            city: driverDetails.city,
-            state: driverDetails.state,
-            pincode: driverDetails.pincode,
+                emergencyContact:
+                    driverDetails.emergencyContact,
 
-            aadharNumber: driverDetails.aadharNumber,
+                address:
+                    driverDetails.address,
 
-            documents: {
-                aadharFront: documents.aadharFront,
-                aadharBack: documents.aadharBack,
-                drivingLicense: documents.drivingLicense,
-            },
+                city:
+                    driverDetails.city,
 
-            bankDetails: {
-                accountHolder: bankDetails.accountHolder,
-                accountNumber: bankDetails.accountNumber,
-                ifsc: bankDetails.ifsc,
-                bankName: bankDetails.bankName,
-                upiId: bankDetails.upiId,
-            },
+                state:
+                    driverDetails.state,
 
-            status: "pending",
-        });
-        
+                pincode:
+                    driverDetails.pincode,
+
+                aadharNumber:
+                    driverDetails.aadharNumber,
+
+                documents: {
+                    aadharFront:
+                        documents.aadharFront,
+
+                    aadharBack:
+                        documents.aadharBack,
+
+                    drivingLicense:
+                        documents.drivingLicense,
+                },
+
+                bankDetails: {
+                    accountHolder:
+                        bankDetails.accountHolder,
+
+                    accountNumber:
+                        bankDetails.accountNumber,
+
+                    ifsc:
+                        bankDetails.ifsc,
+
+                    bankName:
+                        bankDetails.bankName,
+
+                    upiId:
+                        bankDetails.upiId,
+                },
+
+                status: "pending",
+            });
+
         await Admin.findByIdAndUpdate(
             adminId,
             {
                 $addToSet: {
-                    pendingPartnerRequests: application._id,
+                    pendingPartnerRequests:
+                        application._id,
                 },
             }
         );
 
-        user.partnerApplication = application._id;
+        user.partnerApplication =
+            application._id;
+
         user.partnerStatus = "pending";
 
         await user.save();
@@ -154,14 +234,17 @@ export async function POST(req: NextRequest) {
                 success: true,
                 application,
             },
-            { status: 201, }
+            {
+                status: 201,
+            }
         );
     } catch (error) {
         console.error(error);
 
         return Response.json(
             {
-                message: "Internal Server Error",
+                message:
+                    "Internal Server Error",
             },
             {
                 status: 500,

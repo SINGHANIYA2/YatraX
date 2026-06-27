@@ -65,9 +65,7 @@ function Info({
 
 export default function ReviewPage() {
     const router = useRouter();
-
     const [loading, setLoading] = useState(false);
-
     const [driver, setDriver] = useState<any>(null);
     const [documents, setDocuments] = useState<any>(null);
     const [bank, setBank] = useState<any>(null);
@@ -75,11 +73,8 @@ export default function ReviewPage() {
 
     useEffect(() => {
         const driverData = localStorage.getItem("driver-details");
-
         const docsData = localStorage.getItem("partner-documents");
-
         const bankData = localStorage.getItem("partner-bank-details");
-
         const locationData = localStorage.getItem("partner-location-admin");
 
         if (driverData)
@@ -104,35 +99,39 @@ export default function ReviewPage() {
             const formData = new FormData();
 
             // Driver Details
-            formData.append("driverDetails",JSON.stringify(driver));
+            formData.append("driverDetails", JSON.stringify(driver));
 
             // Bank Details
             formData.append("bankDetails", JSON.stringify(bank));
 
             // Location
-            formData.append("locationAdmin",JSON.stringify(locationAdmin));
+            formData.append("locationAdmin", JSON.stringify(locationAdmin));
 
             // Files
-            formData.append("profilePhoto",documents.profilePhoto );
+            formData.append("profilePhoto", documents.profilePhoto);
 
             formData.append("aadharFront", documents.aadharFront);
 
             formData.append("aadharBack", documents.aadharBack);
-            formData.append( "drivingLicense", documents.drivingLicense);
+            formData.append("drivingLicense", documents.drivingLicense);
 
-            await axios.post("/api/partner/application", formData,
-                {
-                    headers: {
-                        "Content-Type":
-                            "multipart/form-data",
-                    },
+            // console.log("documents", documents);
+            // console.log("bank", bank);
+            // console.log("admin", locationAdmin);
+
+            await axios.post("/api/partner/application",{
+                    ...driver,
+                    documents,
+                    bankDetails: bank,
+                    adminId: locationAdmin.adminId,
+                    locationId: locationAdmin.locationId,
                 }
             );
-
             localStorage.clear();
-
             router.push("/partner/onboarding/success");
-        } catch (error) {
+            
+        }
+        catch (error) {
             console.log(error);
         } finally {
             setLoading(false);
@@ -141,9 +140,9 @@ export default function ReviewPage() {
 
 
     return (
-        <div className="min-h-screen bg-[#020617] relative overflow-auto">
+        <div className="min-h-screen bg-[#1f2527] relative overflow-auto">
 
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#2563eb55,transparent_55%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,[#2563eb55],transparent_55%)]" />
 
             <div className="relative z-10 px-4 py-10">
 

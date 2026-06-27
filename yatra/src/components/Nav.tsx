@@ -1,16 +1,21 @@
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { Bike, Bus, Car, ChevronRight, LogOut, Menu, Truck, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AuthModal from "./AuthModal";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import router from "next/router";
 import { setUserData } from "@/redux/userSlice";
+import { setAdminData } from "@/redux/adminSlice";
+import { setPartnerData } from "@/redux/partnerSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from '../redux/store';
+
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -30,15 +35,49 @@ export default function Navbar() {
   const [authOpen, setAuthOpen] = useState(false)
   const [steps, setStep] = useState("")
   const [profileOpen, setProfileOpen] = useState(false)
+  const [role, setRole] = useState("")
 
+  const { userData } = useSelector(
+    (state: RootState) => state.user
+  );
 
-  const { userData } = useSelector((state: RootState) => state.user)
+  const { partnerData } = useSelector(
+    (state: RootState) => state.partner
+  );
+
+  const { adminData } = useSelector(
+    (state: RootState) => state.admin
+  );
   const dispatch = useDispatch<AppDispatch>()
+
+  const { data: session, status } = useSession();
+
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      // console.log("User:", session?.user);
+      // console.log("Role:", session?.user?.role);
+
+      if (session?.user?.role === "admin") {
+        setRole("admin")
+        setProfileOpen(true)
+      }
+
+      if (session?.user?.role === "partner") {
+        // do partner stuff
+        setRole("partner")
+        setProfileOpen(true)
+      }
+      // console.log("role : ", role)
+    }
+  }, [session, status]);
 
 
   const handleLogOut = async () => {
     await signOut({ redirect: false })
-    dispatch(setUserData(null))
+    if(role == "user")dispatch(setUserData(null))
+    if(role == "partner")dispatch(setPartnerData(null))
+    if(role == "admin")dispatch(setAdminData(null))
     setProfileOpen(false)
   }
 
@@ -76,7 +115,7 @@ export default function Navbar() {
         right-0 z-50 font-sans
         "
       >
-        <div className="mx-auto max-w-7xl my-3 px-4 py-0.5">
+        <div className="mx-auto max-w-7xl px-4 py-0.5">
           <div
             className="
               flex items-center justify-between
@@ -149,7 +188,7 @@ export default function Navbar() {
 
             {/* Right Side */}
             <div className="hidden lg:flex items-center gap-3">
-              {!userData ? (
+              {role == "" ? (
                 <>
                   <button
                     className="rounded-xl border border-white/10 px-5 py-2.5 text-sm text-white transition-all hover:border-blue-500 hover:bg-blue-500/10"
@@ -172,6 +211,8 @@ export default function Navbar() {
                     className="h-11 w-11 rounded-full bg-gradient-to-r from-blue-600 to-blue-500 flex items-center justify-center text-white font-bold text-lg border border-blue-400/30"
                   >
                     {userData?.name?.charAt(0)?.toUpperCase()}
+                    {adminData?.name?.charAt(0)?.toUpperCase()}
+                    {partnerData?.name?.charAt(0)?.toUpperCase()}
                   </button>
 
                   <AnimatePresence>
@@ -192,22 +233,29 @@ export default function Navbar() {
                             <div className="flex items-center gap-3">
                               <div className="h-12 w-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xl">
                                 {userData?.name?.charAt(0)?.toUpperCase()}
+                                {adminData?.name?.charAt(0)?.toUpperCase()}
+                                {partnerData?.name?.charAt(0)?.toUpperCase()}
                               </div>
 
                               <div>
                                 <h3 className="text-white font-semibold">
                                   {userData?.name?.toUpperCase()}
+                                  {adminData?.name?.toUpperCase()}
+                                  {partnerData?.name?.toUpperCase()}
                                 </h3>
 
                                 <p className="text-xs text-gray-400 uppercase">
                                   {userData?.role?.toLowerCase()}
+                                  {partnerData?.role?.toLowerCase()}
+                                  {adminData?.role?.toLowerCase()}
                                 </p>
                               </div>
                             </div>
                           </div>
 
+                          {
+                            adminData && (
                           <div className="p-3">
-
                             <Link
                               href="/profile"
                               className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/5 hover:text-white transition"
@@ -218,17 +266,17 @@ export default function Navbar() {
                             <Link
                               href="/booking/my-bookings"
                               className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/5 hover:text-white transition"
-                              >
+                            >
                               My Bookings
                             </Link>
-                            <Link  href={"/partner/onboarding/become-partner"}
+                            <Link href={"/partner/onboarding"}
                               className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/5 hover:text-white transition"
-                            
+
                             >
                               Become Partner
                             </Link>
 
-                            {userData?.role === "admin" && (
+                            {adminData && (
                               <Link
                                 href="/admin"
                                 className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/5 hover:text-white transition"
@@ -246,6 +294,9 @@ export default function Navbar() {
                             </button>
 
                           </div>
+
+                            )
+                          }
                         </motion.div>
                       </>
                     )}
@@ -260,11 +311,11 @@ export default function Navbar() {
               className="lg:hidden text-white"
             >
               {menuOpen ? <X size={28} /> : <Menu size={28} />}
+
             </button>
           </div>
         </div>
       </motion.nav>
-
 
       {/* Mobile Menu */}
       {menuOpen && (
@@ -272,40 +323,19 @@ export default function Navbar() {
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
-          className="
-            fixed
-            top-24
-            left-4
-            right-4
-            z-40
-            rounded-2xl
-            border border-white/10
-            bg-[#080B16]
-            backdrop-blur-xl
-            shadow-2xl
-            lg:hidden
-          "
-        >
+          className="fixed top-24 left-4 right-4 z-40 rounded-2xl border border-white/10 bg-[#080B16] backdrop-blur-xl shadow-2xl lg:hidden">
           <div className="flex flex-col p-4">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 onClick={() => setMenuOpen(false)}
-                className="
-                  rounded-xl
-                  px-4 py-3
-                  text-gray-300
-                  transition-all
-                  hover:bg-blue-500/10
-                  hover:text-blue-400
-                "
-              >
+                className="rounded-xl px-4 py-3 text-gray-300 transition-all hover:bg-blue-500/10 hover:text-blue-400">
+
                 {item.name}
+
               </Link>
             ))}
-
-
 
             {
               !profileOpen && (
@@ -317,16 +347,7 @@ export default function Navbar() {
                   </button>
 
                   <button
-
-                    className="
-                      rounded-xl
-                      bg-gradient-to-r
-                      from-blue-600
-                      to-blue-500
-                      py-3
-                      font-medium
-                      text-white
-                    "
+                    className="rounded-xl  bg-gradient-to-r from-blue-600 to-blue-500 py-3 font-medium text-white"
                     onClick={handleSignup}
                   >
                     Sign Up
@@ -336,7 +357,7 @@ export default function Navbar() {
             }
 
             <AnimatePresence>
-              {profileOpen && userData && (
+              {profileOpen && (userData || adminData || partnerData) && (
                 <>
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -354,9 +375,15 @@ export default function Navbar() {
                     className="fixed inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-2xl z-50 md:hidden"
                   >
                     <div className='p-5'>
-                      <p className="font-semibold text-lg">{userData.name}</p>
-                      <p className='text-xs uppercase text-gray-500 mb-4'>{userData.role}</p>
-                      {userData.role != "partner" &&
+                      <p className="font-semibold text-lg">
+                        {userData?.name}
+                        {adminData?.name} 
+                        {partnerData?.name}
+                        </p>
+                      <p className='text-xs uppercase text-gray-500 mb-4'>{role}</p>
+                      
+                      {
+                          role == "user" &&
                         (
                           <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl'
                             onClick={() => router.push("/partner/onboarding/vehicle")}
@@ -376,11 +403,41 @@ export default function Navbar() {
                               </div>
 
                             </div>
-                            Become a Partner
+                            Become a Partner {role}
                             <ChevronRight size={60} className='ml-auto' />
                           </div>
 
                         )}
+
+
+                      {
+                          role == "admin" &&
+                        (
+                          <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl'
+                            onClick={() => router.push("/partner/onboarding/vehicle")}
+                          >
+
+                            <div className='flex space-x-2'>
+                              <div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center">
+                                <Bike size={14} />
+                              </div>
+
+                              <div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center">
+                                <Car size={14} />
+                              </div>
+
+                              <div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center">
+                                <Truck size={14} />
+                              </div>
+
+                            </div>
+                            Admin section
+                            <ChevronRight size={60} className='ml-auto' />
+                          </div>
+
+                        )}
+
+                        
                       <button className="h-full rounded-xl flex items-center gap-3 py-3 hover:bg-gray-100 mt-2"
                         onClick={handleLogOut}>
                         <LogOut size={16} />

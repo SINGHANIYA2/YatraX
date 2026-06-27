@@ -1,6 +1,92 @@
 import mongoose, { Schema } from "mongoose";
 import { FileSchema } from "./FileSchema.models";
 
+import { Document, Types } from "mongoose";
+import { IFile } from "./FileSchema.models";
+
+export interface IPartner extends Document {
+  userId: Types.ObjectId;
+  applicationId?: Types.ObjectId;
+  adminId: Types.ObjectId;
+  locationId: Types.ObjectId;
+  assignedVehicleId?: Types.ObjectId | null;
+
+  name: string;
+  phone: string;
+  email?: string;
+  role:string
+
+  dob?: Date;
+  gender?: "male" | "female" | "other";
+
+  profilePhoto?: IFile;
+
+  emergencyContact?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+
+  dlNumber: string;
+  experience: number;
+  aadharNumber?: string;
+
+  documents: {
+    aadharFront?: IFile;
+    aadharBack?: IFile;
+    drivingLicense?: IFile;
+    profilePhoto?: IFile;
+  };
+
+  bankDetails: {
+    accountHolder?: string;
+    accountNumber?: string;
+    ifsc?: string;
+    bankName?: string;
+    upiId?: string;
+  };
+
+  applicationStatus:
+    | "pending"
+    | "approved"
+    | "rejected"
+    | "suspended";
+
+  approvedAt?: Date;
+  rejectedAt?: Date;
+  rejectionReason?: string;
+
+  isOnline: boolean;
+  isAvailable: boolean;
+  isBlocked: boolean;
+  isVerified: boolean;
+
+  currentLatitude?: number;
+  currentLongitude?: number;
+  lastSeen?: Date;
+
+  totalRides: number;
+  completedRides: number;
+  cancelledRides: number;
+  totalDistance: number;
+
+  averageRating: number;
+  totalRatings: number;
+
+  totalEarned: number;
+  todayEarnings: number;
+  weeklyEarnings: number;
+  monthlyEarnings: number;
+  walletBalance: number;
+  withdrawnAmount: number;
+
+  joinedAt?: Date;
+  lastRideAt?: Date;
+
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 const PartnerSchema = new Schema({
     userId: {
       type: Schema.Types.ObjectId,
@@ -51,6 +137,11 @@ const PartnerSchema = new Schema({
       trim: true,
     },
 
+    role:{
+      type:String,
+      default:"partner",
+      enum:["partner"]
+    },
     dob: Date,
 
     gender: {
