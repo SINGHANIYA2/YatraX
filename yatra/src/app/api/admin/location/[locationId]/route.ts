@@ -20,20 +20,19 @@ export async function GET(req: NextRequest, { params, }: { params: Promise<{ loc
             );
         }
 
-        const admins = await Admin.find({
-            locations: locationId,
-            isAvailable: true,
-            isVerified: true,
-            isBlocked: false,
+        const admins = await Admin.find({locations: locationId,isAvailable: true, isVerified: true, isBlocked: false,
         }).select(`
             name
             standName
             standAddress
             city
             totalVehicles
-            activePartners`
-        ).lean();
+            activePartners
+        `).lean();
 
+        
+
+        
         return NextResponse.json({
             success: true,
             admins,

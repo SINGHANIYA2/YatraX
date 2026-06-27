@@ -108,14 +108,13 @@ export default function DocumentsPage() {
                 "drivingLicense",
                 docs.drivingLicense
             );
+            
 
-            const { data } = await axios.post(
-                "/api/upload/partner-documents",
+            const { data } = await axios.post( "/api/upload/partner-documents",
                 formData,
                 {
                     headers: {
-                        "Content-Type":
-                            "multipart/form-data",
+                        "Content-Type": "multipart/form-data",
                     },
                 }
             );
@@ -124,10 +123,14 @@ export default function DocumentsPage() {
                 throw new Error(data.message || "Failed to upload documents");
             }
 
+            console.log(data)
+
             localStorage.setItem(
                 "partner-documents",
                 JSON.stringify(data.documents)
             );
+
+            console.log("document : ",data)
 
             router.push("/partner/onboarding/bank-details");
         } catch (error: any) {
@@ -144,7 +147,7 @@ export default function DocumentsPage() {
 
     return (
         <div className="min-h-screen bg-[#020617] relative overflow-auto">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#2563eb55,transparent_55%)]" />
+            <div className="absolute inset-0 bg-[rgba(53,64,89,0.33)]" />
 
             <div className="relative z-10 px-4 py-10">
                 <motion.div

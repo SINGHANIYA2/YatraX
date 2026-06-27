@@ -12,7 +12,7 @@ import AdminSidebar from "@/components/admin/sidebar/AdminSidebar";
 
 export default function Home() {
   return (
-    <div className="w-full min-h-screen bg-[#030712] scroll-thin">
+    <div className="w-full min-h-screen bg-[#1f2527] scroll-thin">
       {/* <LiveTracking></LiveTracking> */}
       {/* <FleetManagement/> */}
       {/* <PublicHome /> */}

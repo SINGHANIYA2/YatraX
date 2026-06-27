@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
                 $regex: "^" + query,
                 $options: "i",
             },
+            type:"region"
         }).select("_id name").limit(10);
 
         return NextResponse.json({

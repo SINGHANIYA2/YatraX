@@ -13,6 +13,38 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+type InputProps = {
+    name: string;
+    icon: React.ReactNode;
+    placeholder: string;
+    value: string;
+    onChange: (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => void;
+};
+
+function Input({
+    name,
+    icon,
+    placeholder,
+    value,
+    onChange,
+}: InputProps) {
+    return (
+        <div className="flex items-center gap-3 bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 focus-within:border-blue-500 transition">
+            <div className="text-slate-400">{icon}</div>
+
+            <input
+                name={name}
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                className="flex-1 bg-transparent text-white placeholder:text-slate-500 outline-none"
+            />
+        </div>
+    );
+}
+
 export default function BankDetailsPage() {
     const router = useRouter();
 
@@ -27,18 +59,37 @@ export default function BankDetailsPage() {
         upiId: "",
     });
 
+    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+
+        setForm((prev) => ({
+            ...prev,
+            [name]:
+                name === "ifsc"
+                    ? value.toUpperCase()
+                    : value,
+        }));
+    };
+
     const handleContinue = async () => {
         setError("");
-
-        if (
-            !form.accountHolder ||
-            !form.accountNumber ||
-            !form.ifsc ||
-            !form.bankName
-        ) {
-            return setError("Please fill all required fields");
+        const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
+        
+        if (!form.accountHolder || !form.accountNumber || !form.ifsc || !form.bankName) {
+            return setError(
+                "Please fill all required fields"
+            );
         }
-
+        
+        if (form.upiId && !upiRegex.test(form.upiId)) {
+            return setError("Please enter a valid UPI ID");
+        }
+        
+        if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(form.ifsc)) {
+            return setError(
+                "Please enter a valid IFSC code"
+            );
+        }
         setLoading(true);
 
         try {
@@ -57,52 +108,17 @@ export default function BankDetailsPage() {
         }
     };
 
-    type InputProps = {
-        icon: React.ReactNode;
-        placeholder: string;
-        value: string;
-        onChange: (
-            e: React.ChangeEvent<HTMLInputElement>
-        ) => void;
-    };
-
-    function Input({
-        icon,
-        placeholder,
-        value,
-        onChange,
-    }: InputProps) {
-        return (
-            <div className="flex items-center gap-3 bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 focus-within:border-blue-500 transition">
-                <div className="text-slate-400">
-                    {icon}
-                </div>
-
-                <input
-                    value={value}
-                    onChange={onChange}
-                    placeholder={placeholder}
-                    className="flex-1 bg-transparent text-white placeholder:text-slate-500 outline-none"
-                />
-            </div>
-        );
-    }
-
     return (
         <div className="min-h-screen bg-[#020617] relative overflow-auto">
-
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#2563eb55,transparent_55%)]" />
+            <div className="absolute inset-0 bg-[rgba(53,64,89,0.33)]" />
 
             <div className="relative z-10 px-4 py-10">
-
                 <motion.div
                     initial={{ opacity: 0, y: 25 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="max-w-2xl mx-auto rounded-3xl bg-slate-950/70 backdrop-blur-xl border border-blue-500/20 shadow-[0_0_60px_rgba(37,99,235,0.15)] p-6 sm:p-8"
                 >
-
                     <div className="relative text-center">
-
                         <button
                             onClick={() => router.back()}
                             className="absolute left-0 top-0 w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-white hover:border-blue-500 transition"
@@ -131,72 +147,50 @@ export default function BankDetailsPage() {
                     </div>
 
                     <div className="space-y-5 mt-8">
-
                         <Input
+                            name="accountHolder"
                             icon={<User size={18} />}
                             placeholder="Account Holder Name"
                             value={form.accountHolder}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    accountHolder: e.target.value,
-                                })
-                            }
+                            onChange={handleOnChange}
                         />
 
                         <Input
+                            name="accountNumber"
                             icon={<CreditCard size={18} />}
                             placeholder="Account Number"
                             value={form.accountNumber}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    accountNumber: e.target.value,
-                                })
-                            }
+                            onChange={handleOnChange}
                         />
 
                         <Input
+                            name="ifsc"
                             icon={<Landmark size={18} />}
                             placeholder="IFSC Code"
                             value={form.ifsc}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    ifsc: e.target.value.toUpperCase(),
-                                })
-                            }
+                            onChange={handleOnChange}
                         />
 
                         <Input
+                            name="bankName"
                             icon={<Building2 size={18} />}
                             placeholder="Bank Name"
                             value={form.bankName}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    bankName: e.target.value,
-                                })
-                            }
+                            onChange={handleOnChange}
                         />
 
                         <Input
+                            name="upiId"
                             icon={<CreditCard size={18} />}
                             placeholder="UPI ID (Optional)"
                             value={form.upiId}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    upiId: e.target.value,
-                                })
-                            }
+                            onChange={handleOnChange}
                         />
-
                     </div>
 
                     <div className="mt-6 rounded-2xl border border-blue-500/20 bg-blue-500/5 p-4 text-sm text-slate-400">
-                        Your bank details are encrypted and will only
-                        be used for payouts.
+                        Your bank details are encrypted and will
+                        only be used for payouts.
                     </div>
 
                     {error && (
@@ -221,10 +215,8 @@ export default function BankDetailsPage() {
                             </>
                         )}
                     </motion.button>
-
                 </motion.div>
             </div>
         </div>
     );
 }
-

@@ -14,11 +14,11 @@ export default function PartnerOnboardingPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-[#020617] relative overflow-auto">
+    <div className="min-h-screen bg-[rgba(53,64,89,0.33)] relative overflow-auto">
 
       {/* Blue Glow */}
-    <div className="min-h-screen bg-[#020617] relative overflow-auto">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#2563eb55,transparent_55%)]" />
+    <div className="min-h-screen bg-[#1f2527] relative overflow-auto">
+        <div className="absolute inset-0 bg-[#1f2527]" />
 
         <div className="relative z-10 px-4 -mt-13">
             <div className="max-w-2xl mx-auto">

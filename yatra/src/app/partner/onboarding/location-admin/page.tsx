@@ -28,16 +28,11 @@ export default function LocationAdminPage() {
     const router = useRouter();
 
     const [loading, setLoading] = useState(false);
-
     const [search, setSearch] = useState("");
     const [suggestions, setSuggestions] = useState<LocationSuggestion[] >([]);
-
     const [selectedLocation, setSelectedLocation] = useState<LocationSuggestion | null>(null);
-
     const [admins, setAdmins] = useState<Admin[]>([]);
-
     const [adminId, setAdminId] = useState("");
-
     const [error, setError] = useState("");
 
     const searchLocation = async (value: string) => {
@@ -56,9 +51,7 @@ export default function LocationAdminPage() {
 
     const fetchAdmins = async (locationId: string) => {
         try {
-            const { data } = await axios.get(
-                `/api/admins/location/${locationId}`
-            );
+            const { data } = await axios.get(`/api/admin/location/${locationId}`);
             if(data) console.log("admin id" , data)
             setAdmins(data.admins || []);
         } catch (error) {

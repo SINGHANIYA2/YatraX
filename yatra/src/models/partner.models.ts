@@ -1,222 +1,313 @@
 import mongoose, { Schema } from "mongoose";
 import { FileSchema } from "./FileSchema.models";
 
-const PartnerSchema = new Schema({
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-    unique: true,
-  },
+import { Document, Types } from "mongoose";
+import { IFile } from "./FileSchema.models";
 
-  applicationId: {
-    type: Schema.Types.ObjectId,
-    ref: "PartnerApplication",
-  },
+export interface IPartner extends Document {
+  userId: Types.ObjectId;
+  applicationId?: Types.ObjectId;
+  adminId: Types.ObjectId;
+  locationId: Types.ObjectId;
+  assignedVehicleId?: Types.ObjectId | null;
 
-  adminId: {
-    type: Schema.Types.ObjectId,
-    ref: "Admin",
-    required: true,
-  },
+  name: string;
+  phone: string;
+  email?: string;
+  role:string
 
-  locationId: {
-    type: Schema.Types.ObjectId,
-    ref: "Location",
-    required: true,
-  },
+  dob?: Date;
+  gender?: "male" | "female" | "other";
 
-  assignedVehicleId: {
-    type: Schema.Types.ObjectId,
-    ref: "Vehicle",
-    default: null,
-  },
+  profilePhoto?: IFile;
 
+  emergencyContact?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
 
-
-  name: {
-    type: String,
-    required: true,
-  },
-
-  phone: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-
-  email: {
-    type: String,
-    lowercase: true,
-    trim: true,
-  },
-
-  dob: Date,
-
-  gender: {
-    type: String,
-    enum: ["male", "female", "other"],
-  },
-
-  profilePhoto: FileSchema,
-
-  emergencyContact: String,
-
-  address: String,
-
-  city: String,
-
-  state: String,
-
-  pincode: String,
-
-
-  dlNumber: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-
-  experience: {
-    type: Number,
-    default: 0,
-  },
-
-  aadharNumber: String,
+  dlNumber: string;
+  experience: number;
+  aadharNumber?: string;
 
   documents: {
-    aadharFront: FileSchema,
-    aadharBack: FileSchema,
-    drivingLicense: FileSchema,
-    profilePhoto: FileSchema,
-  },
-
-
+    aadharFront?: IFile;
+    aadharBack?: IFile;
+    drivingLicense?: IFile;
+    profilePhoto?: IFile;
+  };
 
   bankDetails: {
-    accountHolder: String,
-    accountNumber: String,
-    ifsc: String,
-    bankName: String,
-    upiId: String,
+    accountHolder?: string;
+    accountNumber?: string;
+    ifsc?: string;
+    bankName?: string;
+    upiId?: string;
+  };
+
+  applicationStatus:
+    | "pending"
+    | "approved"
+    | "rejected"
+    | "suspended";
+
+  approvedAt?: Date;
+  rejectedAt?: Date;
+  rejectionReason?: string;
+
+  isOnline: boolean;
+  isAvailable: boolean;
+  isBlocked: boolean;
+  isVerified: boolean;
+
+  currentLatitude?: number;
+  currentLongitude?: number;
+  lastSeen?: Date;
+
+  totalRides: number;
+  completedRides: number;
+  cancelledRides: number;
+  totalDistance: number;
+
+  averageRating: number;
+  totalRatings: number;
+
+  totalEarned: number;
+  todayEarnings: number;
+  weeklyEarnings: number;
+  monthlyEarnings: number;
+  walletBalance: number;
+  withdrawnAmount: number;
+
+  joinedAt?: Date;
+  lastRideAt?: Date;
+
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const PartnerSchema = new Schema({
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      unique: true,
+    },
+
+    applicationId: {
+      type: Schema.Types.ObjectId,
+      ref: "PartnerApplication",
+    },
+
+    adminId: {
+      type: Schema.Types.ObjectId,
+      ref: "Admin",
+      required: true,
+    },
+
+    locationId: {
+      type: Schema.Types.ObjectId,
+      ref: "Location",
+      required: true,
+    },
+
+    assignedVehicleId: {
+      type: Schema.Types.ObjectId,
+      ref: "Vehicle",
+      default: null,
+    },
+
+    
+
+    name: {
+      type: String,
+      required: true,
+    },
+
+    phone: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
+    email: {
+      type: String,
+      lowercase: true,
+      trim: true,
+    },
+
+    role:{
+      type:String,
+      default:"partner",
+      enum:["partner"]
+    },
+    dob: Date,
+
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+    },
+
+    profilePhoto: FileSchema,
+
+    emergencyContact: String,
+
+    address: String,
+
+    city: String,
+
+    state: String,
+
+    pincode: String,
+
+
+    dlNumber: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
+    experience: {
+      type: Number,
+      default: 0,
+    },
+
+    aadharNumber: String,
+
+    documents: {
+      aadharFront: FileSchema,
+      aadharBack: FileSchema,
+      drivingLicense: FileSchema,
+      profilePhoto: FileSchema,
+    },
+
+  
+
+    bankDetails: {
+      accountHolder: String,
+      accountNumber: String,
+      ifsc: String,
+      bankName: String,
+      upiId: String,
+    },
+
+
+
+    applicationStatus: {
+      type: String,
+      enum: [
+        "pending",
+        "approved",
+        "rejected",
+        "suspended",
+      ],
+      default: "pending",
+    },
+
+    approvedAt: Date,
+
+    rejectedAt: Date,
+
+    rejectionReason: String,
+
+
+    isOnline: {
+      type: Boolean,
+      default: false,
+    },
+
+    isAvailable: {
+      type: Boolean,
+      default: true,
+    },
+
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
+
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+
+
+    currentLatitude: Number,
+
+    currentLongitude: Number,
+
+    lastSeen: Date,
+
+    totalRides: {
+      type: Number,
+      default: 0,
+    },
+
+    completedRides: {
+      type: Number,
+      default: 0,
+    },
+
+    cancelledRides: {
+      type: Number,
+      default: 0,
+    },
+
+    totalDistance: {
+      type: Number,
+      default: 0,
+    },
+
+    averageRating: {
+      type: Number,
+      default: 0,
+    },
+
+    totalRatings: {
+      type: Number,
+      default: 0,
+    },
+
+
+    totalEarned: {
+      type: Number,
+      default: 0,
+    },
+
+    todayEarnings: {
+      type: Number,
+      default: 0,
+    },
+
+    weeklyEarnings: {
+      type: Number,
+      default: 0,
+    },
+
+    monthlyEarnings: {
+      type: Number,
+      default: 0,
+    },
+
+    walletBalance: {
+      type: Number,
+      default: 0,
+    },
+
+    withdrawnAmount: {
+      type: Number,
+      default: 0,
+    },
+
+    joinedAt: Date,
+
+    lastRideAt: Date,
   },
-
-
-
-  applicationStatus: {
-    type: String,
-    enum: [
-      "pending",
-      "approved",
-      "rejected",
-      "suspended",
-    ],
-    default: "pending",
-  },
-
-  approvedAt: Date,
-
-  rejectedAt: Date,
-
-  rejectionReason: String,
-
-
-  isOnline: {
-    type: Boolean,
-    default: false,
-  },
-
-  isAvailable: {
-    type: Boolean,
-    default: true,
-  },
-
-  isBlocked: {
-    type: Boolean,
-    default: false,
-  },
-
-  isVerified: {
-    type: Boolean,
-    default: false,
-  },
-
-
-  currentLatitude: Number,
-
-  currentLongitude: Number,
-
-  lastSeen: Date,
-
-  totalRides: {
-    type: Number,
-    default: 0,
-  },
-
-  completedRides: {
-    type: Number,
-    default: 0,
-  },
-
-  cancelledRides: {
-    type: Number,
-    default: 0,
-  },
-
-  totalDistance: {
-    type: Number,
-    default: 0,
-  },
-
-  averageRating: {
-    type: Number,
-    default: 0,
-  },
-
-  totalRatings: {
-    type: Number,
-    default: 0,
-  },
-
-
-  totalEarned: {
-    type: Number,
-    default: 0,
-  },
-
-  todayEarnings: {
-    type: Number,
-    default: 0,
-  },
-
-  weeklyEarnings: {
-    type: Number,
-    default: 0,
-  },
-
-  monthlyEarnings: {
-    type: Number,
-    default: 0,
-  },
-
-  walletBalance: {
-    type: Number,
-    default: 0,
-  },
-
-  withdrawnAmount: {
-    type: Number,
-    default: 0,
-  },
-
-  joinedAt: Date,
-
-  lastRideAt: Date,
-},
   {
     timestamps: true,
   }
 );
 
 const Partner = mongoose.models.Partner || mongoose.model("Partner", PartnerSchema);
-export default Partner;
+export default Partner

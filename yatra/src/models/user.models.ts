@@ -1,5 +1,6 @@
 import mongoose, { Mongoose } from "mongoose"
 import partnerApplicationModels from '@/models/partnerApplication.models';
+import PartnerApplication from './partnerApplication.models';
 
 
 export interface IUser extends Document {
@@ -14,11 +15,13 @@ export interface IUser extends Document {
     emailOtp: string
     mobileOtp: string
     otpExpiresAt?: Date
-    mobileNumber?: string
-    isVerified?: boolean;
-    partnerApplication?: mongoose.Types.ObjectId;
-    partnerStatus?: string;
-    partnerId?: string
+    mobilfied?: boolean;
+    partnereNumber?: string
+    isVeriApplication?: mongoose.Types.ObjectId;
+    partnerStatus?: string
+    mobileNumber:string
+    isVerified:boolean
+    partnerApplication: mongoose.Types.ObjectId | null
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -37,7 +40,7 @@ const userSchema = new mongoose.Schema<IUser>({
     role: {
         type: String,
         default: "user",
-        enum: ["user", "partner", "admin"]
+        enum: ["user", "partner"]
     },
     isEmailVerified: {
         type: Boolean,
@@ -57,7 +60,8 @@ const userSchema = new mongoose.Schema<IUser>({
     otpExpiresAt: {
         type: Date
         // default:null
-    }, mobileNumber: {
+    }, 
+    mobileNumber: {
         type: String
     }, partnerApplication: {
         type: mongoose.Schema.Types.ObjectId,
@@ -78,11 +82,7 @@ const userSchema = new mongoose.Schema<IUser>({
         type: Boolean,
         default: false,
     },
-    partnerId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Partner",
-        default: null,
-    },
+
 }, { timestamps: true })
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 

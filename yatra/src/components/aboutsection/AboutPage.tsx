@@ -7,21 +7,37 @@ import { motion } from 'motion/react'
 
 export default function AboutPage() {
     return (
-        <div className='bg-[#030712]'>
+        <div className="bg-[#030712] min-h-screen">
 
             <motion.div
                 initial={{ y: 50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.7 }}
-                className="
-            p-8
-         px-10 pb-10
-            "
+                className="px-10 pt-28 pb-10"
             >
 
-                <div className="mt-18 grid grid-cols-3 gap-4">
+                {/* Header */}
+                <div className="text-center mb-14">
+                    <span className="inline-block px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm mb-4">
+                        ✈️ About YatraX
+                    </span>
 
-                    <div className="col-span-2">
+                    <h1 className="text-5xl font-bold text-white">
+                        Redefining the Way You
+                        <span className="text-blue-500"> Travel</span>
+                    </h1>
+
+                    <p className="mt-4 max-w-3xl mx-auto text-lg text-gray-400">
+                        YatraX is your all-in-one travel platform designed to make
+                        booking buses, taxis, trains, and hotels seamless,
+                        secure, and enjoyable.
+                    </p>
+                </div>
+
+                {/* Content */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+                    <div className="lg:col-span-2">
                         <AboutHero />
                     </div>
 

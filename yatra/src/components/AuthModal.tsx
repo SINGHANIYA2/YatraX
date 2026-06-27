@@ -1,6 +1,6 @@
-
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from "motion/react"
 import { CircleDashed, Lock, Mail, Phone, User, X } from 'lucide-react'
 import Image from 'next/image'
@@ -27,17 +27,34 @@ function AuthModal({ open, steps, onClose }: propType) {
     const [emailOtp, setEmailOtp] = useState(["", "", "", "", "", ""])
     const [role, setRole] = useState("user")
     const [mobileOtp, setMobileOtp] = useState(["", "", "", "", "", ""])
+    const { data: session, status } = useSession();
+
+    useEffect(() => {
+        if (status === "authenticated") {
+        // console.log("User:", session?.user);
+        // console.log("Role:", session?.user?.role);
+
+        if (session?.user?.role === "admin") {
+            setRole("admin")
+        }
+
+        if (session?.user?.role === "partner") {
+            // do partner stuff
+            setRole("partner")
+        }
+        // console.log("role aurth modal: ",role)
+        }
+    }, [session, status]);
+
     const [adminData, setAdminData] = useState({
         organizationName: "",
         organizationType: "",
         gstNumber: "",
         panNumber: "",
         registrationNumber: "",
-
-        contactPerson: "",
         alternatePhone: "",
 
-        addressLine1: "",
+        address: "",
         city: "",
         state: "",
         pincode: "",
@@ -49,8 +66,14 @@ function AuthModal({ open, steps, onClose }: propType) {
         accountNumber: "",
         ifscCode: "",
         upiId: "",
+
     });
-    
+
+    const canSubmit = !!(adminData.accountHolderName && adminData.registrationNumber && adminData.accountNumber && adminData.addressLine1 && adminData.alternatePhone && adminData.bankName &&
+        adminData.city && adminData.gstNumber && adminData.ifscCode && adminData.organizationName && adminData.organizationType &&
+        adminData.panNumber && adminData.pincode && adminData.state && adminData.upiId && adminData.addressLine1
+    )
+
     React.useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setStep(steps as stepType)
@@ -128,16 +151,58 @@ function AuthModal({ open, steps, onClose }: propType) {
     const handleAdminDetailsSubmit = async () => {
         try {
             setLoading(true);
+            if (!adminData.organizationName.trim()) {
+                return setErr("Organization name is required");
+            }
+
+            if (!adminData.organizationType) {
+                return setErr("Organization type is required");
+            }
+
+            if (!adminData.panNumber.trim()) {
+                return setErr("PAN number is required");
+            }
+
+            if (!adminData.address.trim()) {
+                return setErr("Address is required");
+            }
+
+            if (!adminData.city.trim()) {
+                return setErr("City is required");
+            }
+
+            if (!adminData.state.trim()) {
+                return setErr("State is required");
+            }
+
+            if (!adminData.pincode.trim()) {
+                return setErr("Pincode is required");
+            }
+
+            if (!adminData.bankName.trim()) {
+                return setErr("Bank name is required");
+            }
+
+            if (!adminData.accountHolderName.trim()) {
+                return setErr("Account holder name is required");
+            }
+
+            if (!adminData.accountNumber.trim()) {
+                return setErr("Account number is required");
+            }
+
+            if (!adminData.ifscCode.trim()) {
+                return setErr("IFSC code is required");
+            }
+
+            setErr("");
 
             const payload = {
                 email,
                 ...adminData,
             };
 
-            const { data } = await axios.post(
-                "/api/admin/create-profile",
-                payload
-            );
+            const { data } = await axios.post("/api/admin/create-profile", payload);
 
             console.log(data);
 
@@ -243,7 +308,11 @@ function AuthModal({ open, steps, onClose }: propType) {
                         overflow-hidden
                         ">
                         <div className='absolute right-4 top-4 text-gray-400 hover:text-white transition'
-                            onClick={onClose} >
+                            onClick={() => {
+                                if (!(role === "admin" && !canSubmit)){
+                                    onClose();
+                                }
+                            }} >
                             <X size={20} />
                         </div>
 
@@ -542,10 +611,10 @@ function AuthModal({ open, steps, onClose }: propType) {
                                         value={adminData.organizationType}
                                         onChange={(e) => setAdminData({ ...adminData, organizationType: e.target.value })}
                                     >
-                                        <option value="">Select Organization Type</option>
-                                        <option value="Bus Operator">Bus Operator</option>
-                                        <option value="Travel Agency">Travel Agency</option>
-                                        <option value="Fleet Owner">Fleet Owner</option>
+                                        <option value="" className='text-black'>Select Organization Type</option>
+                                        <option value="Bus Operator text-black">Bus Operator</option>
+                                        <option value="Travel Agency text-black">Travel Agency</option>
+                                        <option value="Fleet Owner text-black">Fleet Owner</option>
                                     </select>
 
                                     <input
@@ -572,8 +641,8 @@ function AuthModal({ open, steps, onClose }: propType) {
                                     <input
                                         placeholder="Address"
                                         className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
-                                        value={adminData.addressLine1}
-                                        onChange={(e) => setAdminData({ ...adminData, addressLine1: e.target.value })}
+                                        value={adminData.address}
+                                        onChange={(e) => setAdminData({ ...adminData, address: e.target.value })}
                                     />
 
                                     <div className="grid grid-cols-2 gap-3">
@@ -647,8 +716,10 @@ function AuthModal({ open, steps, onClose }: propType) {
                                         onChange={(e) => setAdminData({ ...adminData, upiId: e.target.value })}
                                     />
 
+                                    {err && (<p className='text-red-600 text-xl'>*{err}</p>)}
+
                                     <button
-                                        className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 font-semibold mt-4"
+                                        className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 cursor-pointer to-blue-500 font-semibold mt-4"
                                         onClick={handleAdminDetailsSubmit}
                                     >
                                         Submit
