@@ -1,70 +1,123 @@
 'use client'
+
 import { motion } from "motion/react"
 import { useState } from "react"
 
 import VehicleSidebar from "./VehicleSidebar"
 import LiveMap from "./LiveMap"
 import VehicleDetails from "./VehicleDetails"
-import { trackingVehicles } from './demo'
-
+import { trackingVehicles } from "./demo"
 
 export default function LiveTracking() {
-    const [vehicles, setVehicles] =
-        useState(trackingVehicles)
+
+    const [vehicles] = useState(trackingVehicles)
 
     const [selectedVehicle, setSelectedVehicle] =
         useState(trackingVehicles[0])
 
-
     return (
+        <div className="bg-[#030712] min-h-screen overflow-hidden">
 
-
-        <div className="bg-[#030712]">
             <motion.div
-                initial={{ y: 100, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{
-                    duration: 0.6,
-                    ease: "easeOut"
-                }}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
                 className="
-                text-white
-                font-sans
-                text-white
-                mx-auto
-                mt-30
-                px-[40px]
-                font-sans
-                gap-4
-                flex
-                h-[calc(100vh-100px)]
-                overflow-hidden
-                mb-8"
+relative
+mt-24
+
+px-4
+sm:px-6
+lg:px-8
+
+grid
+grid-cols-1
+xl:grid-cols-[320px_minmax(0,1fr)_300px]
+
+gap-4
+
+min-h-[calc(100vh-110px)]
+"
             >
-                <div className="absolute top-0 left-0 w-[700px] h-[500px] bg-blue-600/10 blur-[150px] rounded-full" />
 
-                <div className="absolute bottom-0 right-0 w-[700px] h-[500px] bg-cyan-500/10 blur-[150px] rounded-full" />
-
-                <div className="relative z-10 mx-auto justify-between"></div>
-
-                {/* Left */}
-                <VehicleSidebar
-                    vehicles={vehicles}
-                    selectedVehicle={selectedVehicle}
-                    setSelectedVehicle={setSelectedVehicle}
+                {/* Glow */}
+                <div
+                    className="
+                    absolute
+                    top-0
+                    left-0
+                    w-[700px]
+                    h-[500px]
+                    bg-blue-600/10
+                    blur-[150px]
+                    rounded-full
+                    pointer-events-none
+                "
                 />
 
+                <div
+                    className="
+                    absolute
+                    bottom-0
+                    right-0
+                    w-[700px]
+                    h-[500px]
+                    bg-cyan-500/10
+                    blur-[150px]
+                    rounded-full
+                    pointer-events-none
+                "
+                />
 
-                {/* Center */}
-                    <LiveMap />
-
-                {/* Right */}
-                <div className="w-[20%] h-full">
-                    <VehicleDetails vehicle={selectedVehicle} />
+                {/* Sidebar */}
+                <div
+className="
+w-full
+xl:w-[320px]
+relative
+z-10
+"
+>
+                    <VehicleSidebar
+                        vehicles={vehicles}
+                        selectedVehicle={selectedVehicle}
+                        setSelectedVehicle={setSelectedVehicle}
+                    />
                 </div>
 
+                {/* Map */}
+                <div
+className="
+relative
+z-10
+
+h-[350px]
+sm:h-[450px]
+xl:h-auto
+
+min-w-0
+"
+>
+                    <LiveMap />
+                </div>
+
+                {/* Details */}
+              <div
+className="
+w-full
+xl:w-[300px]
+
+relative
+z-10
+"
+>
+                    <VehicleDetails
+                        vehicle={selectedVehicle}
+                    />
+                </div>
 
             </motion.div>
         </div>
     )
+
 }

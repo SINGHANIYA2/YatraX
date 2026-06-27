@@ -2,6 +2,8 @@ import mongoose, { Schema } from "mongoose";
 import { FileSchema } from "./FileSchema.models";
 import partnerApplicationModels from '@/models/partnerApplication.models';
 
+
+
 const PartnerApplicationSchema = new Schema(
   {
     // Relations
@@ -147,6 +149,17 @@ const PartnerApplicationSchema = new Schema(
 
     rejectionReason: String,
 
+    rejectedAt: {
+      type: Date,
+    },
+
+    rejectedPartnerApplications: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "PartnerApplication",
+      },
+    ],
+
     remarks: String,
 
     verifiedBy: {
@@ -165,5 +178,5 @@ const PartnerApplicationSchema = new Schema(
   }
 );
 
-const PartnerApplication = mongoose.models.PartnerApplication || mongoose.model("PartnerApplication",PartnerApplicationSchema);
+const PartnerApplication = mongoose.models.PartnerApplication || mongoose.model("PartnerApplication", PartnerApplicationSchema);
 export default PartnerApplication
