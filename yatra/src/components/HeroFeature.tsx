@@ -29,22 +29,6 @@ const features = [
         iconColor: "text-purple-400",
     },
     {
-        title: "Fleet Administration",
-        description: "Manage fleet, drivers and operations efficiently.",
-        icon: Bus,
-        href: "/fleet",
-        color: "from-orange-500/20 to-orange-600/10",
-        iconColor: "text-orange-400",
-    },
-    {
-        title: "Secure Payments",
-        description: "Multiple payment options with 100% security.",
-        icon: ShieldCheck,
-        href: "/payments",
-        color: "from-emerald-500/20 to-emerald-600/10",
-        iconColor: "text-emerald-400",
-    },
-    {
         title: "Instant Notifications",
         description: "Get real-time alerts for updates and changes.",
         icon: Bell,
@@ -57,7 +41,7 @@ const features = [
 function HeroFeature() {
     return (
         <section className="mt-16">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
 
                 {features.map((feature, index) => {
                     const Icon = feature.icon;
