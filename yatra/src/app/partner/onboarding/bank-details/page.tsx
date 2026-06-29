@@ -1,17 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import {
-    ArrowLeft,
-    ArrowRight,
-    Building2,
-    CircleDashed,
-    CreditCard,
-    Landmark,
-    User,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Building2, CircleDashed, CreditCard, Landmark, User, } from "lucide-react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 type InputProps = {
     name: string;
@@ -50,6 +43,7 @@ export default function BankDetailsPage() {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    
 
     const [form, setForm] = useState({
         accountHolder: "",
@@ -74,17 +68,15 @@ export default function BankDetailsPage() {
     const handleContinue = async () => {
         setError("");
         const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
-        
+
         if (!form.accountHolder || !form.accountNumber || !form.ifsc || !form.bankName) {
-            return setError(
-                "Please fill all required fields"
-            );
+            return setError("Please fill all required fields");
         }
-        
+
         if (form.upiId && !upiRegex.test(form.upiId)) {
             return setError("Please enter a valid UPI ID");
         }
-        
+
         if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(form.ifsc)) {
             return setError(
                 "Please enter a valid IFSC code"
@@ -107,6 +99,31 @@ export default function BankDetailsPage() {
             setLoading(false);
         }
     };
+
+
+useEffect(() => {
+     if (/^[A-Z]{4}0[A-Z0-9]{6}$/.test(form.ifsc)) {
+        const fetchBankDetails = async (ifsc: string) => {
+            try {
+                const { data } = await axios.get(`https://ifsc.razorpay.com/${ifsc}`)
+                console.log(data)
+                setForm((prev) => ({
+                     ...prev,
+                     bankName: data.BANK,
+                }));
+                
+     
+            }catch (err) {
+                console.log(err);
+                setForm((prev) => ({
+                     ...prev,
+                     bankName: "",
+                }));
+            }
+        };
+        fetchBankDetails(form.ifsc)
+    }
+})
 
     return (
         <div className="min-h-screen bg-[#020617] relative overflow-auto">

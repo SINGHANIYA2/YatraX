@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client"
 import React, { useEffect, useState } from 'react'
@@ -14,10 +15,10 @@ type propType = {
     steps: string
 }
 
-type stepType = "login" | "otp" | "signup" | null | "adminDetail"
+type stepType = "login" | "otp" | "signup" | "" | "adminDetail"
 
 function AuthModal({ open, steps, onClose }: propType) {
-    const [step, setStep] = useState<stepType>("login")
+    const [step, setStep] = useState<stepType>("")
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [mobileNumber, setMobileNumber] = useState("")
@@ -31,18 +32,18 @@ function AuthModal({ open, steps, onClose }: propType) {
 
     useEffect(() => {
         if (status === "authenticated") {
-        // console.log("User:", session?.user);
-        // console.log("Role:", session?.user?.role);
+            // console.log("User:", session?.user);
+            // console.log("Role:", session?.user?.role);
 
-        if (session?.user?.role === "admin") {
-            setRole("admin")
-        }
+            if (session?.user?.role === "admin") {
+                setRole("admin")
+            }
 
-        if (session?.user?.role === "partner") {
-            // do partner stuff
-            setRole("partner")
-        }
-        // console.log("role aurth modal: ",role)
+            if (session?.user?.role === "partner") {
+                // do partner stuff
+                setRole("partner")
+            }
+            // console.log("role aurth modal: ",role)
         }
     }, [session, status]);
 
@@ -78,6 +79,7 @@ function AuthModal({ open, steps, onClose }: propType) {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setStep(steps as stepType)
     }, [steps])
+
     const { data } = useSession()
 
     const handleSignUp = async () => {
@@ -148,9 +150,20 @@ function AuthModal({ open, steps, onClose }: propType) {
             )?.focus();
         }
     };
+
     const handleAdminDetailsSubmit = async () => {
         try {
             setLoading(true);
+            setErr("");
+
+            const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+            const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z0-9]{3}$/;
+            const phoneRegex = /^[6-9]\d{9}$/;
+            const pincodeRegex = /^[1-9][0-9]{5}$/;
+            const ifscRegex = /^[A-Z]{4}0[A-Z0-9]{6}$/;
+            const upiRegex = /^[a-zA-Z0-9][a-zA-Z0-9._-]{1,255}@[a-zA-Z]{2,64}$/;
+            const accountRegex = /^[0-9]{9,18}$/;
+
             if (!adminData.organizationName.trim()) {
                 return setErr("Organization name is required");
             }
@@ -161,6 +174,31 @@ function AuthModal({ open, steps, onClose }: propType) {
 
             if (!adminData.panNumber.trim()) {
                 return setErr("PAN number is required");
+            }
+
+            if (!panRegex.test(
+                adminData.panNumber
+                    .trim()
+                    .toUpperCase()
+            )
+            ) {
+                return setErr("Invalid PAN number");
+            }
+
+            if (adminData.gstNumber && !gstRegex.test(
+                adminData.gstNumber
+                    .trim()
+                    .toUpperCase()
+            )
+            ) {
+                return setErr("Invalid GST number");
+            }
+
+            if (adminData.alternatePhone && !phoneRegex.test(
+                adminData.alternatePhone
+            )
+            ) {
+                return setErr("Invalid alternate phone number");
             }
 
             if (!adminData.address.trim()) {
@@ -179,6 +217,24 @@ function AuthModal({ open, steps, onClose }: propType) {
                 return setErr("Pincode is required");
             }
 
+            if (!pincodeRegex.test(
+                adminData.pincode
+            )
+            ) {
+                return setErr("Invalid pincode");
+            }
+
+            if (!adminData.totalVehicles) {
+                return setErr("Total vehicles is required");
+            }
+
+            if (Number(
+                adminData.totalVehicles
+            ) <= 0
+            ) {
+                return setErr("Total vehicles must be greater than 0");
+            }
+
             if (!adminData.bankName.trim()) {
                 return setErr("Bank name is required");
             }
@@ -191,36 +247,62 @@ function AuthModal({ open, steps, onClose }: propType) {
                 return setErr("Account number is required");
             }
 
+            if (!accountRegex.test(
+                adminData.accountNumber
+            )
+            ) {
+                return setErr("Invalid account number");
+            }
+
             if (!adminData.ifscCode.trim()) {
                 return setErr("IFSC code is required");
             }
 
-            setErr("");
+            if (!ifscRegex.test(
+                adminData.ifscCode
+                    .trim()
+                    .toUpperCase()
+            )
+            ) {
+                return setErr("Invalid IFSC code");
+            }
+
+            if (adminData.upiId && !upiRegex.test(
+                adminData.upiId.trim()
+            )
+            ) {
+                return setErr("Invalid UPI ID");
+            }
+
+            // set correct bank name according to IFSC CODE
+            fetchBankDetails
 
             const payload = {
                 email,
                 ...adminData,
+                panNumber: adminData.panNumber.toUpperCase(),
+                gstNumber: adminData.gstNumber.toUpperCase(),
+                ifscCode: adminData.ifscCode.toUpperCase(),
             };
 
             const { data } = await axios.post("/api/admin/create-profile", payload);
 
             console.log(data);
 
-            setLoading(false);
-            // setAdminDetail(false);
-            setStep(null)
+            setStep(null);
             onClose();
-
         } catch (error: any) {
-            setLoading(false);
-
             setErr(
-                error?.response?.data?.message ||
+                error?.response?.data
+                    ?.message ||
                 error?.message ||
                 "Something went wrong"
             );
+        } finally {
+            setLoading(false);
         }
     };
+
     const handleChangeEmailOtp = (index: number, value: string) => {
         if (!/^[0-9]?$/.test(value)) return
 
@@ -247,6 +329,29 @@ function AuthModal({ open, steps, onClose }: propType) {
             document.getElementById(`mobileOtp-${index - 1}`)?.focus()
         }
     }
+
+useEffect(() => {
+    if (/^[A-Z]{4}0[A-Z0-9]{6}$/.test(adminData.ifscCode)) {
+    const fetchBankDetails = async () => {
+        try {
+            if(!adminData.ifscCode){
+                return setErr("Enter IFSC code")
+            }
+            const { data } = await axios.get(`https://ifsc.razorpay.com/${adminData.ifscCode}`);
+
+            setAdminData((prev) => ({
+                ...prev,
+                bankName: data.BANK,
+                city: prev.city || data.CITY,
+                state:prev.state || data.STATE,
+            }));
+        } catch {
+            setErr("Invalid IFSC code");
+        }
+    };
+    fetchBankDetails()
+}
+})
 
     const handleVerification = async () => {
         setLoading(true);
@@ -309,7 +414,7 @@ function AuthModal({ open, steps, onClose }: propType) {
                         ">
                         <div className='absolute right-4 top-4 text-gray-400 hover:text-white transition'
                             onClick={() => {
-                                if (!(role === "admin" && !canSubmit)){
+                                if (!(role === "admin" && !canSubmit)) {
                                     onClose();
                                 }
                             }} >
@@ -720,7 +825,7 @@ function AuthModal({ open, steps, onClose }: propType) {
 
                                     <button
                                         className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 cursor-pointer to-blue-500 font-semibold mt-4"
-                                        onClick={handleAdminDetailsSubmit}
+                                        onClick={() => {handleAdminDetailsSubmit}}
                                     >
                                         Submit
                                     </button>

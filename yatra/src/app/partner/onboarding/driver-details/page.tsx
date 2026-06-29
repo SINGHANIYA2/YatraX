@@ -81,6 +81,18 @@ export default function DriverDetailsPage() {
             return setError("Please fill all fields");
         }
 
+        const dlRegex =  /^[A-Z]{2}[0-9]{2}[0-9]{4}[0-9]{6,7}$/;
+
+        if (!dlRegex.test( form.dlNumber
+                .trim()
+                .toUpperCase()
+            )
+        ) {
+            return setError(
+            "Please enter a valid Driving Licence number"
+            );
+    }
+
         localStorage.setItem(
             "driver-details",
             JSON.stringify(form)

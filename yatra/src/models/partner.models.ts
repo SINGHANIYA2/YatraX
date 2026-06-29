@@ -1,8 +1,12 @@
-import mongoose, { Schema } from "mongoose";
-import { FileSchema } from "./FileSchema.models";
-
-import { Document, Types } from "mongoose";
-import { IFile } from "./FileSchema.models";
+import mongoose, {
+  Schema,
+  Document,
+  Types,
+} from "mongoose";
+import {
+  FileSchema,
+  IFile,
+} from "./FileSchema.models";
 
 export interface IPartner extends Document {
   userId: Types.ObjectId;
@@ -14,7 +18,7 @@ export interface IPartner extends Document {
   name: string;
   phone: string;
   email?: string;
-  role:string
+  role: string;
 
   dob?: Date;
   gender?: "male" | "female" | "other";
@@ -61,8 +65,7 @@ export interface IPartner extends Document {
   isBlocked: boolean;
   isVerified: boolean;
 
-  currentLatitude?: number;
-  currentLongitude?: number;
+  socketId?: string | null;
   lastSeen?: Date;
 
   totalRides: number;
@@ -87,7 +90,8 @@ export interface IPartner extends Document {
   updatedAt: Date;
 }
 
-const PartnerSchema = new Schema({
+const PartnerSchema = new Schema(
+  {
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
@@ -116,19 +120,20 @@ const PartnerSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: "Vehicle",
       default: null,
+      index: true,
     },
-
-    
 
     name: {
       type: String,
       required: true,
+      trim: true,
     },
 
     phone: {
       type: String,
       required: true,
       unique: true,
+      trim: true,
     },
 
     email: {
@@ -137,11 +142,12 @@ const PartnerSchema = new Schema({
       trim: true,
     },
 
-    role:{
-      type:String,
-      default:"partner",
-      enum:["partner"]
+    role: {
+      type: String,
+      enum: ["partner"],
+      default: "partner",
     },
+
     dob: Date,
 
     gender: {
@@ -160,7 +166,6 @@ const PartnerSchema = new Schema({
     state: String,
 
     pincode: String,
-
 
     dlNumber: {
       type: String,
@@ -182,8 +187,6 @@ const PartnerSchema = new Schema({
       profilePhoto: FileSchema,
     },
 
-  
-
     bankDetails: {
       accountHolder: String,
       accountNumber: String,
@@ -191,8 +194,6 @@ const PartnerSchema = new Schema({
       bankName: String,
       upiId: String,
     },
-
-
 
     applicationStatus: {
       type: String,
@@ -211,10 +212,20 @@ const PartnerSchema = new Schema({
 
     rejectionReason: String,
 
-
     isOnline: {
       type: Boolean,
       default: false,
+      index: true,
+    },
+
+    socketId: {
+      type: String,
+      default: null,
+    },
+
+    lastSeen: {
+      type: Date,
+      default: null,
     },
 
     isAvailable: {
@@ -231,13 +242,6 @@ const PartnerSchema = new Schema({
       type: Boolean,
       default: false,
     },
-
-
-    currentLatitude: Number,
-
-    currentLongitude: Number,
-
-    lastSeen: Date,
 
     totalRides: {
       type: Number,
@@ -268,7 +272,6 @@ const PartnerSchema = new Schema({
       type: Number,
       default: 0,
     },
-
 
     totalEarned: {
       type: Number,
@@ -309,5 +312,6 @@ const PartnerSchema = new Schema({
   }
 );
 
-const Partner = mongoose.models.Partner || mongoose.model("Partner", PartnerSchema);
-export default Partner
+const Partner = mongoose.models.Partner || mongoose.model<IPartner>("Partner",PartnerSchema);
+
+export default Partner;

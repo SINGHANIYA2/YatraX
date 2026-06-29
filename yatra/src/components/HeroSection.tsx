@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { motion } from "motion/react";
 import { MapPinned, Headphones } from "lucide-react";
 import Link from "next/link";
@@ -9,6 +10,10 @@ import HeroLeft from './HeroLeft';
 import HeroRight from './HeroRight';
 import HeroFeature from './HeroFeature';
 import StatsSection from './StatsSection';
+import { getSocket } from '@/lib/socket';
+import { useSession } from 'next-auth/react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 export const features = [
     {
@@ -49,6 +54,26 @@ export const features = [
     }
 ];
 function HeroSection() {
+
+    const { partnerData } = useSelector((state: RootState) => state.partner)
+    const session = useSession()
+    useEffect(() => {
+        if (session.status !== "authenticated" || !partnerData )
+            return;
+
+        const socket = getSocket();
+
+        socket.emit("identity", {
+            partnerId:
+                partnerData._id,
+            vehicleId:
+                partnerData.assignedVehicleId,
+        });
+    }, [
+        session.status,
+        partnerData,
+    ]);
+
     return (
         <>
             <section className="relative min-h-screen overflow-auto bg-gradient-to-b from-[#020617] via-[#030712] to-black text-white pt-28 pb-16">
@@ -65,9 +90,9 @@ function HeroSection() {
                         <HeroRight />
                     </div>
                     {/* Features */}
-                    <HeroFeature/>
+                    <HeroFeature />
                     {/* Stats */}
-                    <StatsSection/>
+                    <StatsSection />
 
                 </div>
 
