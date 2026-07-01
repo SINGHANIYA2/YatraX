@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/rules-of-hooks */
 
 "use client";
@@ -6,32 +8,19 @@ import axios from "axios";
 import { Search, MapPin, Bus, Clock, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, MotionConfig, number } from 'motion/react';
+import { useSession } from "next-auth/react";
 import vehicles from '../../components/vehicles';
+import dynamic from "next/dynamic";
+
+const SearchMap = dynamic(() => import("./SearchMap"),
+  {
+    ssr: false,
+  }
+);
+
+
 
 export default function page() {
-  // eslint-disable-next-line prefer-const
-  const vehicles = [
-    {
-      id: 1,
-      type: "Bus",
-      number: "JH01AB1234",
-      route: "Ranchi → Patna",
-      fare: 350,
-      eta: "25 mins",
-      availableSeats: 18,
-      status: "Running",
-    },
-    {
-      id: 2,
-      type: "Auto",
-      number: "JH01CD5678",
-      route: "Ranchi → Patna",
-      fare: 80,
-      eta: "40 mins",
-      availableSeats: 3,
-      status: "Running",
-    },
-  ];
 
   type Place = {
     id?: string;
@@ -44,40 +33,118 @@ export default function page() {
     lng: number;
   };
 
-  const vehicleTypes = [
-    { value: "all", label: "All Vehicles" },
-    { value: "bus", label: "Bus" },
-    { value: "auto", label: "Auto" },
-    { value: "cab", label: "Cab" },
-    { value: "bike", label: "Bike" },
-    ,
-  ];
+  type VehicleType = {
+  _id: string;
+  vehicleNumber: string;
+  vehicleType: string;
+  tripStatus: string;
+
+  routeId?: {
+    distanceInKm?: number;
+    estimatedDurationInMinutes?: number;
+    locations?: {
+      name: string;
+      latitude: number;
+      longitude: number;
+    }[];
+  };
+};
+
+
+  type Path = {
+    lat: number,
+    long: number
+  }
 
   const [source, setSource] = useState<string>("")
   const [destination, setDestination] = useState<string>("")
-  const [srcLat, setSrcLat] = useState<number | null>()
-  const [destLat, setDestLat] = useState<number | null>()
-  const [srcLong, setSrcLong] = useState<number | null>()
-  const [destLong, setDestLong] = useState<number | null>()
-  const [vehicleNumber, setVehicleNumber] = useState<number | null>()
+  const [srcLat, setSrcLat] = useState<number | null>(null)
+  const [destLat, setDestLat] = useState<number | null>(null)
+  const [srcLong, setSrcLong] = useState<number | null>(null)
+  const [destLong, setDestLong] = useState<number | null>(null)
+  const [vehicleNumber, setVehicleNumber] = useState<string>("")
   const [srcSugg, setSrcSugg] = useState<Place[]>([])
   const [destSugg, setDestSugg] = useState<Place[]>([])
-  const [vehicle, setVechicleTypes] = useState<string>("All Vehicles")
-  const [route, setRoute] = useState<[number, number][]>()
-  const canSearch = !!(source && destination && srcLat && srcLong && destLat && destLong)
+  const [route, setRoute] = useState<[number, number][]>([])
+  const [routeId, setRouteId] = useState<string>("")
+  const [vehicleId, setVehicleId] = useState<string>("")
+  const [vehicles, setVehicles] = useState<VehicleType[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [coordinates, setCoordinates] = useState<[number, number][]>([])
+  const [hasSearched, setHasSearched] = useState(false);
 
-  // const getVehicleRoute = async () =>{
-  //   try {
-  //       const {data} = await axios.get(`api/track/getroute`,route)
-  //   } catch (error) {
+  const canSearch = !!((source && destination && srcLat !== null && srcLong !== null && destLat !== null && destLong !== null) 
+                    || (vehicleNumber.length >= 9 && vehicleNumber.length <= 12));
+  const getVehicle = async () => {
+    try {
+      setLoading(true);
+      setHasSearched(true);
+      console.log("searching ... ")
+      const { data: routeData } = await axios.get("/api/route/search", {
+          params: {
+            source: source.split(",")[0].trim(),
+            destination: destination.split(",")[0].trim(),
+          },
+        }
+        );
+
+      const { data } =
+        await axios.post("/api/vehicle/search",{routeIds: routeData.routeIds,});
+
+      setVehicles(data.vehicles);
+
+      if (data.vehicles.length > 0) {
+        const coords = data.vehicles[0].routeId.locations.map((loc: any) => [
+          loc.latitude,
+          loc.longitude,
+        ]
+        );
+
+        setCoordinates(coords);
+
+        setVehicleId(data.vehicles[0]._id);
+
+        setVehicleNumber(data.vehicles[0].vehicleNumber);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getVehilceByVehicleNumber = async () => {
+    try {
+      setLoading(true)
+      if(!vehicleNumber) return;
       
-  //   }
-  // }
-  // useEffect(()=>{
+      const {data} = await axios.get(`api/track/getlocation/vehiclelocation/${vehicleNumber}`)
+      console.log(data)
+      setVehicles(data.vehicles);
 
-  // })
-  
+      if (data.vehicles.length > 0) {
+        const coords = data.vehicles[0].routeId.locations.map((loc: any) => [
+          loc.latitude,
+          loc.longitude,
+        ]
+        );
+
+        setCoordinates(coords);
+
+        setVehicleId(data.vehicles[0]._id);
+
+        setVehicleNumber(data.vehicles[0].vehicleNumber);
+       
+      }
+    } catch (error) {
+      console.error(error);
+      setLoading(false)
+    }
+  }
+
+
   // get the path 
+
 
 
   const getSuggestion = async (query: string, setResult: (r: Place[]) => void, restrict?: string | null) => {
@@ -109,11 +176,6 @@ export default function page() {
   }
 
   const suggestion = (p: Place) => [p.name, p.city, p.state, p.country].filter(Boolean).join(", ");
-  const getVehicles = async (source, destination) => {
-
-  }
-
-
 
 
   return (
@@ -125,22 +187,20 @@ export default function page() {
             Track Your Vehicle
           </h1>
 
-          <div className="grid md:grid-cols-4 gap-4">
-            <div>
-              <select
-                value={vehicle}
-                onChange={(e) => setVechicleTypes(e.target.value)}
-                className="w-full h-12 px-4 rounded-xl border border-gray-300 outline-none focus:border-black bg-white"
-              >
-                {
-                  vehicleTypes.map((type) => type && (
+          <div className="grid md:grid-cols-4 gap-2">
 
-                    <option key={type.value} value={type.value}>
-                      {type.label}
-                    </option>
-                  ))}
-              </select>
-            </div>
+            <input
+              type="text"
+              placeholder="vehicleNumber"
+              className="w-full h-12 pl-11 pr-4 rounded-xl border border-gray-300 outline-none focus:border-black"
+              onChange={(e) => {
+                setVehicleNumber(e.target.value.toUpperCase())
+                setSource("")
+                setDestination("")
+              }
+              }
+              value={vehicleNumber}
+            />
             <div className="relative">
               <MapPin
                 size={18}
@@ -154,7 +214,7 @@ export default function page() {
                 onChange={(e) => {
                   setSource(e.target.value)
                   getSuggestion(e.target.value, setSrcSugg)
-
+                  setVehicleNumber("")
                 }
                 }
                 value={source}
@@ -168,7 +228,6 @@ export default function page() {
                     exit={{ opacity: 0, y: -4, scale: 0.98 }}
                     transition={{ duration: 0.2 }}
                     className="absolute left-0 right-0 top-full mt-1 bg-white border border-zinc-200 rounded-2xl shadow-xl max-h-52 overflow-y-auto z-50"
-
                   >
                     {
                       srcSugg.map((p, i) => (
@@ -184,7 +243,7 @@ export default function page() {
                             setSrcLat(p.lat)
                             setSrcLong(p.lng)
                             setSrcSugg([])
-
+                            setVehicleNumber("")
                           }}
                         >
                           {/* Content here */}
@@ -225,6 +284,7 @@ export default function page() {
                 onChange={(e) => {
                   setDestination(e.target.value)
                   getSuggestion(e.target.value, setDestSugg)
+                  setVehicleNumber("")
                 }
                 }
               />
@@ -277,106 +337,185 @@ export default function page() {
                 )}
               </AnimatePresence>
             </div>
+            <button className={`${canSearch ? 'h-12 rounded-xl bg-black text-white font-medium flex items-center justify-center gap-2 cursor-pointer' : 'h-12 cursor-pointer rounded-xl bg-black/30 text-white font-medium flex items-center justify-center gap-2'}`}
+              onClick={getVehicle}
 
-            <button className={`${canSearch ? 'h-12 rounded-xl bg-black text-white font-medium flex items-center justify-center gap-2' : 'h-12 rounded-xl bg-black/30 text-white font-medium flex items-center justify-center gap-2'}`}
-              onClick={getVehicles}
-
-              disabled={!canSearch}
+              disabled = {!canSearch }
             >
               <Search size={18} />
               Search
             </button>
+
           </div>
         </div>
 
         {/* Main Section */}
-        <div className="grid lg:grid-cols-3 gap-6">
-
-          {/* Vehicles */}
-          <div className="bg-white rounded-3xl shadow-sm p-5">
+        <div className="grid lg:grid-cols-3 gap-6 mt-6">
+          {/* Vehicle Section */}
+          <div className="lg:col-span-1 bg-white rounded-3xl shadow-sm p-5 h-[750px]">
             <h2 className="text-xl font-semibold mb-5">
               Available Vehicles
             </h2>
-            <div className="space-y-4 max-h-[650px] overflow-y-auto">
 
-              {vehicles.map((vehicle) => (
-                <div
-                  key={vehicle.id}
-                  className="border border-gray-200 rounded-2xl p-4 hover:shadow-md transition"
-                >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <Bus size={20} />
-
-                        <h3 className="font-semibold">
-                          {vehicle.number}
-                        </h3>
-                      </div>
-
-                      <p className="text-gray-500 mt-2">
-                        {vehicle.route}
-                      </p>
-
-                      <div className="mt-2 text-sm font-medium text-zinc-700">
-                        Fare: ₹{vehicle.fare}
-                      </div>
-
-                      <div className="mt-1 text-sm text-gray-500">
-                        Seats Available: {vehicle.availableSeats}
-                      </div>
-
-                      <div className="flex items-center gap-2 mt-3 text-sm text-gray-500">
-                        <Clock size={16} />
-                        ETA: {vehicle.eta}
-                      </div>
-
-                      <div className="mt-2">
-                        <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
-                          {vehicle.status}
-                        </span>
-                      </div>
-                    </div>
+            <div className="overflow-y-auto h-[650px] pr-2">
+              {!hasSearched && (
+                <div className="h-full flex flex-col items-center justify-center text-center">
+                  <div className="text-7xl mb-5">
+                    🚌
                   </div>
 
-                  <button className="mt-5 w-full h-11 rounded-xl bg-black text-white font-medium">
-                    Track Vehicle
-                  </button>
-                </div>
-              ))}
+                  <h3 className="text-xl font-semibold">
+                    Find your ride
+                  </h3>
 
+                  <p className="text-zinc-500 mt-3 max-w-xs">
+                    Search a route and discover buses travelling
+                    between your source and destination.
+                  </p>
+
+                  <p className="text-zinc-400 text-sm mt-6">
+                    Enter source and destination to start tracking.
+                  </p>
+                </div>
+              )}
+
+              {loading && (
+                <div className="h-full flex flex-col items-center justify-center">
+                  <div className="w-12 h-12 border-4 border-zinc-300 border-t-black rounded-full animate-spin" />
+
+                  <p className="mt-5 text-zinc-500">
+                    Searching vehicles...
+                  </p>
+                </div>
+              )}
+
+              {!loading &&
+                hasSearched &&
+                vehicles.length === 0 && (
+                  <div className="h-full flex flex-col items-center justify-center text-center">
+                    <div className="text-6xl mb-4">
+                      😔
+                    </div>
+
+                    <h3 className="text-xl font-semibold">
+                      No Vehicles Found
+                    </h3>
+
+                    <p className="text-zinc-500 mt-3">
+                      No active vehicles are currently available
+                      on this route.
+                    </p>
+                  </div>
+                )}
+
+              {!loading &&
+                vehicles.length > 0 &&
+                vehicles.map((vehicle) => (
+                  <div
+                    key={vehicle._id}
+                    onClick={() => {
+                      if (!vehicle.routeId || !vehicle.routeId.locations
+                      ) {
+                        return;
+                      }
+
+                      setVehicleId(vehicle._id);
+
+                      setVehicleNumber(
+                        vehicle.vehicleNumber
+                      );
+
+                      const routeCoords: [
+                        number,
+                        number
+                      ][] =
+                        vehicle.routeId.locations.map(
+                          (loc) => [
+                            loc.latitude,
+                            loc.longitude,
+                          ]
+                        );
+
+                      setCoordinates(routeCoords);
+                    }}
+                    className={`border rounded-2xl p-4 mb-4 cursor-pointer transition
+            ${vehicleId === vehicle._id
+                        ? "border-blue-500 shadow-lg ring-2 ring-blue-200"
+                        : "border-gray-200 hover:shadow-md"
+                      }`}
+                  >
+                    <div>
+                    <h3 className="font-semibold text-lg">
+                      {vehicle.vehicleNumber}
+                    </h3>
+
+                    <p className="text-sm text-zinc-500 mt-3">
+                      {vehicle.routeId?.locations?.[0]?.name}
+                      {" → "}
+                      {
+                        vehicle.routeId?.locations?.[
+                          vehicle.routeId.locations.length - 1
+                        ]?.name
+                      }
+                    </p>
+
+                    <p className="text-sm text-zinc-600 mt-2">
+                      {vehicle.routeId?.distanceInKm ?? "--"} km
+                      •
+                      {" "}
+                      {vehicle.routeId?.estimatedDurationInMinutes ?? "--"} mins
+                    </p>
+                  </div>
+
+                    <button
+                      className={`mt-5 w-full h-11 rounded-xl font-medium transition cursor-pointer
+              ${vehicleId === vehicle._id
+                          ? "bg-blue-600 text-white"
+                          : "bg-black text-white"
+                        }`}
+                    >
+                      {vehicleId === vehicle._id
+                        ? "Tracking Vehicle"
+                        : "Track Vehicle"}
+                    </button>
+                  </div>
+                ))}
             </div>
           </div>
 
-          {/* Map */}
-          <div className="lg:col-span-2 bg-white rounded-3xl shadow-sm p-4">
-            <h2 className="text-xl font-semibold mb-4">
+          {/* Map Section */}
+          <div className="lg:col-span-2 bg-white rounded-3xl shadow-sm p-5">
+            <h2 className="text-xl font-semibold mb-5">
               Live Map
             </h2>
 
-            <div className="h-[650px] rounded-2xl overflow-hidden bg-gray-200 flex items-center justify-center">
-
-              {/* Replace with Leaflet */}
-              <div className="text-center text-gray-500">
-                <MapPin
-                  size={45}
-                  className="mx-auto mb-4"
+            <div className="h-[650px] rounded-2xl overflow-hidden bg-zinc-100">
+              {vehicleId ? (
+                <SearchMap
+                  source={source}
+                  destination={destination}
+                  coordinates={coordinates}
+                  vehicleNumber={vehicleNumber}
+                  srcLat={srcLat}
+                  srcLong={srcLong}
+                  destLat={destLat}
+                  destLong={destLong}
+                  vehicleId={vehicleId}
                 />
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-zinc-500">
+                  <div className="text-7xl mb-4">
+                    🗺️
+                  </div>
 
-                <p className="font-medium">
-                  Leaflet Map Goes Here
-                </p>
-
-                <p className="text-sm mt-2">
-                  Route Polyline + Live Bus Marker
-                </p>
-              </div>
-
-
+                  <p>Select a vehicle to start tracking.</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
     </div>
+
   );
 }

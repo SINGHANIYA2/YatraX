@@ -1,18 +1,19 @@
 import mongoose, { Schema } from "mongoose";
 import { FileSchema } from "./FileSchema.models";
 
-const VehicleSchema = new Schema(
-  {
+const VehicleSchema = new Schema({
     adminId: {
       type: Schema.Types.ObjectId,
       ref: "Admin",
       required: true,
       index: true,
     },
+
     assignedPartnerId: {
       type: Schema.Types.ObjectId,
       ref: "Partner",
       default: null,
+      index: true,
     },
 
     vehicleType: {
@@ -21,9 +22,21 @@ const VehicleSchema = new Schema(
       required: true,
     },
 
+<<<<<<< HEAD
     brand: String,
 
     model: String,
+=======
+    brand: {
+      type: String,
+      trim: true,
+    },
+
+    model: {
+      type: String,
+      trim: true,
+    },
+>>>>>>> 0e1d5da9ede71dacb0ec121eb87405de06a48285
 
     vehicleNumber: {
       type: String,
@@ -31,6 +44,7 @@ const VehicleSchema = new Schema(
       unique: true,
       uppercase: true,
       trim: true,
+      index: true,
     },
 
     documents: {
@@ -47,16 +61,12 @@ const VehicleSchema = new Schema(
         "maintenance",
       ],
       default: "available",
+      index: true,
     },
 
     tripStatus: {
       type: String,
-      enum: [
-        "idle",
-        "boarding",
-        "running",
-        "completed",
-      ],
+      enum: ["idle","boarding","running","completed",],
       default: "idle",
       index: true,
     },
@@ -90,6 +100,7 @@ const VehicleSchema = new Schema(
     lastLocationUpdate: {
       type: Date,
       default: null,
+      index: true,
     },
 
     routeId: {
@@ -98,12 +109,19 @@ const VehicleSchema = new Schema(
       default: null,
     },
 
+<<<<<<< HEAD
     assignedAt: Date,
 
     scheduledStartAt: Date,
 
     scheduledEndAt: Date,
 
+=======
+    assignedAt: {
+      type: Date,
+      default: null,
+    },
+>>>>>>> 0e1d5da9ede71dacb0ec121eb87405de06a48285
   },
   {
     timestamps: true,
@@ -111,4 +129,5 @@ const VehicleSchema = new Schema(
 );
 
 const Vehicle = mongoose.models.Vehicle || mongoose.model("Vehicle", VehicleSchema);
-export default Vehicle
+
+export default Vehicle;
