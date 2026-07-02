@@ -404,15 +404,14 @@ useEffect(() => {
                         w-full
                         max-w-md
                         rounded-3xl
-                        bg-[#08111F]
-                        border border-blue-500/20
-                        shadow-[0_0_50px_rgba(37,99,235,0.25)]
-                        backdrop-blur-xl
+                        bg-card
+                        border border-primary/20
+                        shadow-sm
                         p-6 sm:p-8
-                        text-white
+                        text-foreground
                         overflow-hidden
                         ">
-                        <div className='absolute right-4 top-4 text-gray-400 hover:text-white transition'
+                        <div className='absolute right-4 top-4 text-muted-foreground hover:text-foreground transition'
                             onClick={() => {
                                 if (!(role === "admin" && !canSubmit)) {
                                     onClose();
@@ -423,11 +422,11 @@ useEffect(() => {
 
                         <div className="mb-8 text-center">
                             <h1 className="text-4xl font-bold">
-                                <span className="text-blue-950">Yatra</span>
-                                <span className="text-blue-500">X</span>
+                                <span className="text-foreground">Yatra</span>
+                                <span className="text-primary">X</span>
                             </h1>
 
-                            <p className="mt-2 text-sm text-gray-400">
+                            <p className="mt-2 text-sm text-muted-foreground">
                                 Smart Transport Booking & Live Tracking
                             </p>
                         </div>
@@ -439,11 +438,11 @@ useEffect(() => {
                                     <button className="
                                 w-full h-12
                                 rounded-xl
-                                border border-white/10
-                                bg-white/5
-                                text-white
+                                border border-border/10
+                                bg-accent
+                                text-foreground
                                 flex items-center justify-center gap-3
-                                hover:bg-white/10
+                                hover:bg-accent
                                 transition
                                 cursor-pointer
                                 "
@@ -453,9 +452,9 @@ useEffect(() => {
                                     </button>
 
                                     <div className='flex items-center gap-4 my-6'>
-                                        <div className='flex-1 h-[1px] bg-white/50' />
-                                        <div className='text-xs text-gray-400'>OR</div>
-                                        <div className='flex-1 h-[1px] bg-white/50' />
+                                        <div className='flex-1 h-[1px] bg-accent' />
+                                        <div className='text-xs text-muted-foreground'>OR</div>
+                                        <div className='flex-1 h-[1px] bg-accent' />
                                     </div>
 
                                 </div>
@@ -472,38 +471,38 @@ useEffect(() => {
                                     >
                                         <h1 className='text-xl font-semibold'>Welcome back</h1>
                                         <div className='mt-5 space-y-4'>
-                                            <div className='flex items-center gap-3 border border-white/10 bg-white/5 rounded-xl px-4 py-3'>
-                                                <Mail size={18} className='text-gray-400' />
+                                            <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
+                                                <Mail size={18} className='text-muted-foreground' />
                                                 <input type="email" placeholder='Email' className='flex-1 outline-none bg-transparent text-sm'
                                                     onChange={(e) => { setEmail(e.target.value) }} value={email}
                                                 />
                                             </div>
-                                            <div className='flex items-center gap-3 border border-white/10 bg-white/5 rounded-xl px-4 py-3'>
-                                                <Lock size={18} className='text-gray-400' />
+                                            <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
+                                                <Lock size={18} className='text-muted-foreground' />
                                                 <input type="password" placeholder='Password' className='flex-1 outline-none bg-transparent text-sm'
                                                     onChange={(e) => { setPassword(e.target.value) }} value={password}
                                                 />
                                             </div>
 
 
-                                            <button className='w-full h-11 rounded-xl bg-black text-white font-semibold hover:bg-white hover:text-black'
+                                            <button className='w-full h-11 rounded-xl bg-foreground text-background font-semibold hover:bg-card hover:text-foreground'
                                                 onClick={handleLogIn}
                                             >
                                                 {!loading ? "Log In" :
-                                                    <CircleDashed size={18} color='white' className='animate-spin ml-45' />}
+                                                    <CircleDashed size={18} className='animate-spin ml-45 text-background' />}
 
                                             </button>
 
 
                                         </div>
 
-                                        <p className='mt-6 text-center text-sm text-gray-400'>
+                                        <p className='mt-6 text-center text-sm text-muted-foreground'>
 
                                             Don&apos;t have an account?{" "}
                                             <br></br>
                                             <span
                                                 onClick={() => setStep("signup")}
-                                                className='text-white font-medium hover:underline cursor-pointer'
+                                                className='text-foreground font-medium hover:underline cursor-pointer'
                                             >
                                                 Sign up
                                             </span>
@@ -524,72 +523,72 @@ useEffect(() => {
 
 
                                         <div className='mt-5 space-y-4'>
-                                            <div className='flex items-center gap-3 border border-white/10 bg-white/5 rounded-xl px-4 py-3'>
-                                                <User size={18} className='text-gray-400' />
+                                            <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
+                                                <User size={18} className='text-muted-foreground' />
                                                 <input type="text" placeholder='Full name' className='flex-1 outline-none bg-transparent text-sm'
                                                     onChange={(e) => { setName(e.target.value) }} value={name}
                                                 />
                                             </div>
 
-                                            <div className='flex items-center gap-3 border border-white/10 bg-white/5 rounded-xl px-4 py-3'>
-                                                <Mail size={18} className='text-gray-400' />
+                                            <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
+                                                <Mail size={18} className='text-muted-foreground' />
                                                 <input type="email" placeholder='Email' className='flex-1 outline-none bg-transparent text-sm'
                                                     onChange={(e) => { setEmail(e.target.value) }} value={email}
                                                 />
                                             </div>
-                                            <div className='flex items-center gap-3 border border-white/10 bg-white/5 rounded-xl px-4 py-3'>
-                                                <Phone size={18} className='text-gray-400' />
+                                            <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
+                                                <Phone size={18} className='text-muted-foreground' />
                                                 <input type="text" placeholder='Mobile Number' className='flex-1 outline-none bg-transparent text-sm'
                                                     onChange={(e) => { setMobileNumber(e.target.value) }} value={mobileNumber}
                                                 />
                                             </div>
 
-                                            <div className='flex items-center gap-3 border border-white/10 bg-white/5 rounded-xl px-4 py-3'>
-                                                <Lock size={18} className='text-gray-400' />
+                                            <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
+                                                <Lock size={18} className='text-muted-foreground' />
                                                 <input type="password" placeholder='Password' className='flex-1 outline-none bg-transparent text-sm'
                                                     onChange={(e) => { setPassword(e.target.value) }} value={password}
                                                 />
                                             </div>
-                                            <div className='flex items-center gap-3 border border-white/10 bg-white/5 rounded-xl px-4 py-3'>
-                                                <GrUserAdmin size={18} className='text-gray-400' />
+                                            <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
+                                                <GrUserAdmin size={18} className='text-muted-foreground' />
 
                                                 <select
-                                                    className='flex-1 outline-none bg-transparent text-sm text-white'
+                                                    className='flex-1 outline-none bg-transparent text-sm text-foreground'
                                                     value={role}
                                                     onChange={(e) => setRole(e.target.value)}
                                                 >
-                                                    <option value="" className='text-black'>
+                                                    <option value="" className='text-foreground'>
                                                         Select Role
                                                     </option>
-                                                    <option value="user" className='text-black'>
+                                                    <option value="user" className='text-foreground'>
                                                         User
                                                     </option>
-                                                    <option value="admin" className='text-black'>
+                                                    <option value="admin" className='text-foreground'>
                                                         Owner
                                                     </option>
                                                 </select>
                                             </div>
 
-                                            {err && <p className='text-red-500'>*{err}</p>}
+                                            {err && <p className='text-destructive'>*{err}</p>}
 
-                                            <button className='w-full h-11 rounded-xl bg-black text-white font-semibold
-                                            transition flex justify-center items-center cursor-pointer hover:bg-white hover:text-black'
+                                            <button className='w-full h-11 rounded-xl bg-primary text-primary-foreground font-semibold
+                                            transition flex justify-center items-center cursor-pointer hover:bg-primary-hover'
                                                 onClick={handleSignUp}
                                                 disabled={loading}
                                             >
                                                 {!loading ? "Send otp" :
-                                                    <CircleDashed size={18} color='white' className='animate-spin hover:text-black' />}
+                                                    <CircleDashed size={18} className='animate-spin' />}
                                             </button>
 
 
                                         </div>
 
-                                        <p className='mt-6 text-center text-sm text-gray-400'>
+                                        <p className='mt-6 text-center text-sm text-muted-foreground'>
                                             Already have an account <br>
                                             </br>
                                             <span
                                                 onClick={() => setStep("login")}
-                                                className='text-white font-medium hover:underline cursor-pointer'
+                                                className='text-foreground font-medium hover:underline cursor-pointer'
 
                                             >
                                                 Log In
@@ -608,11 +607,11 @@ useEffect(() => {
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, x: -20 }}
                                     >
-                                        <h2 className="text-2xl font-semibold text-white">
+                                        <h2 className="text-2xl font-semibold text-foreground">
                                             Verify Account
                                         </h2>
 
-                                        <p className="text-gray-400 mt-9">
+                                        <p className="text-muted-foreground mt-9">
                                             Email Otp
                                         </p>
 
@@ -630,17 +629,17 @@ useEffect(() => {
                                                         w-12 h-12
                                                         rounded-xl
                                                         text-center
-                                                        bg-white/5
-                                                        border border-white/10
-                                                        text-white
+                                                        bg-accent
+                                                        border border-border/10
+                                                        text-foreground
                                                         outline-none
-                                                        focus:border-blue-500
+                                                        focus:border-primary
                                                         "
                                                 />
 
                                             ))}
                                         </div>
-                                        <p className="text-gray-400 mt-10">
+                                        <p className="text-muted-foreground mt-10">
                                             Mobile Otp
                                         </p>
 
@@ -655,11 +654,11 @@ useEffect(() => {
                                                             w-12 h-12
                                                             rounded-xl
                                                             text-center
-                                                            bg-white/5
-                                                            border border-white/10
-                                                            text-white
+                                                            bg-accent
+                                                            border border-border/10
+                                                            text-foreground
                                                             outline-none
-                                                            focus:border-blue-500
+                                                            focus:border-primary
                                                             "
                                                     onKeyDown={(e) =>
                                                         handleOtpKeyDown(e, i, "mobile")
@@ -675,10 +674,7 @@ useEffect(() => {
                                                     w-full
                                                     h-12
                                                     rounded-xl
-                                                    bg-gradient-to-r
-                                                    from-blue-600
-                                                    to-blue-500
-                                                    text-white font-semibold
+                                                    bg-primary text-primary-foreground hover:bg-primary-hover transition-colors font-semibold
                                                     "
 
 
@@ -700,52 +696,52 @@ useEffect(() => {
                                     className="max-h-[70vh] overflow-y-auto space-y-4"
                                 >
 
-                                    <h2 className="text-2xl font-bold text-white">
+                                    <h2 className="text-2xl font-bold text-foreground">
                                         Organization Details
                                     </h2>
 
                                     <input
                                         placeholder="Organization Name"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.organizationName}
                                         onChange={(e) => setAdminData({ ...adminData, organizationName: e.target.value })}
                                     />
 
                                     <select
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.organizationType}
                                         onChange={(e) => setAdminData({ ...adminData, organizationType: e.target.value })}
                                     >
-                                        <option value="" className='text-black'>Select Organization Type</option>
-                                        <option value="Bus Operator text-black">Bus Operator</option>
-                                        <option value="Travel Agency text-black">Travel Agency</option>
-                                        <option value="Fleet Owner text-black">Fleet Owner</option>
+                                        <option value="" className='text-foreground'>Select Organization Type</option>
+                                        <option value="Bus Operator text-foreground">Bus Operator</option>
+                                        <option value="Travel Agency text-foreground">Travel Agency</option>
+                                        <option value="Fleet Owner text-foreground">Fleet Owner</option>
                                     </select>
 
                                     <input
                                         placeholder="GST Number"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.gstNumber}
                                         onChange={(e) => setAdminData({ ...adminData, gstNumber: e.target.value })}
                                     />
 
                                     <input
                                         placeholder="PAN Number"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.panNumber}
                                         onChange={(e) => setAdminData({ ...adminData, panNumber: e.target.value })}
                                     />
 
                                     <input
                                         placeholder="Registration Number"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.registrationNumber}
                                         onChange={(e) => setAdminData({ ...adminData, registrationNumber: e.target.value })}
                                     />
 
                                     <input
                                         placeholder="Address"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.address}
                                         onChange={(e) => setAdminData({ ...adminData, address: e.target.value })}
                                     />
@@ -754,14 +750,14 @@ useEffect(() => {
 
                                         <input
                                             placeholder="City"
-                                            className="border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                            className="border border-border/10 bg-accent rounded-xl px-4 py-3"
                                             value={adminData.city}
                                             onChange={(e) => setAdminData({ ...adminData, city: e.target.value })}
                                         />
 
                                         <input
                                             placeholder="State"
-                                            className="border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                            className="border border-border/10 bg-accent rounded-xl px-4 py-3"
                                             value={adminData.state}
                                             onChange={(e) => setAdminData({ ...adminData, state: e.target.value })}
                                         />
@@ -770,61 +766,61 @@ useEffect(() => {
 
                                     <input
                                         placeholder="Pincode"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.pincode}
                                         onChange={(e) => setAdminData({ ...adminData, pincode: e.target.value })}
                                     />
 
                                     <input
                                         placeholder="Total Vehicles"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.totalVehicles}
                                         onChange={(e) => setAdminData({ ...adminData, totalVehicles: e.target.value })}
                                     />
 
-                                    <h3 className="text-lg font-semibold text-white mt-4">
+                                    <h3 className="text-lg font-semibold text-foreground mt-4">
                                         Bank Details
                                     </h3>
 
                                     <input
                                         placeholder="Bank Name"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.bankName}
                                         onChange={(e) => setAdminData({ ...adminData, bankName: e.target.value })}
                                     />
 
                                     <input
                                         placeholder="Account Holder Name"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.accountHolderName}
                                         onChange={(e) => setAdminData({ ...adminData, accountHolderName: e.target.value })}
                                     />
 
                                     <input
                                         placeholder="Account Number"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.accountNumber}
                                         onChange={(e) => setAdminData({ ...adminData, accountNumber: e.target.value })}
                                     />
 
                                     <input
                                         placeholder="IFSC Code"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.ifscCode}
                                         onChange={(e) => setAdminData({ ...adminData, ifscCode: e.target.value })}
                                     />
 
                                     <input
                                         placeholder="UPI ID"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.upiId}
                                         onChange={(e) => setAdminData({ ...adminData, upiId: e.target.value })}
                                     />
 
-                                    {err && (<p className='text-red-600 text-xl'>*{err}</p>)}
+                                    {err && (<p className='text-destructive text-xl'>*{err}</p>)}
 
                                     <button
-                                        className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 cursor-pointer to-blue-500 font-semibold mt-4"
+                                        className="w-full h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover transition-colors font-semibold mt-4"
                                         onClick={() => {handleAdminDetailsSubmit}}
                                     >
                                         Submit

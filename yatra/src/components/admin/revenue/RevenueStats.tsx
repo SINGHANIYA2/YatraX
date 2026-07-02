@@ -20,10 +20,10 @@ export default function RevenueStats() {
     ]
 
     const iconColors = [
-        'text-yellow-400',
-        'text-green-400',
-        'text-blue-400',
-        'text-cyan-400'
+        'text-warning',
+        'text-success',
+        'text-primary',
+        'text-primary'
     ]
 
     return (

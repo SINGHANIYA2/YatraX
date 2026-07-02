@@ -22,9 +22,9 @@ export default function ApplicationFilters({
             mt-6
             p-4
             rounded-3xl
-            bg-[#071427]
+            bg-card
             border
-            border-blue-500/10
+            border-primary/10
             flex
             gap-4
         "
@@ -38,12 +38,12 @@ export default function ApplicationFilters({
                 className="
                 w-56
                 rounded-xl
-                bg-slate-900
+                bg-card
                 border
                 outline-none
-                border-slate-800
+                border-border
                 px-4
-                text-white
+                text-foreground
                 "
             >
                 <option>All</option>
@@ -60,7 +60,7 @@ export default function ApplicationFilters({
                     left-4
                     top-1/2
                     -translate-y-1/2
-                    text-slate-500
+                    text-muted-foreground
                     "
                 />
 
@@ -73,14 +73,14 @@ export default function ApplicationFilters({
                     className="
                     w-full
                     rounded-xl
-                    bg-slate-900
+                    bg-card
                     border
-                    border-slate-800
+                    border-border
                     py-3
                     pl-11
                     pr-4
                     outline-none
-                    text-white
+                    text-foreground
                     "
                 />
             </div>

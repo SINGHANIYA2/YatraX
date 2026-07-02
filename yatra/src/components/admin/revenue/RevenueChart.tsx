@@ -18,10 +18,10 @@ export default function RevenueChart() {
             className="
             rounded-3xl
             border
-            border-blue-500/10
-            bg-[#071427]
+            border-primary/10
+            bg-card
             p-6
-            shadow-[0_0_25px_rgba(59,130,246,.06)]
+            shadow-sm
             "
         >
             <div className="mb-6">
@@ -30,7 +30,7 @@ export default function RevenueChart() {
                     className="
                     text-xl
                     font-bold
-                    text-white
+                    text-foreground
                     "
                 >
                     Revenue Overview
@@ -40,7 +40,7 @@ export default function RevenueChart() {
                     className="
                     mt-1
                     text-sm
-                    text-slate-400
+                    text-muted-foreground
                     "
                 >
                     Monthly revenue performance
@@ -59,31 +59,31 @@ export default function RevenueChart() {
                     >
                         <CartesianGrid
                             strokeDasharray="3 3"
-                            stroke="#1e293b"
+                            stroke="var(--border)"
                         />
 
                         <XAxis
                             dataKey="month"
-                            stroke="#94a3b8"
+                            stroke="var(--muted-foreground)"
                         />
 
                         <YAxis
-                            stroke="#94a3b8"
+                            stroke="var(--muted-foreground)"
                         />
 
                         <Tooltip
                             cursor={false}
                             contentStyle={{
-                                background: '#071427',
-                                border: '1px solid #1e293b',
+                                background: 'var(--card)',
+                                border: '1px solid var(--border)',
                                 borderRadius: '12px',
-                                color: '#fff',
+                                color: 'var(--foreground)',
                             }}
                         />
 
                         <Bar
                             dataKey="revenue"
-                            fill="#3b82f6"
+                            fill="var(--primary)"
                             radius={[8, 8, 0, 0]}
                             activeBar={false}
                         />

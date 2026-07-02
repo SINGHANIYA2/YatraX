@@ -137,15 +137,15 @@ export default function ApplicationsPage() {
             flex
             items-center
             justify-center
-            bg-[#030712]
-            text-white
+            bg-background
+            text-foreground
         ">
                 Loading Applications...
             </div>
         )
     }
     return (
-        <div className="bg-[#030712] min-h-screen">
+        <div className="bg-background min-h-screen">
 
             <div className="w-full fixed top-0 z-40">
                 <ApplicationTopBar />

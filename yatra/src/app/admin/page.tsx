@@ -13,7 +13,7 @@ export default function AdminPage() {
     return (
 
 
-        <div className='bg-[#030712] mb-9'>
+        <div className='bg-background mb-9'>
             <AdminTopbar></AdminTopbar>
             <motion.div
                 initial={{ y: 40, opacity: 0 }}

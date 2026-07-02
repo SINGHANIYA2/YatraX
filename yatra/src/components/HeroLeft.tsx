@@ -22,9 +22,9 @@ export default function HeroLeft() {
                     py-2
                     rounded-full
                     border
-                    border-green-500/20
-                    bg-green-500/10
-                    text-green-400
+                    border-success/20
+                    bg-success/10
+                    text-success
                     text-sm
                     w-fit
                 "
@@ -46,7 +46,7 @@ export default function HeroLeft() {
                 Travel Smarter
                 <br />
                 with{" "}
-                <span className="text-blue-500">
+                <span className="text-primary">
                     YatraX
                 </span>
             </h1>
@@ -56,7 +56,7 @@ export default function HeroLeft() {
                 className="
                     mt-6
                     text-md
-                    text-gray-400
+                    text-muted-foreground
                     max-w-xl
                     leading-relaxed
                 "
@@ -75,12 +75,9 @@ export default function HeroLeft() {
                     px-8
                     py-4
                     rounded-xl
-                    bg-gradient-to-r
-                    from-blue-600
-                    to-blue-500
-                    text-white
+                    bg-primary text-primary-foreground hover:bg-primary-hover transition-colors
                     font-semibold
-                    shadow-[0_0_20px_rgba(37,99,235,.4)]
+                    shadow-sm
                     hover:scale-105
                     transition
                     "
@@ -95,11 +92,11 @@ export default function HeroLeft() {
                     py-4
                     rounded-xl
                     border
-                    border-green-500/30
-                    bg-green-500/5
-                    text-green-400
+                    border-success/30
+                    bg-success/5
+                    text-success
                     font-semibold
-                    hover:bg-green-500/10
+                    hover:bg-success/10
                     transition
                 "
                 >
@@ -113,9 +110,9 @@ export default function HeroLeft() {
                 <div className="flex items-center gap-2">
                     <Shield
                         size={18}
-                        className="text-green-400"
+                        className="text-success"
                     />
-                    <span className="text-sm text-gray-300">
+                    <span className="text-sm text-muted-foreground">
                         Secure Payments
                     </span>
                 </div>
@@ -123,9 +120,9 @@ export default function HeroLeft() {
                 <div className="flex items-center gap-2">
                     <MapPinned
                         size={18}
-                        className="text-green-400"
+                        className="text-success"
                     />
-                    <span className="text-sm text-gray-300">
+                    <span className="text-sm text-muted-foreground">
                         Live Tracking
                     </span>
                 </div>
@@ -133,9 +130,9 @@ export default function HeroLeft() {
                 <div className="flex items-center gap-2">
                     <Headphones
                         size={18}
-                        className="text-green-400"
+                        className="text-success"
                     />
-                    <span className="text-sm text-gray-300">
+                    <span className="text-sm text-muted-foreground">
                         24/7 Support
                     </span>
                 </div>

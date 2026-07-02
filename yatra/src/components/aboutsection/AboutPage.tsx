@@ -7,7 +7,7 @@ import { motion } from 'motion/react'
 
 export default function AboutPage() {
     return (
-        <div className="bg-[#030712] min-h-screen">
+        <div className="bg-background min-h-screen">
 
             <motion.div
                 initial={{ y: 50, opacity: 0 }}
@@ -18,16 +18,16 @@ export default function AboutPage() {
 
                 {/* Header */}
                 <div className="text-center mb-14">
-                    <span className="inline-block px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm mb-4">
+                    <span className="inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm mb-4">
                         ✈️ About YatraX
                     </span>
 
-                    <h1 className="text-5xl font-bold text-white">
+                    <h1 className="text-5xl font-bold text-foreground">
                         Redefining the Way You
-                        <span className="text-blue-500"> Travel</span>
+                        <span className="text-primary"> Travel</span>
                     </h1>
 
-                    <p className="mt-4 max-w-3xl mx-auto text-lg text-gray-400">
+                    <p className="mt-4 max-w-3xl mx-auto text-lg text-muted-foreground">
                         YatraX is your all-in-one travel platform designed to make
                         booking buses, taxis, trains, and hotels seamless,
                         secure, and enjoyable.

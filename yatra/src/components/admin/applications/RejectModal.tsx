@@ -22,16 +22,15 @@ export default function RejectModal({
             fixed inset-0 z-[110]
             flex items-center justify-center
             bg-black/70
-            backdrop-blur-sm
             "
         >
             <div
                 className="
                 w-[500px]
                 rounded-3xl
-                bg-[#071427]
+                bg-card
                 border
-                border-blue-500/10
+                border-primary/10
                 p-6
                 "
             >
@@ -43,13 +42,13 @@ export default function RejectModal({
                             className="
                             text-xl
                             font-bold
-                            text-white
+                            text-foreground
                             "
                         >
                             Reject Application
                         </h2>
 
-                        <p className="text-slate-400 text-sm">
+                        <p className="text-muted-foreground text-sm">
                             Provide a rejection reason
                         </p>
                     </div>
@@ -59,8 +58,8 @@ export default function RejectModal({
                         className="
                         p-2
                         rounded-lg
-                        hover:bg-slate-800
-                        text-slate-400
+                        hover:bg-secondary
+                        text-muted-foreground
                         "
                     >
                         <X size={18} />
@@ -83,11 +82,11 @@ export default function RejectModal({
                     w-full
                     resize-none
                     rounded-xl
-                    bg-slate-900
+                    bg-card
                     border
-                    border-slate-800
+                    border-border
                     p-4
-                    text-white
+                    text-foreground
                     outline-none
                     "
                 />
@@ -106,8 +105,8 @@ export default function RejectModal({
                         px-4
                         py-2
                         rounded-xl
-                        bg-slate-800
-                        text-white
+                        bg-secondary
+                        text-foreground
                         "
                     >
                         Cancel
@@ -121,8 +120,8 @@ export default function RejectModal({
                         px-4
                         py-2
                         rounded-xl
-                        bg-red-500
-                        text-white
+                        bg-destructive
+                        text-foreground
                         "
                     >
                         Reject Application

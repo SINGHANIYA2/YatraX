@@ -34,28 +34,28 @@ export default function ApplicationStats() {
                 title="Total Applications"
                 value={applications.length}
                 icon={FileText}
-                iconColor="text-blue-400"
+                iconColor="text-primary"
             />
 
             <ApplicationStatsCard
                 title="Pending"
                 value={pending}
                 icon={Clock3}
-                iconColor="text-yellow-400"
+                iconColor="text-warning"
             />
 
             <ApplicationStatsCard
                 title="Approved"
                 value={approved}
                 icon={CheckCircle2}
-                iconColor="text-green-400"
+                iconColor="text-success"
             />
 
             <ApplicationStatsCard
                 title="Rejected"
                 value={rejected}
                 icon={XCircle}
-                iconColor="text-red-400"
+                iconColor="text-destructive"
             />
 
         </div>

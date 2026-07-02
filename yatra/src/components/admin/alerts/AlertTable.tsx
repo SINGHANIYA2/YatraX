@@ -8,8 +8,8 @@ export default function AlertTable() {
             className="
             rounded-3xl
             border
-            border-blue-500/10
-            bg-[#071427]
+            border-primary/10
+            bg-card
             overflow-hidden
             "
         >
@@ -19,8 +19,8 @@ export default function AlertTable() {
                     <tr
                         className="
                         border-b
-                        border-slate-800
-                        text-slate-400
+                        border-border
+                        text-muted-foreground
                         "
                     >
                         <th className="p-5 text-left">
@@ -55,23 +55,23 @@ export default function AlertTable() {
                             key={alert.id}
                             className="
                             border-b
-                            border-slate-900
-                            hover:bg-slate-900/30
+                            border-border
+                            hover:bg-card
                             "
                         >
-                            <td className="p-5 text-white">
+                            <td className="p-5 text-foreground">
                                 {alert.id}
                             </td>
 
-                            <td className="p-5 text-slate-300">
+                            <td className="p-5 text-muted-foreground">
                                 {alert.vehicle}
                             </td>
 
-                            <td className="p-5 text-slate-300">
+                            <td className="p-5 text-muted-foreground">
                                 {alert.type}
                             </td>
 
-                            <td className="p-5 text-slate-300">
+                            <td className="p-5 text-muted-foreground">
                                 {alert.message}
                             </td>
 
@@ -85,10 +85,10 @@ export default function AlertTable() {
 
                                     ${
                                         alert.severity === 'Critical'
-                                            ? 'bg-red-500/15 text-red-400'
+                                            ? 'bg-destructive/15 text-destructive'
                                             : alert.severity === 'Warning'
-                                            ? 'bg-yellow-500/15 text-yellow-400'
-                                            : 'bg-green-500/15 text-green-400'
+                                            ? 'bg-warning/15 text-warning'
+                                            : 'bg-success/15 text-success'
                                     }
                                     `}
                                 >
@@ -96,7 +96,7 @@ export default function AlertTable() {
                                 </span>
                             </td>
 
-                            <td className="p-5 text-slate-400">
+                            <td className="p-5 text-muted-foreground">
                                 {alert.time}
                             </td>
                         </tr>

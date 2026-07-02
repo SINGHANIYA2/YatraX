@@ -14,7 +14,7 @@ export default function Layout({
                     className="
             flex-1
             overflow-y-auto
-            bg-[#030712]
+            bg-background
           "
                 >
                     {children}

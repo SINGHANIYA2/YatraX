@@ -31,11 +31,9 @@ export default function AdminSidebar() {
                 h-screen
                 sticky
                 top-0
-                bg-gradient-to-b
-                from-[#071427]
-                to-[#04101f]
+                bg-background
                 border-r
-                border-blue-500/10
+                border-primary/10
                 transition-all
                 duration-300
                 font-sans
@@ -44,7 +42,7 @@ export default function AdminSidebar() {
         >
             {/* header */}
 
-            <div className="h-21 px-4 flex items-center justify-between border-b border-slate-800">
+            <div className="h-21 px-4 flex items-center justify-between border-b border-border">
 
                 {!collapsed && (
                     <motion.h1
@@ -67,11 +65,11 @@ export default function AdminSidebar() {
                                 text-3xl
                                 font-black
                                 tracking-tight
-                                text-white
+                                text-foreground
                                 "
                     >
                         Yatra
-                        <span className="text-blue-500">X</span>
+                        <span className="text-primary">X</span>
                     </motion.h1>
                 )}
 
@@ -82,8 +80,8 @@ export default function AdminSidebar() {
                     className="
                         p-2
                         rounded-lg
-                        text-slate-400
-                        hover:bg-slate-800
+                        text-muted-foreground
+                        hover:bg-secondary
                         cursor-pointer
                     "
                 >
@@ -113,7 +111,7 @@ export default function AdminSidebar() {
                                             font-normal
                                             uppercase
                                             tracking-[0.18em]
-                                            text-slate-500
+                                            text-muted-foreground
                                             
                                             "
                                     >
@@ -152,14 +150,14 @@ export default function AdminSidebar() {
                             duration-200
                              ${isActive
                                     ? `
-                                    bg-slate-800/80
-                                    text-white
-                                    shadow-[0_0_15px_rgba(59,130,246,.08)]
+                                    bg-secondary/80
+                                    text-foreground
+                                    shadow-sm
                                     `
                                     : `
-                                    text-slate-300
-                                    hover:bg-slate-800/70
-                                    hover:text-white
+                                    text-muted-foreground
+                                    hover:bg-secondary/70
+                                    hover:text-foreground
                                     `
                                 }
 

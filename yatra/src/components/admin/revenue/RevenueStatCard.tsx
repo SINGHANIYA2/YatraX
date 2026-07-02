@@ -22,10 +22,10 @@ export default function RevenueStatCard({
             className="
             rounded-3xl
             border
-            border-blue-500/10
-            bg-[#071427]
+            border-primary/10
+            bg-card
             p-5
-            shadow-[0_0_25px_rgba(59,130,246,.06)]
+            shadow-sm
             "
         >
             <div className="flex items-start justify-between">
@@ -38,7 +38,7 @@ export default function RevenueStatCard({
                     items-center
                     justify-center
                     rounded-2xl
-                    bg-slate-800/50
+                    bg-secondary/50
                     "
                 >
                     <div className={iconColor}>
@@ -49,12 +49,12 @@ export default function RevenueStatCard({
                 <span
                     className="
                     rounded-full
-                    bg-green-500/10
+                    bg-success/10
                     px-3
                     py-1
                     text-xs
                     font-medium
-                    text-green-400
+                    text-success
                     "
                 >
                     {change}
@@ -67,7 +67,7 @@ export default function RevenueStatCard({
                 <h3
                     className="
                     text-sm
-                    text-slate-400
+                    text-muted-foreground
                     "
                 >
                     {title}
@@ -78,7 +78,7 @@ export default function RevenueStatCard({
                     mt-2
                     text-4xl
                     font-bold
-                    text-white
+                    text-foreground
                     "
                 >
                     {value}

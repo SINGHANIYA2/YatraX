@@ -22,9 +22,9 @@ export default function ApplicationTable({
             className="
             mt-6
             rounded-3xl
-            bg-[#071427]
+            bg-card
             border
-            border-blue-500/10
+            border-primary/10
             "
         >
             <table className="w-full">
@@ -32,9 +32,9 @@ export default function ApplicationTable({
                 <thead>
                     <tr
                         className="
-                        text-slate-400
+                        text-muted-foreground
                         border-b
-                        border-slate-800
+                        border-border
                         "
                     >
                         <th className="p-5 text-left">
@@ -69,24 +69,24 @@ export default function ApplicationTable({
                             key={app.id}
                             className="
                             border-b
-                            border-slate-800
+                            border-border
                             "
                         >
                             <td className="p-5">
-                                <p className="text-white">
+                                <p className="text-foreground">
                                     {app.name}
                                 </p>
 
-                                <p className="text-slate-500 text-sm">
+                                <p className="text-muted-foreground text-sm">
                                     {app.phone}
                                 </p>
                             </td>
 
-                            <td className="text-slate-300">
+                            <td className="text-muted-foreground">
                                 {app.city}
                             </td>
 
-                            <td className="text-slate-300">
+                            <td className="text-muted-foreground">
                                 {app.experience} Years
                             </td>
 
@@ -97,15 +97,15 @@ export default function ApplicationTable({
                                     py-1
                                     rounded-full
                                     text-xs
-                                    bg-slate-800
-                                    text-white
+                                    bg-secondary
+                                    text-foreground
                                     "
                                 >
                                     {app.status}
                                 </span>
                             </td>
 
-                            <td className="text-slate-300">
+                            <td className="text-muted-foreground">
                                 {app.appliedAt}
                             </td>
 
@@ -117,8 +117,8 @@ export default function ApplicationTable({
                                         onClick={() => onView(app)}
                                         className="
                                         cursor-pointer
-                                        text-slate-400
-                                        hover:text-blue-400
+                                        text-muted-foreground
+                                        hover:text-primary
                                         "/>
 
                                     {app.status === "pending" && (
@@ -127,8 +127,8 @@ export default function ApplicationTable({
                                                 onClick={() => onApprove(app)}
                                                 className="
                                         px-3 py-1.5 rounded-lg
-                                        bg-green-500/15
-                                        text-green-400
+                                        bg-success/15
+                                        text-success
                                         "
                                             >
                                                 Approve
@@ -137,8 +137,8 @@ export default function ApplicationTable({
                                             <button
                                                 onClick={() => onReject(app)}
                                                 className={`px-3 py-1.5 rounded-lg
-                                        bg-red-500/15
-                                        text-red-400`}
+                                        bg-destructive/15
+                                        text-destructive`}
                                             >
                                                 Reject
                                             </button>
@@ -146,13 +146,13 @@ export default function ApplicationTable({
                                     )}
 
                                     {app.status === "approved" && (
-                                        <span className="text-green-400">
+                                        <span className="text-success">
                                             Approved
                                         </span>
                                     )}
 
                                     {app.status === "rejected" && (
-                                        <span className="text-red-400">
+                                        <span className="text-destructive">
                                             Rejected
                                         </span>
                                     )}

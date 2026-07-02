@@ -16,13 +16,13 @@ function getStatusColor(status: string) {
     switch (status) {
 
         case 'On Duty':
-            return 'bg-green-500/20 text-green-400'
+            return 'bg-success/20 text-success'
 
         case 'Off Duty':
-            return 'bg-red-500/20 text-red-400'
+            return 'bg-destructive/20 text-destructive'
 
         default:
-            return 'bg-slate-500/20 text-slate-400'
+            return 'bg-muted/20 text-muted-foreground'
     }
 }
 
@@ -42,49 +42,49 @@ export default function DriverTable({
             className="
             rounded-2xl
             border
-            border-blue-500/10
-            bg-[#0b1220]
+            border-primary/10
+            bg-card
             overflow-hidden
             mt-4
-            shadow-[0_0_15px_rgba(59,130,246,0.08)]
+            shadow-sm
             "
         >
             <table className="w-full">
 
                 {/* Header */}
-                <thead className="bg-slate-900/60">
+                <thead className="bg-card">
 
                     <tr className="text-left">
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Driver
                         </th>
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Vehicle
                         </th>
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Phone
                         </th>
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Rating
                         </th>
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Experience
                         </th>
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Trips
                         </th>
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Status
                         </th>
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Action
                         </th>
 
@@ -101,8 +101,8 @@ export default function DriverTable({
                             key={driver.id}
                             className="
                             border-t
-                            border-slate-800
-                            hover:bg-slate-900/40
+                            border-border
+                            hover:bg-card
                             transition
                             "
                         >
@@ -111,11 +111,11 @@ export default function DriverTable({
                             <td className="px-6 py-4">
 
                                 <div>
-                                    <p className="font-medium text-white">
+                                    <p className="font-medium text-foreground">
                                         {driver.name}
                                     </p>
 
-                                    <p className="text-xs text-slate-500">
+                                    <p className="text-xs text-muted-foreground">
                                         {driver.id}
                                     </p>
                                 </div>
@@ -123,19 +123,19 @@ export default function DriverTable({
                             </td>
 
                             {/* Vehicle */}
-                            <td className="px-6 py-4 text-slate-300">
+                            <td className="px-6 py-4 text-muted-foreground">
                                 {driver.vehicle}
                             </td>
 
                             {/* Phone */}
-                            <td className="px-6 py-4 text-slate-300">
+                            <td className="px-6 py-4 text-muted-foreground">
                                 {driver.phone}
                             </td>
 
                             {/* Rating */}
                             <td className="px-6 py-4">
 
-                                <div className="flex items-center gap-1 text-yellow-400">
+                                <div className="flex items-center gap-1 text-warning">
 
                                     <Star
                                         size={14}
@@ -151,12 +151,12 @@ export default function DriverTable({
                             </td>
 
                             {/* Experience */}
-                            <td className="px-6 py-4 text-slate-300">
+                            <td className="px-6 py-4 text-muted-foreground">
                                 {driver.experience}
                             </td>
 
                             {/* Trips */}
-                            <td className="px-6 py-4 text-slate-300">
+                            <td className="px-6 py-4 text-muted-foreground">
                                 {driver.trips}
                             </td>
 
@@ -185,9 +185,9 @@ export default function DriverTable({
 
                                     <button
                                         className="
-                                        text-slate-400
+                                        text-muted-foreground
                                         cursor-pointer
-                                        hover:text-blue-400
+                                        hover:text-primary
                                         "
                                     >
                                         <Eye size={18} />
@@ -195,8 +195,8 @@ export default function DriverTable({
 
                                     <button
                                         className="
-                                        text-slate-400
-                                        hover:text-yellow-400
+                                        text-muted-foreground
+                                        hover:text-warning
                                         cursor-pointer
 
                                         "
@@ -209,8 +209,8 @@ export default function DriverTable({
                                             handleDeleteDriver(driver.id)
                                         }
                                         className="
-                                        text-slate-400
-                                        hover:text-red-400
+                                        text-muted-foreground
+                                        hover:text-destructive
                                         cursor-pointer
                                         "
                                     >

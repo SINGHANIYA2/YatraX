@@ -8,7 +8,7 @@ import AlertTable from '@/components/admin/alerts/AlertTable'
 
 export default function AlertsPage() {
     return (
-        <div className='bg-[#030712] h-screen'>
+        <div className='bg-background h-screen'>
             <div className="w-full fixed top-0 z-40">
                 <AlertTopBar />
             </div>
@@ -21,7 +21,7 @@ export default function AlertsPage() {
 
                 <div
                     className="
-                    bg-[#030712]
+                    bg-background
                     px-6
                     pt-6
                     mt-[100px]

@@ -29,44 +29,70 @@ export default function StatsSection() {
 
   return (
     <section className="mt-8">
-      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#08111F]">
-        
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-transparent to-blue-600/5" />
+  <div
+    className="
+      relative overflow-hidden rounded-3xl
+      border border-border/40
+      bg-background dark:bg-card
+      shadow-lg
+    "
+  >
+    <div
+      className="
+        absolute inset-0
+        bg-gradient-to-r
+        from-primary/[0.03]
+        via-transparent
+        to-primary/[0.03]
+      "
+    />
 
-        <div className="relative grid grid-cols-2 lg:grid-cols-4">
+    <div className="relative grid grid-cols-2 lg:grid-cols-4">
+      {stats.map((stat, index) => {
+        const Icon = stat.icon;
 
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
+        return (
+          <motion.div
+            key={stat.label}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            className="
+              flex items-center gap-4
+              p-5 lg:p-7
+              border-r border-border/20
+              last:border-r-0
+              hover:bg-accent/40
+              transition-all duration-300
+            "
+          >
+            <div
+              className="
+                h-14 w-14 rounded-2xl
+                bg-primary/10
+                dark:bg-primary/20
+                flex items-center justify-center
+                shrink-0
+              "
+            >
+              <Icon size={28} className="text-primary" />
+            </div>
 
-            return (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="flex items-center gap-4 p-5 lg:p-7 border-r border-white/10 last:border-r-0"
-              >
-                <div className="h-14 w-14 rounded-full bg-blue-500/10 flex items-center justify-center">
-                  <Icon size={28} className="text-blue-400" />
-                </div>
+            <div>
+              <h3 className="text-2xl lg:text-3xl font-bold text-foreground">
+                {stat.value}
+              </h3>
 
-                <div>
-                  <h3 className="text-2xl lg:text-3xl font-bold text-blue-400">
-                    {stat.value}
-                  </h3>
-
-                  <p className="text-sm text-gray-400 mt-1">
-                    {stat.label}
-                  </p>
-                </div>
-
-              </motion.div>
-            );
-          })}
-
-        </div>
-      </div>
-    </section>
+              <p className="text-sm text-muted-foreground mt-1">
+                {stat.label}
+              </p>
+            </div>
+          </motion.div>
+        );
+      })}
+    </div>
+  </div>
+</section>
   );
 }

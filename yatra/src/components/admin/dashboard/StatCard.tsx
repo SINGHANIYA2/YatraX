@@ -20,8 +20,8 @@ export default function StatCard({
             className="
             rounded-3xl
             border
-            border-blue-500/10
-            bg-[#071427]
+            border-primary/10
+            bg-card
             p-6
             flex
             w-full
@@ -37,7 +37,7 @@ export default function StatCard({
                     items-center
                     justify-center
                     rounded-xl
-                    bg-slate-900
+                    bg-card
                     ${color}
                     `}
                 >
@@ -45,11 +45,11 @@ export default function StatCard({
                 </div>
 
                 <div className="text-right gap-5 flex flex-col">
-                    <p className="text-sm text-slate-400">
+                    <p className="text-sm text-muted-foreground">
                         {title}
                     </p>
 
-                    <h2 className="text-3xl font-bold text-white">
+                    <h2 className="text-3xl font-bold text-foreground">
                         {value}
                     </h2>
                 </div>

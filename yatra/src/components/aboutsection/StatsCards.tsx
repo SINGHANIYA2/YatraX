@@ -12,25 +12,25 @@ const stats = [
         title: 'Trips Completed',
         value: '50,000+',
         icon: Bus,
-        color: 'text-blue-400'
+        color: 'text-primary'
     },
     {
         title: 'Daily Trips',
         value: '1,000+',
         icon: Route,
-        color: 'text-cyan-400'
+        color: 'text-primary'
     },
     {
         title: 'Fleet Vehicles',
         value: '500+',
         icon: Users,
-        color: 'text-green-400'
+        color: 'text-success'
     },
     {
         title: 'Tracking Accuracy',
         value: '99%',
         icon: ShieldCheck,
-        color: 'text-yellow-400'
+        color: 'text-warning'
     }
 ]
 
@@ -47,10 +47,10 @@ export default function StatsCards() {
                         className="
                         rounded-2xl
                         border
-                        border-blue-500/10
-                        bg-[#071427]
+                        border-primary/10
+                        bg-card
                         p-5
-                        shadow-[0_0_15px_rgba(59,130,246,0.15)]
+                        shadow-sm
                         "
                     >
                         <Icon
@@ -58,11 +58,11 @@ export default function StatsCards() {
                             size={24}
                         />
 
-                        <h2 className="text-2xl font-bold text-white">
+                        <h2 className="text-2xl font-bold text-foreground">
                             {stat.value}
                         </h2>
 
-                        <p className="mt-1 text-sm text-slate-400">
+                        <p className="mt-1 text-sm text-muted-foreground">
                             {stat.title}
                         </p>
                     </div>

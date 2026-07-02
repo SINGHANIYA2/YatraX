@@ -53,11 +53,11 @@ export default function FleetFilters({
             className="
             rounded-2xl
             border
-            border-blue-500/10
-            bg-[#071427]
+            border-primary/10
+            bg-card
             p-4
             mt-5
-            shadow-[0_0_15px_rgba(59,130,246,0.15)]
+            shadow-sm
             "
         >
             <div className="flex items-center gap-4">
@@ -74,12 +74,12 @@ export default function FleetFilters({
                             appearance-none
                             rounded-xl
                             border
-                            border-slate-700
-                            bg-slate-900
+                            border-border
+                            bg-card
                             px-4
                             py-3
                             text-sm
-                            text-white
+                            text-foreground
                             outline-none
                         "
                     >
@@ -92,7 +92,7 @@ export default function FleetFilters({
 
                     <ChevronDown
                         size={18}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground"
                     />
                 </div>
 
@@ -108,12 +108,12 @@ export default function FleetFilters({
                         appearance-none
                         rounded-xl
                         border
-                        border-slate-700
-                        bg-slate-900
+                        border-border
+                        bg-card
                         px-4
                         py-3
                         text-sm
-                        text-white
+                        text-foreground
                         outline-none
                         "
                     >
@@ -126,7 +126,7 @@ export default function FleetFilters({
 
                     <ChevronDown
                         size={18}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground"
                     />
                 </div>
 
@@ -134,7 +134,7 @@ export default function FleetFilters({
                 <div className="relative flex-1">
                     <Search
                         size={16}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
                     />
 
                     <input
@@ -148,13 +148,13 @@ export default function FleetFilters({
                         w-full
                         rounded-xl
                         border
-                        border-slate-700
-                        bg-slate-900
+                        border-border
+                        bg-card
                         py-3
                         pl-11
                         pr-4
                         text-sm
-                        text-white
+                        text-foreground
                         outline-none
                         "
                     />
@@ -168,14 +168,14 @@ export default function FleetFilters({
                     items-center
                     gap-2
                     rounded-xl
-                    bg-blue-600
+                    bg-primary
                     px-5
                     py-3
                     text-sm
                     font-medium
-                    text-white
+                    text-foreground
                     transition
-                    hover:bg-blue-700
+                    hover:bg-primary
                     "
                 >
                     <Plus size={18} />

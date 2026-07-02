@@ -76,11 +76,9 @@ function HeroSection() {
 
     return (
         <>
-            <section className="relative min-h-screen overflow-auto bg-gradient-to-b from-[#020617] via-[#030712] to-black text-white pt-28 pb-16">
+            <section className="relative min-h-screen overflow-auto bg-background text-foreground pt-28 pb-16">
 
-                <div className="absolute top-0 left-0 w-[700px] h-[500px] bg-blue-600/10 blur-[150px] rounded-full" />
-
-                <div className="absolute bottom-0 right-0 w-[700px] h-[500px] bg-cyan-500/10 blur-[150px] rounded-full" />
+                <div className="absolute top-0 left-0 w-[700px] h-[500px] bg-primary/5 blur-[150px] rounded-full" />
 
                 <div className="relative z-10 max-w-[80%] mx-auto px-4 sm:px-6 lg:px-8 justify-between">
 

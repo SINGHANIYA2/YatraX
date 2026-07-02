@@ -52,10 +52,10 @@ export default function DriverFilters({
             mt-4
             rounded-2xl
             border
-            border-blue-500/10
-            bg-[#0b1220]
+            border-primary/10
+            bg-card
             p-4
-            shadow-[0_0_15px_rgba(59,130,246,0.08)]
+            shadow-sm
             "
         >
             <div className="flex items-center gap-4">
@@ -73,12 +73,12 @@ export default function DriverFilters({
                         appearance-none
                         rounded-xl
                         border
-                        border-slate-700
-                        bg-slate-900
+                        border-border
+                        bg-card
                         px-4
                         py-3
                         text-sm
-                        text-white
+                        text-foreground
                         outline-none
                         "
                     >
@@ -94,7 +94,7 @@ export default function DriverFilters({
                         right-4
                         top-1/2
                         -translate-y-1/2
-                        text-slate-400
+                        text-muted-foreground
                         "
                     />
                 </div>
@@ -109,7 +109,7 @@ export default function DriverFilters({
                         left-4
                         top-1/2
                         -translate-y-1/2
-                        text-slate-500
+                        text-muted-foreground
                         "
                     />
 
@@ -124,13 +124,13 @@ export default function DriverFilters({
                         w-full
                         rounded-xl
                         border
-                        border-slate-700
-                        bg-slate-900
+                        border-border
+                        bg-card
                         py-3
                         pl-11
                         pr-4
                         text-sm
-                        text-white
+                        text-foreground
                         outline-none
                         "
                     />
@@ -144,14 +144,14 @@ export default function DriverFilters({
                     items-center
                     gap-2
                     rounded-xl
-                    bg-blue-600
+                    bg-primary
                     px-5
                     py-3
                     text-sm
                     font-medium
-                    text-white
+                    text-foreground
                     transition
-                    hover:bg-blue-700
+                    hover:bg-primary
                     "
                 >
                     <Plus size={18} />

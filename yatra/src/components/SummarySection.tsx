@@ -49,16 +49,16 @@ export default function SummarySection() {
   return (
     <div
       className="
-        bg-[#07142C]
+        bg-card
         rounded-2xl
         p-5
-        text-white
+        text-foreground
         w-full
         lg:max-w-sm
         self-start
         border
-        border-blue-500/10
-        shadow-[0_0_15px_rgba(59,130,246,0.15)]
+        border-primary/10
+        shadow-sm
         font-sans
       "
     >
@@ -68,11 +68,11 @@ export default function SummarySection() {
       </h2>
 
       {/* Vehicle */}
-      <div className="flex items-center gap-3 mb-6 border-b border-gray-600 pb-4">
+      <div className="flex items-center gap-3 mb-6 border-b border-border pb-4">
         <div className="rounded-lg flex items-center justify-center">
           <Bus
             size={50}
-            className="text-blue-400 shrink-0"
+            className="text-primary shrink-0"
           />
         </div>
 
@@ -81,7 +81,7 @@ export default function SummarySection() {
             {booking.vehicleType}
           </h3>
 
-          <p className="text-sm text-gray-400 break-words">
+          <p className="text-sm text-muted-foreground break-words">
             {booking.vehicleName}
           </p>
         </div>
@@ -90,42 +90,42 @@ export default function SummarySection() {
       {/* Journey Details */}
       <div className="space-y-4 text-sm sm:text-base mb-6">
         <div className="flex justify-between gap-4">
-          <span className="text-gray-400">From</span>
+          <span className="text-muted-foreground">From</span>
           <span className="text-right">
             {booking.from}
           </span>
         </div>
 
         <div className="flex justify-between gap-4">
-          <span className="text-gray-400">To</span>
+          <span className="text-muted-foreground">To</span>
           <span className="text-right">
             {booking.to}
           </span>
         </div>
 
         <div className="flex justify-between gap-4">
-          <span className="text-gray-400">Date</span>
+          <span className="text-muted-foreground">Date</span>
           <span className="text-right">
             {booking.date}
           </span>
         </div>
 
         <div className="flex justify-between gap-4">
-          <span className="text-gray-400">Time</span>
+          <span className="text-muted-foreground">Time</span>
           <span className="text-right">
             {booking.time}
           </span>
         </div>
 
         <div className="flex justify-between gap-4">
-          <span className="text-gray-400">Seats</span>
+          <span className="text-muted-foreground">Seats</span>
           <span className="text-right">
             {booking.seats.join(', ')}
           </span>
         </div>
 
         <div className="flex justify-between gap-4">
-          <span className="text-gray-400">
+          <span className="text-muted-foreground">
             Passengers
           </span>
           <span className="text-right">
@@ -135,13 +135,13 @@ export default function SummarySection() {
       </div>
 
       {/* Fare */}
-      <div className="border-y border-gray-600 py-4 mb-6">
+      <div className="border-y border-border py-4 mb-6">
         <div className="flex justify-between items-center">
           <span className="text-base sm:text-lg font-semibold">
             Total Fare
           </span>
 
-          <span className="text-lg sm:text-xl font-bold text-green-400">
+          <span className="text-lg sm:text-xl font-bold text-success">
             ₹{booking.fare}
           </span>
         </div>
@@ -164,7 +164,7 @@ export default function SummarySection() {
                 cursor-pointer
                 p-3
                 rounded-lg
-                hover:bg-white/5
+                hover:bg-accent
                 transition
               "
             >
@@ -196,8 +196,8 @@ export default function SummarySection() {
         className="
           w-full
           mt-6
-          bg-blue-600
-          hover:bg-blue-700
+          bg-primary
+          hover:bg-primary
           transition
           rounded-lg
           py-3

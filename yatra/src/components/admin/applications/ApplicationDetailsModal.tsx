@@ -26,7 +26,6 @@ export default function ApplicationDetailsModal({
             fixed inset-0 z-[100]
             flex items-center justify-center
             bg-black/70
-            backdrop-blur-sm
             "
         >
             <div
@@ -35,9 +34,9 @@ export default function ApplicationDetailsModal({
                 max-h-[90vh]
                 overflow-y-auto
                 rounded-3xl
-                bg-[#071427]
+                bg-card
                 border
-                border-blue-500/10
+                border-primary/10
                 p-6
                 "
             >
@@ -45,11 +44,11 @@ export default function ApplicationDetailsModal({
                 <div className="flex items-center justify-between mb-6">
 
                     <div>
-                        <h2 className="text-2xl font-bold text-white">
+                        <h2 className="text-2xl font-bold text-foreground">
                             Application Details
                         </h2>
 
-                        <p className="text-slate-400 text-sm">
+                        <p className="text-muted-foreground text-sm">
                             Review applicant information
                         </p>
                     </div>
@@ -59,8 +58,8 @@ export default function ApplicationDetailsModal({
                         className="
                         p-2
                         rounded-lg
-                        hover:bg-slate-800
-                        text-slate-400
+                        hover:bg-secondary
+                        text-muted-foreground
                         "
                     >
                         <X size={20} />
@@ -75,7 +74,7 @@ export default function ApplicationDetailsModal({
                         className="
                         text-lg
                         font-semibold
-                        text-white
+                        text-foreground
                         mb-4
                         "
                     >
@@ -115,7 +114,7 @@ export default function ApplicationDetailsModal({
                         className="
                         text-lg
                         font-semibold
-                        text-white
+                        text-foreground
                         mb-4
                         "
                     >
@@ -165,7 +164,7 @@ export default function ApplicationDetailsModal({
                         className="
                             text-lg
                             font-semibold
-                            text-white
+                            text-foreground
                             mb-4
                             "
                     >
@@ -181,7 +180,7 @@ export default function ApplicationDetailsModal({
                             rounded-xl
                             object-cover
                             border
-                            border-slate-700
+                            border-border
                             "
                     />
 
@@ -195,7 +194,7 @@ export default function ApplicationDetailsModal({
                         className="
                         text-lg
                         font-semibold
-                        text-white
+                        text-foreground
                         mb-4
                         "
                     >
@@ -246,11 +245,11 @@ export default function ApplicationDetailsModal({
                             py-2.5
                             cursor-pointer
                             rounded-xl
-                            bg-red-500/15
+                            bg-destructive/15
                             border
-                            border-red-500/20
-                            text-red-400
-                            shadow-red-500/20
+                            border-destructive/20
+                            text-destructive
+                            shadow-sm
                             hover:shadow-lg
                         ">
                         Reject
@@ -275,11 +274,11 @@ export default function ApplicationDetailsModal({
                             py-2.5
                             cursor-pointer
                             rounded-xl
-                            bg-green-500/15
+                            bg-success/15
                             border
-                            border-green-500/20
-                            text-green-400
-                            shadow-green-500/20
+                            border-success/20
+                            text-success
+                            shadow-sm
                             hover:shadow-lg
                             "
                     >
@@ -304,15 +303,15 @@ function Info({
         <div
             className="
             rounded-xl
-            bg-slate-900/50
+            bg-card
             p-4
             "
         >
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-muted-foreground">
                 {label}
             </p>
 
-            <p className="text-white mt-1">
+            <p className="text-foreground mt-1">
                 {value}
             </p>
         </div>
@@ -330,11 +329,11 @@ function DocumentCard({
         <div
             className="
             rounded-xl
-            bg-slate-900/50
+            bg-card
             p-4
             "
         >
-            <p className="text-white mb-3">
+            <p className="text-foreground mb-3">
                 {title}
             </p>
 
@@ -343,9 +342,9 @@ function DocumentCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="
-                text-blue-400
+                text-primary
                 text-sm
-                hover:text-blue-300
+                hover:text-primary-hover
                 "
             >
                 View Document

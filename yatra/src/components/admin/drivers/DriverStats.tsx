@@ -48,28 +48,28 @@ export default function DriverStats({
                 title="Total Drivers"
                 value={totalDrivers}
                 icon={Users}
-                color="text-blue-400"
+                color="text-primary"
             />
 
             <DriverStatsCard
                 title="On Duty"
                 value={onDuty}
                 icon={UserCheck}
-                color="text-green-400"
+                color="text-success"
             />
 
             <DriverStatsCard
                 title="Off Duty"
                 value={offDuty}
                 icon={UserX}
-                color="text-red-400"
+                color="text-destructive"
             />
 
             <DriverStatsCard
                 title="Avg Rating"
                 value={avgRating}
                 icon={Star}
-                color="text-yellow-400"
+                color="text-warning"
             />
 
         </div>

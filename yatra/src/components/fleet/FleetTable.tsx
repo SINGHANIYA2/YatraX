@@ -14,19 +14,19 @@ type Props = {
 function getStatusColor(status: string) {
     switch (status) {
         case 'Active':
-            return 'bg-green-500/20 text-green-400'
+            return 'bg-success/20 text-success'
 
         case 'In Transit':
-            return 'bg-blue-500/20 text-blue-400'
+            return 'bg-primary/20 text-primary'
 
         case 'Maintenance':
-            return 'bg-yellow-500/20 text-yellow-400'
+            return 'bg-warning/20 text-warning'
 
         case 'Offline':
-            return 'bg-red-500/20 text-red-400'
+            return 'bg-destructive/20 text-destructive'
 
         default:
-            return 'bg-slate-500/20 text-slate-400'
+            return 'bg-muted/20 text-muted-foreground'
     }
 }
 
@@ -46,44 +46,44 @@ export default function FleetTable({
             className="
             rounded-2xl
             border
-            border-blue-500/10
-            bg-[#0b1220]
+            border-primary/10
+            bg-card
             overflow-hidden
             mt-5
-            shadow-[0_0_15px_rgba(59,130,246,0.15)]
+            shadow-sm
             "
         >
             <table className="w-full">
 
                 {/* Header */}
-                <thead className="bg-slate-900/60">
+                <thead className="bg-card">
                     <tr className="text-left">
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Vehicle
                         </th>
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Type
                         </th>
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Driver
                         </th>
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Route
                         </th>
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Status
                         </th>
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Last Updated
                         </th>
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Action
                         </th>
 
@@ -98,24 +98,24 @@ export default function FleetTable({
                             key={vehicle.id}
                             className="
                             border-t
-                            border-slate-800
+                            border-border
                             transition
-                            hover:bg-slate-900/40
+                            hover:bg-card
                             "
                         >
-                            <td className="px-6 py-4 font-medium text-white">
+                            <td className="px-6 py-4 font-medium text-foreground">
                                 {vehicle.id}
                             </td>
 
-                            <td className="px-6 py-4 text-slate-300">
+                            <td className="px-6 py-4 text-muted-foreground">
                                 {vehicle.type}
                             </td>
 
-                            <td className="px-6 py-4 text-slate-300">
+                            <td className="px-6 py-4 text-muted-foreground">
                                 {vehicle.driver}
                             </td>
 
-                            <td className="px-6 py-4 text-slate-300">
+                            <td className="px-6 py-4 text-muted-foreground">
                                 {vehicle.route}
                             </td>
 
@@ -134,7 +134,7 @@ export default function FleetTable({
                                 </span>
                             </td>
 
-                            <td className="px-6 py-4 text-slate-400">
+                            <td className="px-6 py-4 text-muted-foreground">
                                 {vehicle.updated}
                             </td>
 
@@ -142,8 +142,8 @@ export default function FleetTable({
                                 <div className="flex items-center gap-3">
                                     <button
                                         className="
-                                        text-slate-400
-                                        hover:text-blue-400
+                                        text-muted-foreground
+                                        hover:text-primary
                                         "
                                     >
                                         <Eye className='cursor-pointer' size={18} />
@@ -151,8 +151,8 @@ export default function FleetTable({
 
                                     <button
                                         className="
-                                        text-slate-400
-                                        hover:text-yellow-400
+                                        text-muted-foreground
+                                        hover:text-warning
                                         "
                                     >
                                         <Pencil className='cursor-pointer' size={18} />
@@ -161,8 +161,8 @@ export default function FleetTable({
                                     <button
                                         onClick={() => handleDelete(vehicle.id)}
                                         className="
-                                        text-slate-400
-                                        hover:text-red-400
+                                        text-muted-foreground
+                                        hover:text-destructive
                                         cursor-pointer
                                         "
                                     >

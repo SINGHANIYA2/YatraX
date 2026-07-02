@@ -20,10 +20,10 @@ export default function AlertStatCard({
             className="
             rounded-3xl
             border
-            border-blue-500/10
-            bg-[#071427]
+            border-primary/10
+            bg-card
             p-5
-            shadow-[0_0_25px_rgba(59,130,246,.06)]
+            shadow-sm
             "
         >
             <div
@@ -34,7 +34,7 @@ export default function AlertStatCard({
                 items-center
                 justify-center
                 rounded-2xl
-                bg-slate-800/50
+                bg-secondary/50
                 "
             >
                 <div className={iconColor}>
@@ -43,11 +43,11 @@ export default function AlertStatCard({
             </div>
 
             <div className="mt-6">
-                <h2 className="text-4xl font-bold text-white">
+                <h2 className="text-4xl font-bold text-foreground">
                     {value}
                 </h2>
 
-                <p className="mt-2 text-slate-400">
+                <p className="mt-2 text-muted-foreground">
                     {title}
                 </p>
             </div>

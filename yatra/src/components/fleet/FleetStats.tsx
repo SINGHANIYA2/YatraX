@@ -33,35 +33,35 @@ export default function FleetStats({
                 title="Total Vehicles"
                 value={vehicles.length}
                 icon={Bus}
-                color="text-blue-400"
+                color="text-primary"
             />
 
             <StatCard
                 title="Active"
                 value={countByStatus("Active")}
                 icon={Activity}
-                color="text-green-400"
+                color="text-success"
             />
 
             <StatCard
                 title="In Transit"
                 value={countByStatus("In Transit")}
                 icon={Truck}
-                color="text-orange-400"
+                color="text-warning"
             />
 
             <StatCard
                 title="Maintenance"
                 value={countByStatus("Maintenance")}
                 icon={Wrench}
-                color="text-yellow-400"
+                color="text-warning"
             />
 
             <StatCard
                 title="Offline"
                 value={countByStatus("Offline")}
                 icon={WifiOff}
-                color="text-red-400"
+                color="text-destructive"
             />
 
         </div>

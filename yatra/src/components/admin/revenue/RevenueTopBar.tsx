@@ -13,22 +13,22 @@ export default function RevenueTopBar() {
             items-center
             justify-between
 
-            bg-[#071427]
-            border-b border-slate-800
-            shadow-[0_4px_20px_rgba(0,0,0,0.25)]
+            bg-card
+            border-b border-border
+            shadow-sm
 
             border-b
-            border-blue-500/10
+            border-primary/10
             "
         >
 
             {/* Left */}
             <div>
-                <h1 className="text-3xl font-bold text-white">
+                <h1 className="text-3xl font-bold text-foreground">
                     Revenue Management
                 </h1>
 
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-muted-foreground">
                     Monitor earnings and business performance
                 </p>
             </div>

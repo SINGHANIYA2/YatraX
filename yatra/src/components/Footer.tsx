@@ -12,11 +12,11 @@ import {
 
 function Footer() {
   return (
-    <footer className="relative overflow-hidden border-t border-blue-500/10 bg-[#030712] text-white">
+    <footer className="relative overflow-hidden border-t border-primary/10 bg-background text-foreground">
 
       {/* Glow Effects */}
-      <div className="absolute -left-32 top-0 h-72 w-72 rounded-full bg-blue-600/10 blur-3xl" />
-      <div className="absolute -right-32 bottom-0 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl" />
+      <div className="absolute -left-32 top-0 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
+      <div className="absolute -right-32 bottom-0 h-72 w-72 rounded-full bg-primary/5 blur-3xl" />
 
       <motion.div
         initial={{ opacity: 0, y: 40 }}
@@ -30,17 +30,17 @@ function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-blue-600/20 border border-blue-500/20">
-                <Bus className="text-blue-500" size={24} />
+              <div className="p-2 rounded-xl bg-primary/20 border border-primary/20">
+                <Bus className="text-primary" size={24} />
               </div>
 
               <h2 className="text-3xl font-bold">
-                <span className="text-white">Yatra</span>
-                <span className="text-blue-500">X</span>
+                <span className="text-foreground">Yatra</span>
+                <span className="text-primary">X</span>
               </h2>
             </div>
 
-            <p className="mt-4 text-gray-400 leading-relaxed max-w-md">
+            <p className="mt-4 text-muted-foreground leading-relaxed max-w-md">
               One platform for ticket booking, live vehicle tracking,
               route management, fleet operations and seamless travel
               experiences.
@@ -57,11 +57,11 @@ function Footer() {
                     w-10 h-10
                     flex items-center justify-center
                     rounded-full
-                    border border-white/10
-                    bg-white/5
-                    text-gray-400
-                    hover:text-blue-400
-                    hover:border-blue-500/40
+                    border border-border/10
+                    bg-accent
+                    text-muted-foreground
+                    hover:text-primary
+                    hover:border-primary/40
                     transition-all
                   "
                   >
@@ -74,28 +74,28 @@ function Footer() {
 
           {/* Product */}
           <div>
-            <h3 className="font-semibold text-white mb-4">
+            <h3 className="font-semibold text-foreground mb-4">
               Product
             </h3>
 
-            <div className="space-y-3 text-gray-400 text-sm">
-              <Link href="/booking" className="block hover:text-blue-400">
+            <div className="space-y-3 text-muted-foreground text-sm">
+              <Link href="/booking" className="block hover:text-primary">
                 Book Tickets
               </Link>
 
-              <Link href="/track" className="block hover:text-blue-400">
+              <Link href="/track" className="block hover:text-primary">
                 Track Bus
               </Link>
 
-              <Link href="/routes" className="block hover:text-blue-400">
+              <Link href="/routes" className="block hover:text-primary">
                 Routes
               </Link>
 
-              <Link href="/fleet" className="block hover:text-blue-400">
+              <Link href="/fleet" className="block hover:text-primary">
                 Fleet Management
               </Link>
 
-              <Link href="/live-tracking" className="block hover:text-blue-400">
+              <Link href="/live-tracking" className="block hover:text-primary">
                 Live Tracking
               </Link>
             </div>
@@ -103,24 +103,24 @@ function Footer() {
 
           {/* Company */}
           <div>
-            <h3 className="font-semibold text-white mb-4">
+            <h3 className="font-semibold text-foreground mb-4">
               Company
             </h3>
 
-            <div className="space-y-3 text-gray-400 text-sm">
-              <Link href="/about" className="block hover:text-blue-400">
+            <div className="space-y-3 text-muted-foreground text-sm">
+              <Link href="/about" className="block hover:text-primary">
                 About Us
               </Link>
 
-              <Link href="/careers" className="block hover:text-blue-400">
+              <Link href="/careers" className="block hover:text-primary">
                 Careers
               </Link>
 
-              <Link href="/blog" className="block hover:text-blue-400">
+              <Link href="/blog" className="block hover:text-primary">
                 Blog
               </Link>
 
-              <Link href="/contact" className="block hover:text-blue-400">
+              <Link href="/contact" className="block hover:text-primary">
                 Contact
               </Link>
             </div>
@@ -128,20 +128,20 @@ function Footer() {
 
           {/* Support */}
           <div>
-            <h3 className="font-semibold text-white mb-4">
+            <h3 className="font-semibold text-foreground mb-4">
               Support
             </h3>
 
-            <div className="space-y-3 text-gray-400 text-sm">
+            <div className="space-y-3 text-muted-foreground text-sm">
               <p>+91 98765 43210</p>
               <p>support@yatrax.com</p>
               <p>24/7 Customer Support</p>
 
-              <Link href="/privacy" className="block hover:text-blue-400">
+              <Link href="/privacy" className="block hover:text-primary">
                 Privacy Policy
               </Link>
 
-              <Link href="/terms" className="block hover:text-blue-400">
+              <Link href="/terms" className="block hover:text-primary">
                 Terms & Conditions
               </Link>
             </div>
@@ -151,8 +151,8 @@ function Footer() {
       </motion.div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-500 gap-3">
+      <div className="border-t border-border/10">
+        <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row justify-between items-center text-sm text-muted-foreground gap-3">
           <p>
             © {new Date().getFullYear()} YatraX. All rights reserved.
           </p>

@@ -26,19 +26,19 @@ export default function HeroRight() {
             icon: Bus,
             title: "Active Buses",
             value: "128",
-            color: "text-violet-400",
+            color: "text-primary",
         },
         {
             icon: Route,
             title: "Routes",
             value: "56",
-            color: "text-purple-400",
+            color: "text-primary",
         },
         {
             icon: Users,
             title: "Passengers",
             value: "2.8K",
-            color: "text-blue-400",
+            color: "text-primary",
         },
     ];
 
@@ -52,10 +52,10 @@ export default function HeroRight() {
             initial={{ opacity: 0, x: 60 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="w-full max-w-[850px] xl:max-w-[900px] mx-auto bg-[#08111F] border border-white/10 rounded-3xl p-3 sm:p-4 shadow-[0_0_40px_rgba(0,0,0,0.4)]"
+            className="w-full max-w-[850px] xl:max-w-[900px] mx-auto bg-card border border-border/10 rounded-3xl p-3 sm:p-4 shadow-sm"
         >
             {/* MAP SECTION */}
-            <div className="relative h-[280px] sm:h-[330px] lg:h-[420px] rounded-2xl overflow-hidden border border-white/10">
+            <div className="relative h-[280px] sm:h-[330px] lg:h-[420px] rounded-2xl overflow-hidden border border-border/10">
 
                 <Image
                     src="/hero_map.png"
@@ -70,38 +70,38 @@ export default function HeroRight() {
                 <div className="absolute inset-0 bg-black/20" />
 
                 {/* LIVE CARD */}
-                <div className="absolute top-3 left-3 sm:top-4 sm:left-4 w-[160px] sm:w-[200px] lg:w-[230px] rounded-2xl bg-[#07101D]/95 backdrop-blur-md border border-white/10 p-3 sm:p-5 z-20">
+                <div className="absolute top-3 left-3 sm:top-4 sm:left-4 w-[160px] sm:w-[200px] lg:w-[230px] rounded-2xl bg-card border border-border/10 p-3 sm:p-5 z-20">
 
                     <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-white text-md sm:text-base">
+                        <h3 className="font-semibold text-foreground text-md sm:text-base">
                             Live Tracking
                         </h3>
 
-                        <span className="px-2 py-1 rounded-lg bg-green-500 text-black text-[10px] sm:text-xs font-medium">
+                        <span className="px-2 py-1 rounded-lg bg-success text-foreground text-[10px] sm:text-xs font-medium">
                             Live
                         </span>
                     </div>
 
                     <div className="mt-4 sm:mt-6">
-                        <h2 className="text-lg sm:text-2xl lg:text-xs font-bold text-white">
+                        <h2 className="text-lg sm:text-2xl lg:text-xs font-bold text-foreground">
                             KA01AB1234
                         </h2>
 
-                        <p className="mt-2 text-[10px] sm:text-sm text-gray-400">
+                        <p className="mt-2 text-[10px] sm:text-sm text-muted-foreground">
                             Bengaluru → Mysuru
                         </p>
                     </div>
 
                     <div className="mt-4 sm:mt-8">
-                        <p className="text-xs sm:text-sm text-gray-500">
+                        <p className="text-xs sm:text-sm text-muted-foreground">
                             ETA
                         </p>
 
-                        <h3 className="text-lg sm:text-xs lg:text-xl font-bold text-white mt-1">
+                        <h3 className="text-lg sm:text-xs lg:text-xl font-bold text-foreground mt-1">
                             01:20 PM
                         </h3>
 
-                        <p className="text-xs sm:text-sm text-gray-400 mt-2">
+                        <p className="text-xs sm:text-sm text-muted-foreground mt-2">
                             40 km remaining
                         </p>
                     </div>
@@ -117,11 +117,11 @@ export default function HeroRight() {
                         return (
                             <div
                                 key={index}
-                                className="rounded-xl border border-white/10 bg-[#07101D]/95 backdrop-blur-md p-4"
+                                className="rounded-xl border border-border/10 bg-card p-4"
                             >
                                 <div className="flex gap-3">
 
-                                    <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center">
+                                    <div className="h-10 w-10 rounded-xl bg-accent flex items-center justify-center">
                                         <Icon
                                             size={20}
                                             className={item.color}
@@ -129,11 +129,11 @@ export default function HeroRight() {
                                     </div>
 
                                     <div>
-                                        <p className="text-xs text-gray-400">
+                                        <p className="text-xs text-muted-foreground">
                                             {item.title}
                                         </p>
 
-                                        <h3 className="text-xs font-bold text-white">
+                                        <h3 className="text-xs font-bold text-foreground">
                                             {item.value}
                                         </h3>
                                     </div>
@@ -156,18 +156,18 @@ export default function HeroRight() {
                     return (
                         <div
                             key={index}
-                            className="rounded-xl border border-white/10 bg-[#07101D]/95 p-3"
+                            className="rounded-xl border border-border/10 bg-card p-3"
                         >
                             <Icon
                                 size={18}
                                 className={item.color}
                             />
 
-                            <p className="text-xs text-gray-400 mt-2">
+                            <p className="text-xs text-muted-foreground mt-2">
                                 {item.title}
                             </p>
 
-                            <h3 className="text-lg font-bold text-white">
+                            <h3 className="text-lg font-bold text-foreground">
                                 {item.value}
                             </h3>
                         </div>
@@ -177,16 +177,16 @@ export default function HeroRight() {
             </div>
 
             {/* SEARCH SECTION */}
-            <div className="mt-4 rounded-2xl border border-white/10 bg-black/10 p-4 sm:p-5">
+            <div className="mt-4 rounded-2xl border border-border/10 bg-black/10 p-4 sm:p-5">
 
                 {/* TABS */}
-                <div className="flex gap-8 border-b border-white/10 pb-4">
+                <div className="flex gap-8 border-b border-border/10 pb-4">
 
                     <button
                         onClick={() => setTripType("oneway")}
                         className={`pb-2 text-sm font-medium transition ${tripType === "oneway"
-                            ? "text-blue-500 border-b-2 border-blue-500"
-                            : "text-gray-400"
+                            ? "text-primary border-b-2 border-primary"
+                            : "text-muted-foreground"
                             }`}
                     >
                         One Way
@@ -195,8 +195,8 @@ export default function HeroRight() {
                     <button
                         onClick={() => setTripType("roundtrip")}
                         className={`pb-2 text-sm font-medium transition ${tripType === "roundtrip"
-                            ? "text-blue-500 border-b-2 border-blue-500"
-                            : "text-gray-400"
+                            ? "text-primary border-b-2 border-primary"
+                            : "text-muted-foreground"
                             }`}
                     >
                         Round Trip
@@ -208,7 +208,7 @@ export default function HeroRight() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-5">
 
                     <div>
-                        <label className="text-sm text-gray-400">
+                        <label className="text-sm text-muted-foreground">
                             From
                         </label>
 
@@ -216,12 +216,12 @@ export default function HeroRight() {
                             value={from}
                             onChange={(e) => setFrom(e.target.value)}
                             placeholder="Bengaluru"
-                            className="mt-2 w-full rounded-xl border border-white/10 bg-[#0B1424] px-4 py-3 text-white outline-none focus:border-blue-500"
+                            className="mt-2 w-full rounded-xl border border-border/10 bg-card px-4 py-3 text-foreground outline-none focus:border-primary"
                         />
                     </div>
 
                     <div>
-                        <label className="text-sm text-gray-400">
+                        <label className="text-sm text-muted-foreground">
                             To
                         </label>
 
@@ -229,12 +229,12 @@ export default function HeroRight() {
                             value={to}
                             onChange={(e) => setTo(e.target.value)}
                             placeholder="Mysuru"
-                            className="mt-2 w-full rounded-xl border border-white/10 bg-[#0B1424] px-4 py-3 text-white outline-none focus:border-blue-500"
+                            className="mt-2 w-full rounded-xl border border-border/10 bg-card px-4 py-3 text-foreground outline-none focus:border-primary"
                         />
                     </div>
 
                     <div>
-                        <label className="text-sm text-gray-400">
+                        <label className="text-sm text-muted-foreground">
                             Travel Date
                         </label>
 
@@ -246,14 +246,14 @@ export default function HeroRight() {
                                     w-full
                                     h-[50px]
                                     rounded-xl
-                                    border border-white/10
-                                    bg-[#0B1424]
+                                    border border-border/10
+                                    bg-card
                                     px-4
-                                    text-white
+                                    text-foreground
                                     flex
                                     items-center
                                     justify-between
-                                    hover:border-blue-500
+                                    hover:border-primary
                                     transition
                                     "
                                 >
@@ -272,8 +272,8 @@ export default function HeroRight() {
                                 className="
                                         w-auto
                                         p-0
-                                        border-white/10
-                                        bg-[#4e5766]
+                                        border-border/10
+                                        bg-muted-foreground
                                 "
                             >
                                 <Calendar
@@ -290,7 +290,7 @@ export default function HeroRight() {
 
                     <button
                         onClick={handleSearch}
-                        className="h-[50px] sm:mt-7 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold hover:scale-[1.02] transition-all duration-300"
+                        className="h-[50px] sm:mt-7 rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover transition-colors font-semibold hover:scale-[1.02] transition-all duration-300"
                     >
                         Track Vehicle
                     </button>

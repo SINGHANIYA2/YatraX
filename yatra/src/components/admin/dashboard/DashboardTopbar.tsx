@@ -15,22 +15,19 @@ export default function AdminTopbar() {
             items-center
             justify-between
 
-            bg-[#071427]
-            border-b border-slate-800
-            shadow-[0_4px_20px_rgba(0,0,0,0.25)]
-
-            border-b
-            border-blue-500/10
+            bg-card
+            border-b border-border
+            shadow-sm
             "
         >
 
             {/* Left */}
             <div>
-                <h1 className="text-3xl font-bold text-white">
+                <h1 className="text-3xl font-bold text-foreground">
                     Dashboard
                 </h1>
 
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-muted-foreground">
                     Welcome back, Admin
                 </p>
             </div>
@@ -47,7 +44,7 @@ export default function AdminTopbar() {
                         left-4
                         top-1/2
                         -translate-y-1/2
-                        text-slate-500
+                        text-muted-foreground
                         "
                     />
 
@@ -58,15 +55,15 @@ export default function AdminTopbar() {
                         w-72
                         rounded-xl
                         border
-                        border-slate-800
-                        bg-[#071427]
+                        border-border
+                        bg-card
                         py-3
                         pl-11
                         pr-4
                         text-sm
-                        text-white
+                        text-foreground
                         outline-none
-                        focus:border-blue-500/40
+                        focus:border-primary/40
                         "
                     />
                 </div>
@@ -81,12 +78,12 @@ export default function AdminTopbar() {
                     items-center
                     justify-center
                     rounded-xl
-                    bg-[#071427]
+                    bg-card
                     border
-                    border-slate-800
-                    text-slate-300
-                    hover:text-white
-                    hover:border-blue-500/20
+                    border-border
+                    text-muted-foreground
+                    hover:text-foreground
+                    hover:border-primary/20
                     transition
                     "
                 >
@@ -100,7 +97,7 @@ export default function AdminTopbar() {
                         h-2
                         w-2
                         rounded-full
-                        bg-red-500
+                        bg-destructive
                         "
                     />
                 </button>
@@ -112,12 +109,12 @@ export default function AdminTopbar() {
                     items-center
                     gap-3
                     rounded-xl
-                    bg-[#071427]
+                    bg-card
                     border
-                    border-slate-800
+                    border-border
                     px-3
                     py-2
-                    hover:border-blue-500/20
+                    hover:border-primary/20
                     transition
                     "
                 >
@@ -132,18 +129,18 @@ export default function AdminTopbar() {
                     />
 
                     <div className="text-left">
-                        <p className="text-sm font-medium text-white">
+                        <p className="text-sm font-medium text-foreground">
                             Admin
                         </p>
 
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs text-muted-foreground">
                             System Manager
                         </p>
                     </div>
 
                     <ChevronDown
                         size={16}
-                        className="text-slate-500"
+                        className="text-muted-foreground"
                     />
                 </button>
 

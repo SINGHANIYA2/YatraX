@@ -72,11 +72,11 @@ export default function FleetManagement() {
                 initial={{ y: 40, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6 }}
-                className='bg-[#030712]'
+                className='bg-background'
             >
 
 
-                <div className="mt-34 mb-10 px-10 bg-[#030712] font-sans">
+                <div className="mt-34 mb-10 px-10 bg-background font-sans">
 
 
                     {/* Stats */}

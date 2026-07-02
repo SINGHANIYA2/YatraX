@@ -179,10 +179,10 @@ export default function page() {
 
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 md:p-6">
+    <div className="min-h-screen bg-secondary p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Search Section */}
-        <div className="bg-white rounded-3xl shadow-sm p-5 md:p-6">
+        <div className="bg-card rounded-3xl shadow-sm p-5 md:p-6">
           <h1 className="text-2xl font-bold mb-5">
             Track Your Vehicle
           </h1>
@@ -192,7 +192,7 @@ export default function page() {
             <input
               type="text"
               placeholder="vehicleNumber"
-              className="w-full h-12 pl-11 pr-4 rounded-xl border border-gray-300 outline-none focus:border-black"
+              className="w-full h-12 pl-11 pr-4 rounded-xl border border-border outline-none focus:border-border"
               onChange={(e) => {
                 setVehicleNumber(e.target.value.toUpperCase())
                 setSource("")
@@ -204,13 +204,13 @@ export default function page() {
             <div className="relative">
               <MapPin
                 size={18}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
               />
 
               <input
                 type="text"
                 placeholder="Source"
-                className="w-full h-12 pl-11 pr-4 rounded-xl border border-gray-300 outline-none focus:border-black"
+                className="w-full h-12 pl-11 pr-4 rounded-xl border border-border outline-none focus:border-border"
                 onChange={(e) => {
                   setSource(e.target.value)
                   getSuggestion(e.target.value, setSrcSugg)
@@ -227,7 +227,7 @@ export default function page() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -4, scale: 0.98 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute left-0 right-0 top-full mt-1 bg-white border border-zinc-200 rounded-2xl shadow-xl max-h-52 overflow-y-auto z-50"
+                    className="absolute left-0 right-0 top-full mt-1 bg-card border border-border rounded-2xl shadow-md max-h-52 overflow-y-auto z-50"
                   >
                     {
                       srcSugg.map((p, i) => (
@@ -237,7 +237,7 @@ export default function page() {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ delay: i * 0.03 }}
-                          className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-zinc-50 transition-colors border-b border-zinc-100 last:border-0"
+                          className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-secondary transition-colors border-b border-border last:border-0"
                           onClick={() => {
                             setSource(suggestion(p))
                             setSrcLat(p.lat)
@@ -247,15 +247,15 @@ export default function page() {
                           }}
                         >
                           {/* Content here */}
-                          <MapPin size={13} className="text-zinc-400 flex-shrink-0" />
+                          <MapPin size={13} className="text-muted-foreground flex-shrink-0" />
 
-                          <span className="text-sm text-zinc-800 font-medium truncate">
+                          <span className="text-sm text-foreground font-medium truncate">
                             {suggestion(p)}
                           </span>
 
                           <ChevronRight
                             size={13}
-                            className="text-zinc-300 flex-shrink-0 ml-auto"
+                            className="text-muted-foreground flex-shrink-0 ml-auto"
                           />
 
                         </motion.div>
@@ -272,7 +272,7 @@ export default function page() {
             <div className="relative">
               <MapPin
                 size={18}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
               />
 
               <input
@@ -280,7 +280,7 @@ export default function page() {
                 disabled={!source}
                 value={destination}
                 placeholder="Destination"
-                className="w-full h-12 pl-11 pr-4 rounded-xl border border-gray-300 outline-none focus:border-black"
+                className="w-full h-12 pl-11 pr-4 rounded-xl border border-border outline-none focus:border-border"
                 onChange={(e) => {
                   setDestination(e.target.value)
                   getSuggestion(e.target.value, setDestSugg)
@@ -297,7 +297,7 @@ export default function page() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -4, scale: 0.98 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute left-0 right-0 top-full mt-1 bg-white border border-zinc-200 rounded-2xl shadow-xl max-h-52 overflow-y-auto z-50"
+                    className="absolute left-0 right-0 top-full mt-1 bg-card border border-border rounded-2xl shadow-md max-h-52 overflow-y-auto z-50"
 
                   >
                     {
@@ -308,7 +308,7 @@ export default function page() {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ delay: i * 0.03 }}
-                          className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-zinc-50 transition-colors border-b border-zinc-100 last:border-0"
+                          className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-secondary transition-colors border-b border-border last:border-0"
                           onClick={() => {
                             setDestination(suggestion(p))
                             setDestLat(p.lat)
@@ -317,15 +317,15 @@ export default function page() {
                           }}
                         >
                           {/* Content here */}
-                          <MapPin size={13} className="text-zinc-400 flex-shrink-0" />
+                          <MapPin size={13} className="text-muted-foreground flex-shrink-0" />
 
-                          <span className="text-sm text-zinc-800 font-medium truncate">
+                          <span className="text-sm text-foreground font-medium truncate">
                             {suggestion(p)}
                           </span>
 
                           <ChevronRight
                             size={13}
-                            className="text-zinc-300 flex-shrink-0 ml-auto"
+                            className="text-muted-foreground flex-shrink-0 ml-auto"
                           />
 
                         </motion.div>
@@ -337,7 +337,7 @@ export default function page() {
                 )}
               </AnimatePresence>
             </div>
-            <button className={`${canSearch ? 'h-12 rounded-xl bg-black text-white font-medium flex items-center justify-center gap-2 cursor-pointer' : 'h-12 cursor-pointer rounded-xl bg-black/30 text-white font-medium flex items-center justify-center gap-2'}`}
+            <button className={`${canSearch ? 'h-12 rounded-xl bg-primary text-primary-foreground font-medium flex items-center justify-center gap-2 cursor-pointer hover:bg-primary-hover' : 'h-12 cursor-pointer rounded-xl bg-muted text-muted-foreground font-medium flex items-center justify-center gap-2'}`}
               onClick={getVehicle}
 
               disabled = {!canSearch }
@@ -352,7 +352,7 @@ export default function page() {
         {/* Main Section */}
         <div className="grid lg:grid-cols-3 gap-6 mt-6">
           {/* Vehicle Section */}
-          <div className="lg:col-span-1 bg-white rounded-3xl shadow-sm p-5 h-[750px]">
+          <div className="lg:col-span-1 bg-card rounded-3xl shadow-sm p-5 h-[750px]">
             <h2 className="text-xl font-semibold mb-5">
               Available Vehicles
             </h2>
@@ -368,12 +368,12 @@ export default function page() {
                     Find your ride
                   </h3>
 
-                  <p className="text-zinc-500 mt-3 max-w-xs">
+                  <p className="text-muted-foreground mt-3 max-w-xs">
                     Search a route and discover buses travelling
                     between your source and destination.
                   </p>
 
-                  <p className="text-zinc-400 text-sm mt-6">
+                  <p className="text-muted-foreground text-sm mt-6">
                     Enter source and destination to start tracking.
                   </p>
                 </div>
@@ -381,9 +381,9 @@ export default function page() {
 
               {loading && (
                 <div className="h-full flex flex-col items-center justify-center">
-                  <div className="w-12 h-12 border-4 border-zinc-300 border-t-black rounded-full animate-spin" />
+                  <div className="w-12 h-12 border-4 border-border border-t-foreground rounded-full animate-spin" />
 
-                  <p className="mt-5 text-zinc-500">
+                  <p className="mt-5 text-muted-foreground">
                     Searching vehicles...
                   </p>
                 </div>
@@ -401,7 +401,7 @@ export default function page() {
                       No Vehicles Found
                     </h3>
 
-                    <p className="text-zinc-500 mt-3">
+                    <p className="text-muted-foreground mt-3">
                       No active vehicles are currently available
                       on this route.
                     </p>
@@ -440,8 +440,8 @@ export default function page() {
                     }}
                     className={`border rounded-2xl p-4 mb-4 cursor-pointer transition
             ${vehicleId === vehicle._id
-                        ? "border-blue-500 shadow-lg ring-2 ring-blue-200"
-                        : "border-gray-200 hover:shadow-md"
+                        ? "border-primary shadow-lg ring-2 ring-primary/30"
+                        : "border-border hover:shadow-md"
                       }`}
                   >
                     <div>
@@ -449,7 +449,7 @@ export default function page() {
                       {vehicle.vehicleNumber}
                     </h3>
 
-                    <p className="text-sm text-zinc-500 mt-3">
+                    <p className="text-sm text-muted-foreground mt-3">
                       {vehicle.routeId?.locations?.[0]?.name}
                       {" → "}
                       {
@@ -459,7 +459,7 @@ export default function page() {
                       }
                     </p>
 
-                    <p className="text-sm text-zinc-600 mt-2">
+                    <p className="text-sm text-muted-foreground mt-2">
                       {vehicle.routeId?.distanceInKm ?? "--"} km
                       •
                       {" "}
@@ -470,8 +470,8 @@ export default function page() {
                     <button
                       className={`mt-5 w-full h-11 rounded-xl font-medium transition cursor-pointer
               ${vehicleId === vehicle._id
-                          ? "bg-blue-600 text-white"
-                          : "bg-black text-white"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-secondary text-foreground hover:bg-hover"
                         }`}
                     >
                       {vehicleId === vehicle._id
@@ -484,12 +484,12 @@ export default function page() {
           </div>
 
           {/* Map Section */}
-          <div className="lg:col-span-2 bg-white rounded-3xl shadow-sm p-5">
+          <div className="lg:col-span-2 bg-card rounded-3xl shadow-sm p-5">
             <h2 className="text-xl font-semibold mb-5">
               Live Map
             </h2>
 
-            <div className="h-[650px] rounded-2xl overflow-hidden bg-zinc-100">
+            <div className="h-[650px] rounded-2xl overflow-hidden bg-secondary">
               {vehicleId ? (
                 <SearchMap
                   source={source}
@@ -503,7 +503,7 @@ export default function page() {
                   vehicleId={vehicleId}
                 />
               ) : (
-                <div className="h-full flex flex-col items-center justify-center text-zinc-500">
+                <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
                   <div className="text-7xl mb-4">
                     🗺️
                   </div>

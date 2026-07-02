@@ -59,7 +59,7 @@ export default function DriversPage() {
 
     return (
 
-        <div className='bg-[#030712] h-screen'>
+        <div className='bg-background h-screen'>
             <div className="w-full fixed top-0 z-40">
                 <DriverManagementTopBar />
             </div>
@@ -70,7 +70,7 @@ export default function DriversPage() {
                 className=''
             >
 
-                <div className="bg-[#030712] px-6 pt-6 mt-[100px] font-sans">
+                <div className="bg-background px-6 pt-6 mt-[100px] font-sans">
 
                     {/* Heading */}
 

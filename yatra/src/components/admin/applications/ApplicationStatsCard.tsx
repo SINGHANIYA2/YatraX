@@ -16,9 +16,9 @@ export default function ApplicationStatsCard({
     return (
         <div
             className="
-            bg-[#071427]
+            bg-card
             border
-            border-blue-500/10
+            border-primary/10
             rounded-3xl
             p-6
         "
@@ -28,7 +28,7 @@ export default function ApplicationStatsCard({
                 h-12
                 w-12
                 rounded-xl
-                bg-slate-900
+                bg-card
                 flex
                 items-center
                 justify-center
@@ -40,11 +40,11 @@ export default function ApplicationStatsCard({
                 />
             </div>
 
-            <h2 className="mt-5 text-4xl font-bold text-white">
+            <h2 className="mt-5 text-4xl font-bold text-foreground">
                 {value}
             </h2>
 
-            <p className="mt-2 text-slate-400">
+            <p className="mt-2 text-muted-foreground">
                 {title}
             </p>
         </div>

@@ -8,7 +8,7 @@ import SummarySection from './SummarySection'
 
 function Booking() {
   return (
-    <div className="bg-[#030712]">
+    <div className="bg-background">
       <motion.div
         initial={{ y: 40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -20,7 +20,7 @@ function Booking() {
           sm:px-6
           lg:px-10
           font-sans
-          text-white
+          text-foreground
           pb-8
         "
       >
@@ -32,11 +32,7 @@ function Booking() {
               sm:text-4xl
               lg:text-5xl
               font-bold
-              bg-gradient-to-r
-              from-blue-400
-              to-cyan-300
-              bg-clip-text
-              text-transparent
+              text-foreground
             "
           >
             Book Your Journey
@@ -44,7 +40,7 @@ function Booking() {
 
           <p
             className="
-              text-gray-400
+              text-muted-foreground
               mt-3
               text-sm
               sm:text-base
@@ -61,12 +57,12 @@ function Booking() {
         {/* Search Bar */}
         <div
           className="
-            bg-[#07142C]
+            bg-card
             rounded-2xl
             p-5
             border
-            border-blue-500/10
-            shadow-[0_0_15px_rgba(59,130,246,0.15)]
+            border-primary/10
+            shadow-sm
             grid
             grid-cols-1
             sm:grid-cols-2
@@ -79,7 +75,7 @@ function Booking() {
             <p className="font-bold">From</p>
             <input
               className="
-                bg-[#102B56]
+                bg-card
                 p-3
                 rounded-lg
                 outline-none
@@ -91,7 +87,7 @@ function Booking() {
             <p className="font-bold">To</p>
             <input
               className="
-                bg-[#102B56]
+                bg-card
                 p-3
                 rounded-lg
                 outline-none
@@ -104,8 +100,8 @@ function Booking() {
             <input
               type="date"
               className="
-                bg-[#102B56]
-                text-gray-400
+                bg-card
+                text-muted-foreground
                 p-3
                 rounded-lg
                 outline-none
@@ -118,7 +114,7 @@ function Booking() {
             <input
               type="text"
               className="
-                bg-[#102B56]
+                bg-card
                 p-3
                 rounded-lg
                 outline-none
@@ -131,8 +127,8 @@ function Booking() {
 
             <select
               className="
-                bg-[#102B56]
-                text-gray-400
+                bg-card
+                text-muted-foreground
                 p-3
                 rounded-lg
                 outline-none
@@ -146,9 +142,7 @@ function Booking() {
 
           <button
             className="
-              bg-gradient-to-r
-              from-blue-600
-              to-blue-500
+              bg-primary text-primary-foreground hover:bg-primary-hover transition-colors
               rounded-lg
               font-semibold
               cursor-pointer

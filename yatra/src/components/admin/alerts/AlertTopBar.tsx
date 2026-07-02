@@ -13,19 +13,19 @@ export default function AlertTopBar() {
             items-center
             justify-between
 
-            bg-[#071427]
+            bg-card
             border-b
-            border-blue-500/10
+            border-primary/10
 
-            shadow-[0_4px_20px_rgba(0,0,0,0.25)]
+            shadow-sm
             "
         >
             <div>
-                <h1 className="text-3xl font-bold text-white">
+                <h1 className="text-3xl font-bold text-foreground">
                     Alerts Management
                 </h1>
 
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-muted-foreground">
                     Monitor fleet alerts and incidents
                 </p>
             </div>

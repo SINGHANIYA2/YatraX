@@ -16,28 +16,28 @@ const stats = [
         title: 'Active Vehicles',
         value: 102,
         icon: Bus,
-        color: 'text-blue-400',
+        color: 'text-primary',
     },
 
     {
         title: 'Drivers On Duty',
         value: 86,
         icon: Users,
-        color: 'text-green-400',
+        color: 'text-success',
     },
 
     {
         title: 'Revenue Today',
         value: '₹3.4L',
         icon: IndianRupee,
-        color: 'text-yellow-400',
+        color: 'text-warning',
     },
 
     {
         title: 'Pending Requests',
         value: 5,
         icon: TriangleAlert,
-        color: 'text-red-400',
+        color: 'text-destructive',
     },
 ]
 

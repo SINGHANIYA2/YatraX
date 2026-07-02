@@ -41,12 +41,12 @@ export default function FleetAnalytics({
         {
             name: "Used",
             value: utilization,
-            fill: "#3b82f6",
+            fill: "var(--primary)",
         },
         {
             name: "Remaining",
             value: 100 - utilization,
-            fill: "#0f2038",
+            fill: "var(--muted)",
         },
     ]
 
@@ -58,27 +58,27 @@ export default function FleetAnalytics({
                 className="
                 rounded-2xl
                 border
-                border-blue-500/10
-                bg-[#071427]
+                border-primary/10
+                bg-card
                 p-5
-                shadow-[0_0_15px_rgba(59,130,246,0.15)]
+                shadow-sm
                 "
             >
-                <h3 className="text-white text-lg font-semibold mb-4">
+                <h3 className="text-foreground text-lg font-semibold mb-4">
                     Fuel Usage
                 </h3>
 
                 <div className="h-[250px]">
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={fuelData}>
-                            <XAxis dataKey="month" stroke="#64748b" />
-                            <YAxis stroke="#64748b" />
+                            <XAxis dataKey="month" stroke="var(--muted-foreground)" />
+                            <YAxis stroke="var(--muted-foreground)" />
                             <Tooltip />
 
                             <Line
                                 type="monotone"
                                 dataKey="fuel"
-                                stroke="#3b82f6"
+                                stroke="var(--primary)"
                                 strokeWidth={3}
                             />
                         </LineChart>
@@ -91,13 +91,13 @@ export default function FleetAnalytics({
                 className="
                 rounded-2xl
                 border
-                border-blue-500/10
-                bg-[#071427]
+                border-primary/10
+                bg-card
                 p-5
-                shadow-[0_0_15px_rgba(59,130,246,0.15)]
+                shadow-sm
                 "
             >
-                <h3 className="text-white text-lg font-semibold mb-4">
+                <h3 className="text-foreground text-lg font-semibold mb-4">
                     Vehicle Utilization
                 </h3>
 
@@ -125,11 +125,11 @@ export default function FleetAnalytics({
                     </ResponsiveContainer>
 
                     <div className="absolute text-center">
-                        <p className="text-4xl font-bold text-white">
+                        <p className="text-4xl font-bold text-foreground">
                             {utilization}%
                         </p>
 
-                        <p className="text-slate-400 text-sm">
+                        <p className="text-muted-foreground text-sm">
                             Utilized
                         </p>
                     </div>
@@ -142,13 +142,13 @@ export default function FleetAnalytics({
                 className="
                 rounded-2xl
                 border
-                border-blue-500/10
-                bg-[#071427]
+                border-primary/10
+                bg-card
                 p-5
-                shadow-[0_0_15px_rgba(59,130,246,0.15)]
+                shadow-sm
                 "
             >
-                <h3 className="text-white text-lg font-semibold mb-4">
+                <h3 className="text-foreground text-lg font-semibold mb-4">
                     Revenue Overview
                 </h3>
 
@@ -158,20 +158,20 @@ export default function FleetAnalytics({
                         <BarChart data={revenueData} style={{
                             outline: "none",
                         }}>
-                            <XAxis dataKey="month" stroke="#64748b" />
-                            <YAxis stroke="#64748b" />
+                            <XAxis dataKey="month" stroke="var(--muted-foreground)" />
+                            <YAxis stroke="var(--muted-foreground)" />
                             <Tooltip
                                 cursor={false}
                                 contentStyle={{
-                                    background: "#071427",
-                                    border: "1px solid rgba(59,130,246,.2)",
+                                    background: "var(--card)",
+                                    border: "1px solid var(--border)",
                                     borderRadius: "12px",
-                                    color: "#fff",
+                                    color: "var(--foreground)",
                                 }}
                             />
                             <Bar
                                 dataKey="revenue"
-                                fill="#3b82f6"
+                                fill="var(--primary)"
                                 radius={[6, 6, 0, 0]}
                                 activeBar={false}
                             />

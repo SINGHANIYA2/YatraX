@@ -88,16 +88,16 @@ export default function LocationAdminPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#020617] relative overflow-auto">
+        <div className="min-h-screen bg-background relative overflow-auto">
 
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#2563eb55,transparent_55%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,var(--border),transparent_55%)]" />
 
             <div className="relative z-10 px-4 py-10">
 
                 <motion.div
                     initial={{ opacity: 0, y: 25 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="max-w-3xl mx-auto rounded-3xl bg-slate-950/70 backdrop-blur-xl border border-blue-500/20 shadow-[0_0_60px_rgba(37,99,235,0.15)] p-6 sm:p-8"
+                    className="max-w-3xl mx-auto rounded-3xl bg-card border border-primary/20 shadow-sm p-6 sm:p-8"
                 >
 
                     {/* Header */}
@@ -106,20 +106,20 @@ export default function LocationAdminPage() {
 
                         <button
                             onClick={() => router.back()}
-                            className="absolute left-0 top-0 w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-white hover:border-blue-500 transition"
+                            className="absolute left-0 top-0 w-10 h-10 rounded-full border border-border flex items-center justify-center text-foreground hover:border-primary transition"
                         >
                             <ArrowLeft size={18} />
                         </button>
 
-                        <p className="text-blue-400 text-sm">
+                        <p className="text-primary text-sm">
                             Step 4 of 4
                         </p>
 
-                        <h1 className="text-3xl font-bold text-white mt-2">
+                        <h1 className="text-3xl font-bold text-foreground mt-2">
                             Select Location & Admin
                         </h1>
 
-                        <p className="text-slate-400 mt-2">
+                        <p className="text-muted-foreground mt-2">
                             Search your city or area and choose the
                             nearest hub
                         </p>
@@ -129,27 +129,27 @@ export default function LocationAdminPage() {
                     {/* Progress */}
 
                     <div className="flex justify-center gap-2 mt-6">
-                        <div className="h-2 w-4 rounded-full bg-blue-500" />
-                        <div className="h-2 w-4 rounded-full bg-blue-500" />
-                        <div className="h-2 w-4 rounded-full bg-blue-500" />
-                        <div className="h-2 w-16 rounded-full bg-blue-500" />
+                        <div className="h-2 w-4 rounded-full bg-primary" />
+                        <div className="h-2 w-4 rounded-full bg-primary" />
+                        <div className="h-2 w-4 rounded-full bg-primary" />
+                        <div className="h-2 w-16 rounded-full bg-primary" />
                     </div>
 
                     {/* Search */}
 
                     <div className="mt-8">
 
-                        <label className="text-sm text-slate-400">
+                        <label className="text-sm text-muted-foreground">
                             Search City / Area / Stand
                         </label>
 
                         <div className="relative mt-2">
 
-                            <div className="flex items-center gap-3 bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 focus-within:border-blue-500">
+                            <div className="flex items-center gap-3 bg-card border border-border rounded-xl px-4 py-3 focus-within:border-primary">
 
                                 <Search
                                     size={18}
-                                    className="text-slate-400"
+                                    className="text-muted-foreground"
                                 />
 
                                 <input
@@ -158,13 +158,13 @@ export default function LocationAdminPage() {
                                         searchLocation(e.target.value)
                                     }
                                     placeholder="Ranchi, Harmu, Kanke..."
-                                    className="flex-1 bg-transparent text-white placeholder:text-slate-500 outline-none"
+                                    className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground outline-none"
                                 />
 
                             </div>
 
                             {suggestions.length > 0 && (
-                                <div className="absolute left-0 right-0 mt-2 bg-slate-950 border border-slate-800 rounded-xl overflow-hidden z-50">
+                                <div className="absolute left-0 right-0 mt-2 bg-card border border-border rounded-xl overflow-hidden z-50">
 
                                     {suggestions.map((location) => (
                                         <button
@@ -177,7 +177,7 @@ export default function LocationAdminPage() {
 
                                                 fetchAdmins(location._id);
                                             }}
-                                            className="w-full px-4 py-3 text-left text-white hover:bg-slate-800 transition"
+                                            className="w-full px-4 py-3 text-left text-foreground hover:bg-secondary transition"
                                         >
                                             {location.name}
                                         </button>
@@ -193,9 +193,9 @@ export default function LocationAdminPage() {
                     {/* Selected Location */}
 
                     {selectedLocation && (
-                        <div className="mt-6 rounded-xl border border-blue-500/20 bg-blue-500/10 p-4">
+                        <div className="mt-6 rounded-xl border border-primary/20 bg-primary/10 p-4">
 
-                            <div className="flex items-center gap-2 text-blue-400">
+                            <div className="flex items-center gap-2 text-primary">
 
                                 <MapPin size={18} />
 
@@ -214,7 +214,7 @@ export default function LocationAdminPage() {
                     {admins.length > 0 && (
                         <div className="mt-8">
 
-                            <h3 className="text-white font-semibold mb-4">
+                            <h3 className="text-foreground font-semibold mb-4">
                                 Available Admins
                             </h3>
 
@@ -228,8 +228,8 @@ export default function LocationAdminPage() {
                                             setAdminId(admin._id)
                                         }
                                         className={`cursor-pointer rounded-2xl p-5 border transition ${adminId === admin._id
-                                                ? "border-blue-500 bg-blue-500/10"
-                                                : "border-slate-800 bg-slate-900/60"
+                                                ? "border-primary bg-primary/10"
+                                                : "border-border bg-card"
                                             }`}
                                     >
 
@@ -237,11 +237,11 @@ export default function LocationAdminPage() {
 
                                             <div>
 
-                                                <h4 className="text-white font-semibold text-lg">
+                                                <h4 className="text-foreground font-semibold text-lg">
                                                     {admin.name}
                                                 </h4>
 
-                                                <div className="flex items-center gap-2 text-slate-400 mt-2">
+                                                <div className="flex items-center gap-2 text-muted-foreground mt-2">
 
                                                     <MapPin size={15} />
 
@@ -251,7 +251,7 @@ export default function LocationAdminPage() {
 
                                                 </div>
 
-                                                <p className="text-slate-500 text-sm mt-1">
+                                                <p className="text-muted-foreground text-sm mt-1">
                                                     {admin.standAddress}
                                                 </p>
 
@@ -260,14 +260,14 @@ export default function LocationAdminPage() {
                                             <UserCheck
                                                 className={
                                                     adminId === admin._id
-                                                        ? "text-blue-500"
-                                                        : "text-slate-500"
+                                                        ? "text-primary"
+                                                        : "text-muted-foreground"
                                                 }
                                             />
 
                                         </div>
 
-                                        <div className="flex flex-wrap gap-6 mt-4 text-sm text-slate-400">
+                                        <div className="flex flex-wrap gap-6 mt-4 text-sm text-muted-foreground">
 
                                             <div className="flex items-center gap-2">
 
@@ -298,7 +298,7 @@ export default function LocationAdminPage() {
                     {/* Error */}
 
                     {error && (
-                        <p className="text-red-500 mt-4 text-sm">
+                        <p className="text-destructive mt-4 text-sm">
                             * {error}
                         </p>
                     )}
@@ -310,7 +310,7 @@ export default function LocationAdminPage() {
                         whileTap={{ scale: 0.98 }}
                         disabled={loading}
                         onClick={handleContinue}
-                        className="mt-8 w-full h-14 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
+                        className="mt-8 w-full h-14 rounded-2xl bg-primary text-primary-foreground hover:bg-primary-hover transition-colors font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                         {loading ? (
                             <CircleDashed className="animate-spin" />
