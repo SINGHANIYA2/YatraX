@@ -554,6 +554,8 @@ NEXT_PUBLIC_SOCKET_SERVER_URL=http://localhost:4000
 CLOUDINARY_CLOUD_NAME=
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
+
+
 ```
 
 ---
@@ -621,7 +623,7 @@ npm run dev
 # 👨‍💻 Authors
 
 ### Bipin Kumar
-### Laksh Bairwa
+### Lavkush Bairwa
 
 
 ---
