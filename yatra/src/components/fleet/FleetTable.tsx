@@ -1,5 +1,7 @@
 'use client'
 
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import {
     Eye,
     Pencil,
@@ -7,22 +9,23 @@ import {
 } from 'lucide-react'
 
 type Props = {
-    vehicles: any[]
-    setVehicles: React.Dispatch<React.SetStateAction<any[]>>
+    vehicles: any[];
+    setVehicles: React.Dispatch<React.SetStateAction<any[]>>;
+    fetchVehicles: () => Promise<void>;
 }
 
 function getStatusColor(status: string) {
     switch (status) {
-        case 'Active':
+        case 'available':
             return 'bg-green-500/20 text-green-400'
 
-        case 'In Transit':
+        case 'assigned':
             return 'bg-blue-500/20 text-blue-400'
 
-        case 'Maintenance':
+        case 'maintenance':
             return 'bg-yellow-500/20 text-yellow-400'
 
-        case 'Offline':
+        case 'offline':
             return 'bg-red-500/20 text-red-400'
 
         default:
@@ -32,13 +35,28 @@ function getStatusColor(status: string) {
 
 export default function FleetTable({
     vehicles,
-    setVehicles
+    setVehicles,
+    fetchVehicles
 }: Props) {
+    const router = useRouter();
 
-    function handleDelete(id: string) {
-        setVehicles(prev =>
-            prev.filter(vehicle => vehicle.id !== id)
-        )
+    async function handleDelete(id: string) {
+        try {
+            const res = await fetch(`/api/admin/vehicle/${id}`, {
+                method: "DELETE",
+            });
+
+            const data = await res.json();
+
+            if (!data.success) {
+                alert(data.message);
+                return;
+            }
+
+            await fetchVehicles();
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     return (
@@ -71,9 +89,9 @@ export default function FleetTable({
                             Driver
                         </th>
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        {/* <th className="px-6 py-4 text-sm font-medium text-slate-400">
                             Route
-                        </th>
+                        </th> */}
 
                         <th className="px-6 py-4 text-sm font-medium text-slate-400">
                             Status
@@ -95,7 +113,7 @@ export default function FleetTable({
 
                     {vehicles.map((vehicle) => (
                         <tr
-                            key={vehicle.id}
+                            key={vehicle._id}
                             className="
                             border-t
                             border-slate-800
@@ -104,20 +122,20 @@ export default function FleetTable({
                             "
                         >
                             <td className="px-6 py-4 font-medium text-white">
-                                {vehicle.id}
+                                {vehicle.vehicleNumber}
                             </td>
 
                             <td className="px-6 py-4 text-slate-300">
-                                {vehicle.type}
+                                {vehicle.vehicleType}
                             </td>
 
                             <td className="px-6 py-4 text-slate-300">
-                                {vehicle.driver}
+                                {vehicle.assignedPartnerId?.name ?? "Not Assigned"}
                             </td>
 
-                            <td className="px-6 py-4 text-slate-300">
-                                {vehicle.route}
-                            </td>
+                            {/* <td className="px-6 py-4 text-slate-300">
+                                {vehicle.routeId?.routeName ?? "No Route"}
+                            </td> */}
 
                             <td className="px-6 py-4">
                                 <span
@@ -135,12 +153,15 @@ export default function FleetTable({
                             </td>
 
                             <td className="px-6 py-4 text-slate-400">
-                                {vehicle.updated}
+                                {new Date(vehicle.updatedAt).toLocaleString()}
                             </td>
 
                             <td className="px-6 py-4">
                                 <div className="flex items-center gap-3">
                                     <button
+                                        onClick={() =>
+                                            router.push(`/admin/fleet/${vehicle._id}`)
+                                        }
                                         className="
                                         text-slate-400
                                         hover:text-blue-400
@@ -149,17 +170,17 @@ export default function FleetTable({
                                         <Eye className='cursor-pointer' size={18} />
                                     </button>
 
-                                    <button
+                                    {/* <button
                                         className="
                                         text-slate-400
                                         hover:text-yellow-400
                                         "
                                     >
                                         <Pencil className='cursor-pointer' size={18} />
-                                    </button>
+                                    </button> */}
 
                                     <button
-                                        onClick={() => handleDelete(vehicle.id)}
+                                        onClick={() => handleDelete(vehicle._id)}
                                         className="
                                         text-slate-400
                                         hover:text-red-400

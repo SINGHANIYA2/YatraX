@@ -1,25 +1,23 @@
 'use client'
 
 import { Search, ChevronDown, Plus } from 'lucide-react'
+import { useState } from 'react'
 
 
 type Props = {
-    vehicles: any[]
-    setVehicles: React.Dispatch<React.SetStateAction<any[]>>
+    selectedType: string;
+    setSelectedType: React.Dispatch<React.SetStateAction<string>>;
 
-    selectedType: string
-    setSelectedType: React.Dispatch<React.SetStateAction<string>>
+    selectedStatus: string;
+    setSelectedStatus: React.Dispatch<React.SetStateAction<string>>;
 
-    selectedStatus: string
-    setSelectedStatus: React.Dispatch<React.SetStateAction<string>>
+    search: string;
+    setSearch: React.Dispatch<React.SetStateAction<string>>;
 
-    search: string
-    setSearch: React.Dispatch<React.SetStateAction<string>>
+    onAddVehicle: () => void;
 }
 
 export default function FleetFilters({
-    vehicles,
-    setVehicles,
 
     selectedType,
     setSelectedType,
@@ -28,24 +26,13 @@ export default function FleetFilters({
     setSelectedStatus,
 
     search,
-    setSearch
+    setSearch,
+
+    onAddVehicle
 }: Props) {
 
     function handleAddVehicle() {
-
-        const newVehicle = {
-            id: crypto.randomUUID(),
-            type: 'Bus',
-            driver: 'New Driver',
-            route: 'Delhi → Jaipur',
-            status: 'Active',
-            updated: 'Just now',
-            fuelUsed: [0, 0, 0, 0, 0, 0],
-            revenue: [0, 0, 0, 0, 0, 0],
-            activeDays: 0,
-        }
-
-        setVehicles(prev => [...prev, newVehicle])
+        onAddVehicle();
     }
 
     return (
@@ -118,10 +105,9 @@ export default function FleetFilters({
                         "
                     >
                         <option>All Status</option>
-                        <option>Active</option>
-                        <option>In Transit</option>
+                        <option>Available</option>
+                        <option>Assigned</option>
                         <option>Maintenance</option>
-                        <option>Offline</option>
                     </select>
 
                     <ChevronDown
@@ -162,7 +148,7 @@ export default function FleetFilters({
 
                 {/* Add Vehicle */}
                 <button
-                    onClick={handleAddVehicle}
+                    onClick={onAddVehicle}
                     className="
                     flex
                     items-center

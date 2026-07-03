@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'motion/react'
 
 import DriverStats from './DriverStats'
@@ -8,12 +8,27 @@ import DriverFilters from './DriverFilters'
 import DriverTable from './DriverTable'
 import DriverManagementTopBar from './DriverTopBar'
 
-import { drivers as initialDrivers } from './demo'
+type Partner = {
+    _id: string
+    name: string
+    vehicle: string
+    phone: string
+    rating: number
+    status: string
+    experience: string
+    trips: number
+}
 
 export default function DriversPage() {
 
-    const [drivers, setDrivers] =
-        useState(initialDrivers)
+    const [partners, setPartners] =
+        useState<Partner[]>([])
+
+    const [loading, setLoading] =
+        useState(true)
+
+    const [error, setError] =
+        useState<string | null>(null)
 
     const [selectedStatus, setSelectedStatus] =
         useState('All Status')
@@ -21,29 +36,57 @@ export default function DriversPage() {
     const [search, setSearch] =
         useState('')
 
-    const filteredDrivers = useMemo(() => {
+    useEffect(() => {
+        let cancelled = false
 
-        let filtered = drivers
+        async function loadDrivers() {
+            setLoading(true)
+            setError(null)
+            try {
+                const res = await fetch('/api/admin/partner')
+                const data = await res.json()
+
+                if (!res.ok || !data.success) {
+                    throw new Error(data?.message || 'Could not load partners')
+                }
+
+                if (!cancelled) setPartners(data.partners)
+            } catch (err: any) {
+                if (!cancelled) setError(err?.message || 'Something went wrong')
+            } finally {
+                if (!cancelled) setLoading(false)
+            }
+        }
+
+        loadDrivers()
+        return () => {
+            cancelled = true
+        }
+    }, [])
+
+    const filteredPartners = useMemo(() => {
+
+        let filtered = partners
 
         if (selectedStatus !== 'All Status') {
             filtered = filtered.filter(
-                driver =>
-                    driver.status === selectedStatus
+                partner =>
+                    partner.status === selectedStatus
             )
         }
 
         if (search.trim()) {
             filtered = filtered.filter(
-                driver =>
-                    driver.name
+                partner =>
+                    partner.name
                         .toLowerCase()
                         .includes(search.toLowerCase()) ||
 
-                    driver.id
+                    partner._id
                         .toLowerCase()
                         .includes(search.toLowerCase()) ||
 
-                    driver.vehicle
+                    partner.vehicle
                         .toLowerCase()
                         .includes(search.toLowerCase())
             )
@@ -52,7 +95,7 @@ export default function DriversPage() {
         return filtered
 
     }, [
-        drivers,
+        partners,
         selectedStatus,
         search
     ])
@@ -72,32 +115,43 @@ export default function DriversPage() {
 
                 <div className="bg-[#030712] px-6 pt-6 mt-[100px] font-sans">
 
-                    {/* Heading */}
+                    {loading ? (
+                        <div className="flex items-center justify-center py-20">
+                            <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+                        </div>
+                    ) : error ? (
+                        <p className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+                            {error}
+                        </p>
+                    ) : (
+                        <>
+                            {/* Stats */}
+                            <DriverStats
+                                partners={filteredPartners}
+                            />
 
-                    {/* Stats */}
-                    <DriverStats
-                        drivers={filteredDrivers}
-                    />
+                            {/* Filters */}
+                            <DriverFilters
+                                partners={partners}
+                                setPartners={setPartners}
 
-                    {/* Filters */}
-                    <DriverFilters
-                        drivers={drivers}
-                        setDrivers={setDrivers}
+                                selectedStatus={selectedStatus}
+                                setSelectedStatus={setSelectedStatus}
 
-                        selectedStatus={selectedStatus}
-                        setSelectedStatus={setSelectedStatus}
+                                search={search}
+                                setSearch={setSearch}
+                            />
 
-                        search={search}
-                        setSearch={setSearch}
-                    />
-
-                    {/* Table */}
-                    <DriverTable
-                        drivers={filteredDrivers}
-                        setDrivers={setDrivers}
-                    />
+                            {/* Table */}
+                            <DriverTable
+                                partners={filteredPartners}
+                                setPartners={setPartners}
+                            />
+                        </>
+                    )}
 
                 </div>
+
             </motion.div>
         </div>
     )

@@ -3,8 +3,8 @@
 import { Search, ChevronDown, Plus } from 'lucide-react'
 
 type Props = {
-    drivers: any[]
-    setDrivers: React.Dispatch<React.SetStateAction<any[]>>
+    partners: any[]
+    setPartners: React.Dispatch<React.SetStateAction<any[]>>
 
     selectedStatus: string
     setSelectedStatus: React.Dispatch<React.SetStateAction<string>>
@@ -14,8 +14,8 @@ type Props = {
 }
 
 export default function DriverFilters({
-    drivers,
-    setDrivers,
+    partners,
+    setPartners,
 
     selectedStatus,
     setSelectedStatus,
@@ -43,7 +43,7 @@ export default function DriverFilters({
             trips: 0,
         }
 
-        setDrivers(prev => [...prev, newDriver])
+        setPartners(prev => [...prev, newDriver])
     }
 
     return (
@@ -135,29 +135,6 @@ export default function DriverFilters({
                         "
                     />
                 </div>
-
-                {/* Add Driver */}
-                <button
-                    onClick={handleAddDriver}
-                    className="
-                    flex
-                    items-center
-                    gap-2
-                    rounded-xl
-                    bg-blue-600
-                    px-5
-                    py-3
-                    text-sm
-                    font-medium
-                    text-white
-                    transition
-                    hover:bg-blue-700
-                    "
-                >
-                    <Plus size={18} />
-                    Add Driver
-                </button>
-
             </div>
         </div>
     )

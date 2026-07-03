@@ -2,8 +2,64 @@ import { auth } from "@/auth";
 import connectDb from "@/lib/db";
 import Admin from "@/models/admin.models";
 import Location from "@/models/location.models";
-import Route from "@/models/Route.models";
+import Route from "@/models/route.models";
 import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(req: NextRequest) {
+    try {
+        await connectDb();
+
+        const session = await auth();
+
+        if (!session?.user?.email) {
+            return NextResponse.json(
+                { success: false, message: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+
+        // const admin = await Admin.findOne({
+        //     email: session.user.email,
+        // });
+
+        const admin = await Admin.findById('6a3e89c071940960de5b6a2c');
+
+        if (!admin) {
+            return NextResponse.json(
+                { success: false, message: "Admin not found" },
+                { status: 404 }
+            );
+        }
+
+        const searchParams = req.nextUrl.searchParams;
+        // pass ?activeOnly=false to see inactive routes too
+        const activeOnly = searchParams.get("activeOnly") !== "false";
+
+        const filter: any = { adminId: admin._id };
+        if (activeOnly) filter.isActive = true;
+
+        const routes = await Route.find(filter)
+            .populate({
+                path: "locations",
+                select: "name city",
+            })
+            .select("locations distanceInKm estimatedDurationInMinutes isActive")
+            .sort({ createdAt: -1 })
+            .lean();
+
+        return NextResponse.json(
+            { success: true, routes },
+            { status: 200 }
+        );
+    } catch (error) {
+        console.log(error);
+
+        return NextResponse.json(
+            { success: false, message: "Internal server error." },
+            { status: 500 }
+        );
+    }
+}
 
 export async function POST(req: NextRequest) {
     try {

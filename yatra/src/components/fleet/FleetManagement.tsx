@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'motion/react'
 
 import FleetStats from './FleetStats'
@@ -8,13 +8,11 @@ import FleetFilters from './FleetFilters'
 import FleetTable from './FleetTable'
 import FleetAnalytics from './FleetAnalytics'
 import FleetTopBar from './FleetTopBar'
-
-import { fleetVehicles } from './demo'
+import AddVehicleForm from '@/components/AddVehicleForm'
 
 export default function FleetManagement() {
 
-    const [vehicles, setVehicles] =
-        useState(fleetVehicles)
+    const [vehicles, setVehicles] = useState<any[]>([]);
 
     const [selectedType, setSelectedType] =
         useState('All Types')
@@ -25,13 +23,15 @@ export default function FleetManagement() {
     const [search, setSearch] =
         useState('')
 
+    const [showAddVehicle, setShowAddVehicle] = useState(false);
+
     function applyFilters() {
 
         let filtered = vehicles
 
         if (selectedType !== 'All Types') {
             filtered = filtered.filter(
-                vehicle => vehicle.type === selectedType
+                vehicle => vehicle.vehicleType === selectedType
             )
         }
 
@@ -41,10 +41,10 @@ export default function FleetManagement() {
             )
         }
 
-        if (search.trim()) {
+        if (search.trim().toLocaleLowerCase() !== '') {
             filtered = filtered.filter(
                 vehicle =>
-                    vehicle.id.toLowerCase().includes(search.toLowerCase()) || vehicle.driver.toLowerCase().includes(search.toLowerCase())
+                    vehicle.vehicleNumber.toLowerCase().includes(search.toLowerCase()) || vehicle.assignedPartnerId?.name.toLowerCase().includes(search.toLowerCase())
             )
         }
 
@@ -61,6 +61,26 @@ export default function FleetManagement() {
             search
         ]
     )
+
+    const fetchVehicles = async () => {
+        try {
+            const res = await fetch("/api/admin/vehicle");
+
+            const data = await res.json();
+
+            console.log("Fetched vehicles:", data);
+
+            if (data.success) {
+                setVehicles(data.vehicles);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    useEffect(() => {
+        fetchVehicles();
+    }, []);
 
     return (
 
@@ -85,8 +105,6 @@ export default function FleetManagement() {
 
                     {/* Filters */}
                     <FleetFilters
-                        vehicles={vehicles}
-                        setVehicles={setVehicles}
 
                         selectedType={selectedType}
                         setSelectedType={setSelectedType}
@@ -95,12 +113,24 @@ export default function FleetManagement() {
                         setSelectedStatus={setSelectedStatus}
 
                         search={search}
-                        setSearch={setSearch} />
+                        setSearch={setSearch}
+
+                        onAddVehicle={() => setShowAddVehicle(true)}
+                    />
 
                     {/* Table */}
                     <FleetTable
                         vehicles={filteredVehicles}
                         setVehicles={setVehicles}
+                        fetchVehicles={fetchVehicles}
+                    />
+
+                    <AddVehicleForm
+                        open={showAddVehicle}
+                        onClose={() => setShowAddVehicle(false)}
+                        onSuccess={() => {
+                            fetchVehicles();
+                        }}
                     />
 
                     {/* Fleet Analytics */}

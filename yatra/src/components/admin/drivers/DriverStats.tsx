@@ -9,40 +9,40 @@ import {
 
 import DriverStatsCard from './DriverStatsCard'
 
-type Driver = {
+type Partner = {
     status: string
     rating: number
 }
 
 export default function DriverStats({
-    drivers,
+    partners,
 }: {
-    drivers: Driver[]
+    partners: Partner[]
 }) {
 
-    const totalDrivers = drivers.length
+    const totalDrivers = partners.length
 
-    const onDuty = drivers.filter(
-        driver => driver.status === 'On Duty'
+    const onDuty = partners.filter(
+        partner => partner.status === 'available' || partner.status === 'Busy'
     ).length
 
-    const offDuty = drivers.filter(
-        driver => driver.status === 'Off Duty'
+    const offDuty = partners.filter(
+        partner => partner.status === 'busy' || partner.status === 'Offline'
     ).length
 
     const avgRating =
-        drivers.length > 0
+        partners.length > 0
             ? (
-                drivers.reduce(
-                    (sum, driver) =>
-                        sum + driver.rating,
+                partners.reduce(
+                    (sum, partner) =>
+                        sum + partner.rating,
                     0
-                ) / drivers.length
+                ) / partners.length
             ).toFixed(1)
             : '0.0'
 
     return (
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-3 gap-4">
 
             <DriverStatsCard
                 title="Total Drivers"
@@ -52,24 +52,17 @@ export default function DriverStats({
             />
 
             <DriverStatsCard
-                title="On Duty"
+                title="Available Drivers"
                 value={onDuty}
                 icon={UserCheck}
                 color="text-green-400"
             />
 
             <DriverStatsCard
-                title="Off Duty"
+                title="offline Drivers"
                 value={offDuty}
                 icon={UserX}
                 color="text-red-400"
-            />
-
-            <DriverStatsCard
-                title="Avg Rating"
-                value={avgRating}
-                icon={Star}
-                color="text-yellow-400"
             />
 
         </div>

@@ -31,6 +31,8 @@ const PUBLIC_ROUTES = [
     "/api/route/search",
     "/api/vehicle/search",
     "/api/track/getlocation",
+    "/api/admin/driver",     
+    "/api/admin/partner",
 ]
 
 const PUBLIC_API = [
@@ -51,9 +53,20 @@ export async function proxy(req: NextRequest) {
     }
 
     // Allow public APIs
+    // if (
+    //     PUBLIC_API.some((api) =>
+    //         pathname.startsWith(api)
+    //     )
+    // ) {
+    //     return NextResponse.next();
+    // }
+
+    // Allow public pages
     if (
-        PUBLIC_API.some((api) =>
-            pathname.startsWith(api)
+        PUBLIC_ROUTES.some(
+            (route) =>
+                pathname === route ||
+                pathname.startsWith(route + "/")
         )
     ) {
         return NextResponse.next();

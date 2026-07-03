@@ -9,6 +9,7 @@ interface IBankDetails {
   ifsc?: string;
   bankName?: string;
   upiId?: string;
+
 }
 
 export interface IAdmin extends Document {
@@ -16,7 +17,7 @@ export interface IAdmin extends Document {
   email: string;
   phone: string;
   password: string;
-  role:string
+  role: string
 
   profilePhoto?: IFile;
 
@@ -35,6 +36,8 @@ export interface IAdmin extends Document {
     aadhar?: IFile;
     panCard?: IFile;
   };
+  otp: string
+  otpExpiresAt: Date
 }
 
 
@@ -148,6 +151,13 @@ const AdminSchema = new Schema({
   standAddress: {
     type: String,
     default: "",
+  },
+  otp: {
+    type: String,
+    default: ""
+  },
+  otpExpiresAt: {
+    type: Date
   },
 
   standLatitude: Number,

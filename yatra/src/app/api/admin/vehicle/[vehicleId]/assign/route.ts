@@ -1,10 +1,13 @@
 import connectDb from "@/lib/db";
 import Partner from "@/models/partner.models";
 import { auth } from "@/auth";
-import Route from "@/models/Route.models";
+import Route from "@/models/route.models";
 import Admin from "@/models/admin.models";
 import vehicleModels from "@/models/vehicle.models";
 import { NextRequest } from "next/server";
+import Location from "@/models/location.models";
+
+console.log(Location)
 
 export async function PATCH(
     req: NextRequest,
@@ -139,6 +142,7 @@ export async function PATCH(
         vehicle.assignedPartnerId = partner._id;
         vehicle.routeId = route._id;
         vehicle.status = "assigned";
+        vehicle.availableSeats = vehicle.seatingCapacity;
 
         await vehicle.save();
 

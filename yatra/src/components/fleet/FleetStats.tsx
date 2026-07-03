@@ -27,7 +27,7 @@ export default function FleetStats({
     }
 
     return (
-        <div className="grid grid-cols-5 gap-4">
+        <div className="grid grid-cols-4 gap-4">
 
             <StatCard
                 title="Total Vehicles"
@@ -37,32 +37,32 @@ export default function FleetStats({
             />
 
             <StatCard
-                title="Active"
-                value={countByStatus("Active")}
+                title="Available"
+                value={countByStatus("available")}
                 icon={Activity}
                 color="text-green-400"
             />
 
             <StatCard
-                title="In Transit"
-                value={countByStatus("In Transit")}
+                title="Assigned"
+                value={countByStatus("assigned")}
                 icon={Truck}
                 color="text-orange-400"
             />
 
             <StatCard
                 title="Maintenance"
-                value={countByStatus("Maintenance")}
+                value={countByStatus("maintenance")}
                 icon={Wrench}
                 color="text-yellow-400"
             />
 
-            <StatCard
+            {/* <StatCard
                 title="Offline"
                 value={countByStatus("Offline")}
                 icon={WifiOff}
                 color="text-red-400"
-            />
+            /> */}
 
         </div>
     )
