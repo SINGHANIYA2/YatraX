@@ -28,6 +28,8 @@ function AuthModal({ open, steps, onClose }: propType) {
     const [emailOtp, setEmailOtp] = useState(["", "", "", "", "", ""])
     const [role, setRole] = useState("user")
     const [mobileOtp, setMobileOtp] = useState(["", "", "", "", "", ""])
+    const [resendTimer, setResendTimer] = useState(60)
+    const [resending, setResending] = useState(false)
     const { data: session, status } = useSession();
 
     useEffect(() => {
@@ -82,6 +84,23 @@ function AuthModal({ open, steps, onClose }: propType) {
 
     const { data } = useSession()
 
+    // Resend-OTP countdown — ticks every second while on the otp step
+    // and the timer hasn't run out yet.
+    useEffect(() => {
+        if (step !== "otp") return;
+        if (resendTimer <= 0) return;
+
+        const t = setTimeout(() => setResendTimer((s) => s - 1), 1000);
+        return () => clearTimeout(t);
+    }, [step, resendTimer]);
+
+    // Reset the countdown whenever a fresh otp step is entered
+    useEffect(() => {
+        if (step === "otp") {
+            setResendTimer(60);
+        }
+    }, [step]);
+
     const handleSignUp = async () => {
         setLoading(true)
         try {
@@ -96,6 +115,23 @@ function AuthModal({ open, steps, onClose }: propType) {
             setLoading(false);
             setErr(`${error.response.data.message ?? error.message}`)
 
+        }
+    }
+
+    const handleResendOtp = async () => {
+        if (resendTimer > 0 || resending) return;
+
+        setResending(true)
+        setErr("")
+        try {
+            await axios.post("/api/auth/register", {
+                name, email, mobileNumber, password, role
+            })
+            setResendTimer(60)
+        } catch (error: any) {
+            setErr(`${error.response?.data?.message ?? error.message}`)
+        } finally {
+            setResending(false)
         }
     }
 
@@ -176,12 +212,7 @@ function AuthModal({ open, steps, onClose }: propType) {
                 return setErr("PAN number is required");
             }
 
-            if (!panRegex.test(
-                adminData.panNumber
-                    .trim()
-                    .toUpperCase()
-            )
-            ) {
+            if (!panRegex.test(adminData.panNumber.trim().toUpperCase())){
                 return setErr("Invalid PAN number");
             }
 
@@ -194,10 +225,7 @@ function AuthModal({ open, steps, onClose }: propType) {
                 return setErr("Invalid GST number");
             }
 
-            if (adminData.alternatePhone && !phoneRegex.test(
-                adminData.alternatePhone
-            )
-            ) {
+            if (adminData.alternatePhone && !phoneRegex.test(adminData.alternatePhone)) {
                 return setErr("Invalid alternate phone number");
             }
 
@@ -275,7 +303,7 @@ function AuthModal({ open, steps, onClose }: propType) {
             }
 
             // set correct bank name according to IFSC CODE
-            fetchBankDetails
+            fetchBankDetails()
 
             const payload = {
                 email,
@@ -668,6 +696,8 @@ useEffect(() => {
                                             ))}
                                         </div>
 
+                                        {err && <p className='text-destructive text-sm mt-4 text-center'>*{err}</p>}
+
                                         <button
                                             onClick={handleVerification}
                                             className="mt-8
@@ -681,6 +711,31 @@ useEffect(() => {
                                         >
 
                                             Verify OTP & Create Account </button>
+
+                                        <p className="mt-5 text-center text-sm text-muted-foreground">
+                                            {resendTimer > 0 ? (
+                                                <>
+                                                    Resend OTP in{" "}
+                                                    <span className="text-foreground font-medium">
+                                                        {resendTimer}s
+                                                    </span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    Didn&apos;t get the code?{" "}
+                                                    <span
+                                                        onClick={handleResendOtp}
+                                                        className="text-primary font-medium hover:text-primary-hover cursor-pointer inline-flex items-center gap-1 align-middle"
+                                                    >
+                                                        {resending ? (
+                                                            <CircleDashed size={14} className="animate-spin" />
+                                                        ) : (
+                                                            "Resend OTP"
+                                                        )}
+                                                    </span>
+                                                </>
+                                            )}
+                                        </p>
 
 
                                     </motion.div>

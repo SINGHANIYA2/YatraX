@@ -52,6 +52,10 @@ export default function Navbar() {
 
   const { data: session, status } = useSession();
 
+  // Session-derived role — used to decide what the profile popup shows
+  // (user -> Dashboard + Become Partner, admin/partner -> Dashboard).
+  const sessionRole = session?.user?.role;
+
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -61,12 +65,14 @@ export default function Navbar() {
       if (session?.user?.role === "admin") {
         setRole("admin")
         setProfileOpen(true)
-      }
-
-      if (session?.user?.role === "partner") {
+      } else if (session?.user?.role === "partner") {
         // do partner stuff
         setRole("partner")
         setProfileOpen(true)
+      } else {
+        // Regular user — no auto-opened popup, just switch the
+        // navbar over to the profile icon instead of Login/Sign Up.
+        setRole("user")
       }
       // console.log("role : ", role)
     }
@@ -79,6 +85,7 @@ export default function Navbar() {
     if(role == "partner")dispatch(setPartnerData(null))
     if(role == "admin")dispatch(setAdminData(null))
     setProfileOpen(false)
+    setRole("")
   }
 
 
@@ -250,35 +257,42 @@ export default function Navbar() {
                             </div>
                           </div>
 
-                          {
-                            adminData && (
                           <div className="p-3">
-                            <Link
-                              href="/profile"
-                              className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
-                            >
-                              Profile
-                            </Link>
+                            {/* Regular user: Dashboard + Become Partner */}
+                            {sessionRole === "user" && (
+                              <>
+                                <Link
+                                  href="/user"
+                                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
+                                >
+                                  Dashboard
+                                </Link>
 
-                            <Link
-                              href="/booking/my-bookings"
-                              className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
-                            >
-                              My Bookings
-                            </Link>
-                            <Link href={"/partner/onboarding"}
-                              className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
+                                <Link
+                                  href="/partner/onboarding"
+                                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
+                                >
+                                  Become Partner
+                                </Link>
+                              </>
+                            )}
 
-                            >
-                              Become Partner
-                            </Link>
-
-                            {adminData && (
+                            {/* Admin / Partner: just a normal Dashboard link */}
+                            {sessionRole === "admin" && (
                               <Link
                                 href="/admin"
                                 className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
                               >
-                                Admin Dashboard
+                                Dashboard
+                              </Link>
+                            )}
+
+                            {sessionRole === "partner" && (
+                              <Link
+                                href="/partner/dashboard"
+                                className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
+                              >
+                                Dashboard
                               </Link>
                             )}
 
@@ -289,11 +303,7 @@ export default function Navbar() {
                               <LogOut size={16} />
                               Logout
                             </button>
-
                           </div>
-
-                            )
-                          }
                         </motion.div>
                       </>
                     )}

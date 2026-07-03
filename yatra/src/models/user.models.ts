@@ -9,6 +9,10 @@ export interface IUser extends Document {
     password?: string;
     createdAt: Date;
     updatedAt: Date;
+
+    emailVerificationStatus: boolean;
+    mobileVerificationStatus: boolean;
+
     role: string;
     isEmailVerified?: boolean,
     isMobileVerified?: boolean,
@@ -19,8 +23,8 @@ export interface IUser extends Document {
     partnereNumber?: string
     isVeriApplication?: mongoose.Types.ObjectId;
     partnerStatus?: string
-    mobileNumber:string
-    isVerified:boolean
+    mobileNumber: string
+    isVerified: boolean
     partnerApplication: mongoose.Types.ObjectId | null
 }
 
@@ -60,7 +64,16 @@ const userSchema = new mongoose.Schema<IUser>({
     otpExpiresAt: {
         type: Date
         // default:null
-    }, 
+    },
+
+    emailVerificationStatus: {
+        type: Boolean,
+        default: false
+    },
+    mobileVerificationStatus: {
+        type: Boolean,
+        default: false
+    },
     mobileNumber: {
         type: String
     }, partnerApplication: {

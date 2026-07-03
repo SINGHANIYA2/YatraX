@@ -6,19 +6,9 @@ export async function POST(req: Request) {
   try {
     await connectDb();
 
-    const {
-      email,
-      emailOtp,
-      mobileNumber,
-      mobileOtp,
-    } = await req.json();
+    const {email,emailOtp,mobileNumber,mobileOtp} = await req.json();
 
-    if (
-      !email ||
-      !emailOtp ||
-      !mobileNumber ||
-      !mobileOtp
-    ) {
+    if (!email ||!emailOtp ||!mobileNumber ||!mobileOtp) {
       return NextResponse.json(
         {
           message:

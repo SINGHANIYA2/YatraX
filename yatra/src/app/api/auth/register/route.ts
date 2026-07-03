@@ -7,13 +7,11 @@ import { sendOtp } from "@/lib/sendOtp";
 
 export async function POST(req: NextRequest) {
     try {
-        const { name, email, password, mobileNumber, role } =
-            await req.json();
+        const { name, email, password, mobileNumber, role } = await req.json();
 
         await connectDb();
 
-        if (!name || !email || !password || !mobileNumber
-        ) {
+        if (!name || !email || !password || !mobileNumber) {
             return NextResponse.json(
                 {
                     success: false,
@@ -88,8 +86,7 @@ export async function POST(req: NextRequest) {
             emailOtp
         );
 
-        await sendOtp(
-            mobileNumber.startsWith("+91")
+        await sendOtp( mobileNumber.startsWith("+91")
                 ? mobileNumber
                 : `+91${mobileNumber}`,
             mobileOtp
