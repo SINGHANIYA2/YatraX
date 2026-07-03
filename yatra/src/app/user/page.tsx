@@ -24,6 +24,8 @@ import {
 import axios from "axios";
 import { ParamsOf } from '../../../.next/dev/types/routes';
 import { useSession } from "next-auth/react";
+import { AppDispatch, RootState } from '../../redux/store';
+import { useDispatch, useSelector } from "react-redux";
 
 
 type TabKey = "profile" | "upcoming" | "history";
@@ -249,9 +251,14 @@ function OtpModal({ open, target, channel, onClose, onVerified, }: {
 // Profile section
 
 function ProfileSection() {
-  const [name, setName] = useState("Shiv Sambhu");
-  const [email, setEmail] = useState("abc@example.com");
-  const [phone, setPhone] = useState("+91 98765 43210");
+  const dispath = useDispatch<AppDispatch>()
+  
+  const { userData } = useSelector(
+      (state: RootState) => state.user
+    );
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
   const [emailVerified, setEmailVerified] = useState(true);
   const [phoneVerified, setPhoneVerified] = useState(false);
@@ -261,6 +268,7 @@ function ProfileSection() {
   const [savedMsg, setSavedMsg] = useState(false);
   const [loading, setLoading] = useState(false)
   const [id ,setUserId] = useState("")
+
   
   const {data : session} = useSession()
   useEffect(() => {
@@ -324,7 +332,7 @@ function ProfileSection() {
           </button>
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-foreground">{name}</h2>
+          <h2 className="text-xl font-semibold text-foreground">{userData ? userData.name : "Username"}</h2>
           <p className="text-sm text-muted-foreground">
             Member since Jan 2025
           </p>
@@ -347,6 +355,7 @@ function ProfileSection() {
               <User size={16} className="text-muted-foreground shrink-0" />
               <input
                 value={name}
+                placeholder={userData?.name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full bg-transparent text-sm text-foreground focus:outline-none"
               />
@@ -363,6 +372,7 @@ function ProfileSection() {
               <Mail size={16} className="text-muted-foreground shrink-0" />
               <input
                 value={email}
+                placeholder={userData?.email}
                 onChange={(e) => {
                   setEmail(e.target.value);
                   setEmailVerified(false);
@@ -395,6 +405,7 @@ function ProfileSection() {
               <Phone size={16} className="text-muted-foreground shrink-0" />
               <input
                 value={phone}
+                placeholder={userData?.mobileNumber}
                 onChange={(e) => {
                   setPhone(e.target.value);
                   setPhoneVerified(false);
@@ -403,6 +414,7 @@ function ProfileSection() {
               />
               {!phoneVerified && (
                 <button
+            
                   onClick={() => {
                     handleSendotp("phone")
                   }}

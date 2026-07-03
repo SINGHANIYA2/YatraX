@@ -176,8 +176,7 @@ function AuthModal({ open, steps, onClose }: propType) {
 
         // Move to previous box if current is already empty
         if (index > 0) {
-            const prevId =
-                type === "email"
+            const prevId = type === "email"
                     ? `emailOtp-${index - 1}`
                     : `mobileOtp-${index - 1}`;
 
