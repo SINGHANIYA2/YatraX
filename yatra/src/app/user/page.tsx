@@ -325,7 +325,7 @@ function ProfileSection() {
       <div className="rounded-2xl border border-border bg-card p-6 flex items-center gap-5">
         <div className="relative">
           <div className="h-20 w-20 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold">
-            {name.charAt(0).toUpperCase()}
+            {userData ? userData.name.charAt(0).toUpperCase() : ""}
           </div>
           <button className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-secondary border border-border flex items-center justify-center hover:bg-hover cursor-pointer">
             <Camera size={13} className="text-foreground" />
