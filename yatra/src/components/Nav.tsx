@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
 import Link from "next/link";
@@ -32,6 +31,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [name,setName] = useState("")
   const [authOpen, setAuthOpen] = useState(false)
   const [steps, setStep] = useState("")
   const [profileOpen, setProfileOpen] = useState(false)
@@ -59,31 +59,20 @@ export default function Navbar() {
 
   useEffect(() => {
     if (status === "authenticated") {
-      // console.log("User:", session?.user);
-      // console.log("Role:", session?.user?.role);
-
-      if (session?.user?.role === "admin") {
-        setRole("admin")
+      if(!name || !role){
+        setRole(session?.user?.role)
+        setName(session?.user?.name)
         setProfileOpen(true)
-      } else if (session?.user?.role === "partner") {
-        // do partner stuff
-        setRole("partner")
-        setProfileOpen(true)
-      } else {
-        // Regular user — no auto-opened popup, just switch the
-        // navbar over to the profile icon instead of Login/Sign Up.
-        setRole("user")
       }
-      // console.log("role : ", role)
     }
   }, [session, status]);
 
 
   const handleLogOut = async () => {
     await signOut({ redirect: false })
-    if(role == "user")dispatch(setUserData(null))
-    if(role == "partner")dispatch(setPartnerData(null))
-    if(role == "admin")dispatch(setAdminData(null))
+    if (role == "user") dispatch(setUserData(null))
+    if (role == "partner") dispatch(setPartnerData(null))
+    if (role == "admin") dispatch(setAdminData(null))
     setProfileOpen(false)
     setRole("")
   }
@@ -101,8 +90,9 @@ export default function Navbar() {
     try {
       setStep("login")
       setAuthOpen(true);
-      setProfileOpen(true)
+      // setProfileOpen(true)
       console.log("Logged in successfully")
+
     } catch (error) {
       console.log(error)
     }
@@ -128,7 +118,7 @@ export default function Navbar() {
               flex items-center justify-between
               rounded-2xl
               border border-border/10
-            bg-background
+              bg-background
               px-6 py-4
               shadow-sm
               
@@ -214,9 +204,8 @@ export default function Navbar() {
                     onClick={() => setProfileOpen(!profileOpen)}
                     className="h-11 w-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg border border-primary/30"
                   >
-                    {userData?.name?.charAt(0)?.toUpperCase()}
-                    {adminData?.name?.charAt(0)?.toUpperCase()}
-                    {partnerData?.name?.charAt(0)?.toUpperCase()}
+                    {name.charAt(0)?.toUpperCase()}
+           
                   </button>
 
                   <AnimatePresence>
@@ -236,29 +225,25 @@ export default function Navbar() {
                           <div className="p-5 border-b border-border/10">
                             <div className="flex items-center gap-3">
                               <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-xl">
-                                {userData?.name?.charAt(0)?.toUpperCase()}
-                                {adminData?.name?.charAt(0)?.toUpperCase()}
-                                {partnerData?.name?.charAt(0)?.toUpperCase()}
+                                {name.charAt(0)?.toUpperCase()}
+                               
                               </div>
 
                               <div>
                                 <h3 className="text-foreground font-semibold">
-                                  {userData?.name?.toUpperCase()}
-                                  {adminData?.name?.toUpperCase()}
-                                  {partnerData?.name?.toUpperCase()}
+                                  {name.toUpperCase()}
                                 </h3>
 
                                 <p className="text-xs text-muted-foreground uppercase">
-                                  {userData?.role?.toLowerCase()}
-                                  {partnerData?.role?.toLowerCase()}
-                                  {adminData?.role?.toLowerCase()}
+                                  {role.toLowerCase()}
+                                  
                                 </p>
                               </div>
                             </div>
                           </div>
 
                           <div className="p-3">
-                            {/* Regular user: Dashboard + Become Partner */}
+                            {/* Regular user: Dashboard  +  Become Partner */}
                             {sessionRole === "user" && (
                               <>
                                 <Link
@@ -289,7 +274,7 @@ export default function Navbar() {
 
                             {sessionRole === "partner" && (
                               <Link
-                                href="/partner/dashboard"
+                                href="/partnerpage"
                                 className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
                               >
                                 Dashboard
@@ -337,14 +322,12 @@ export default function Navbar() {
                 href={item.href}
                 onClick={() => setMenuOpen(false)}
                 className="rounded-xl px-4 py-3 text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary">
-
                 {item.name}
-
               </Link>
             ))}
 
             {
-              !profileOpen && (
+              (!profileOpen) && (
                 <div className="mt-4 flex flex-col gap-3">
                   <button className="rounded-xl border border-border/10 py-3 text-foreground"
                     onClick={handleLogin}
@@ -382,17 +365,42 @@ export default function Navbar() {
                   >
                     <div className='p-5'>
                       <p className="font-semibold text-lg">
-                        {userData?.name}
-                        {adminData?.name} 
-                        {partnerData?.name}
-                        </p>
+                        {name}
+                      </p>
                       <p className='text-xs uppercase text-muted-foreground mb-4'>{role}</p>
-                      
+
                       {
-                          role == "user" &&
+                        role == "partner" &&
                         (
                           <div className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
-                            onClick={() => router.push("/partner/onboarding/vehicle")}
+                            onClick={() => router.push("/partnerpage")}
+                          >
+
+                            <div className='flex space-x-2'>
+                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
+                                <Bike size={14} />
+                              </div>
+
+                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
+                                <Car size={14} />
+                              </div>
+
+                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
+                                <Truck size={14} />
+                              </div>
+
+                            </div>
+                            Partner Dashboard
+                            <ChevronRight size={60} className='ml-auto' />
+                          </div>
+
+                        )}
+
+                      {
+                        role == "user" &&
+                        (
+                          <div className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
+                            onClick={() => router.push("/partner/onboarding")}
                           >
 
                             <div className='flex space-x-2'>
@@ -417,10 +425,10 @@ export default function Navbar() {
 
 
                       {
-                          role == "admin" &&
+                        role == "admin" &&
                         (
                           <div className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
-                            onClick={() => router.push("/partner/onboarding/vehicle")}
+                            onClick={() => router.push("/admin")}
                           >
 
                             <div className='flex space-x-2'>
@@ -443,7 +451,7 @@ export default function Navbar() {
 
                         )}
 
-                        
+
                       <button className="h-full rounded-xl flex items-center gap-3 py-3 hover:bg-secondary mt-2"
                         onClick={handleLogOut}>
                         <LogOut size={16} />

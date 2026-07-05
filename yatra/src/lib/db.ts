@@ -9,6 +9,9 @@ if(!cached){
     cached=global.mongooseConn={conn:null,promise:null}
 }
 
+
+// console.log("Registered models:", mongoose.modelNames());
+
 const connectDb= async () =>{
     if (!mongodbUrl) {
         throw new Error("DB url not found")
@@ -24,6 +27,7 @@ const connectDb= async () =>{
     
     try{
         const conn = await cached.promise
+        cached.conn = conn;
         console.log("new Connection Established")
         return conn 
     }catch(error){

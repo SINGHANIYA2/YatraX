@@ -44,7 +44,8 @@ export default function PartnerLocationTracker() {
                 });
             },
             (error) => {
-                console.error(error);
+                // console.error("Code:", error.code);
+                console.error("Message:", error.message);
             },
             {
                 enableHighAccuracy: true,

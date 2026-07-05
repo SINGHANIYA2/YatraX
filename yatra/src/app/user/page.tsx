@@ -1,22 +1,5 @@
 "use client";
 
-/**
- * User Dashboard / Profile page
- * -------------------------------------------------------------
- * Drop this file in: src/app/dashboard/profile/page.tsx
- * (or any route folder you like — it's fully self-contained).
- *
- * Uses the same theme tokens as the rest of YatraX
- * (bg-background, bg-card, text-foreground, text-muted-foreground,
- * border-border, bg-primary/text-primary-foreground, bg-success,
- * bg-warning, bg-destructive) so it automatically supports the
- * Dark/Light toggle with no extra work.
- *
- * Everything below (verification, save, cancel booking) is wired
- * to local mock state with clearly marked TODOs — swap those for
- * your real API calls / redux actions.
- */
-
 import { useEffect, useState } from "react";
 import {
   User, Mail, Phone, ShieldCheck, ShieldAlert, Camera, MapPin, Calendar, Clock, Ticket, X, CircleDashed, Bus, ChevronRight,

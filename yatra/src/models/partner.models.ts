@@ -1,12 +1,8 @@
-import mongoose, {
-  Schema,
-  Document,
-  Types,
-} from "mongoose";
-import {
-  FileSchema,
-  IFile,
-} from "./FileSchema.models";
+import mongoose, {Schema,Document,Types,} from "mongoose";
+import {FileSchema,IFile,} from "./FileSchema.models";
+import "./admin.models";
+import "./location.models";
+import "./vehicle.models";
 
 export interface IPartner extends Document {
   userId: Types.ObjectId;
@@ -19,7 +15,7 @@ export interface IPartner extends Document {
 
   name: string;
   phone: string;
-  email?: string;
+  email: string;
   role: string;
 
   dob?: Date;

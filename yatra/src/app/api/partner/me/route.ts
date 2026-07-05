@@ -2,13 +2,18 @@ import { auth } from "@/auth";
 import connectDb from "@/lib/db";
 import Partner from "@/models/partner.models";
 
+
+
 export async function GET(req: Request) {
     try {
         await connectDb();
 
         const session = await auth();
 
-        if (!session || !session.user) {
+        console.log(session);
+
+        if (!session || !session?.user) {
+            console.log(session?.user?.email)
             return Response.json(
                 { message: "Unauthorized" },
                 { status: 401 }
@@ -31,14 +36,16 @@ export async function GET(req: Request) {
         return Response.json(partner, {
             status: 200,
         });
+
     } catch (err) {
+        console.error(err);
+
         return Response.json(
             {
-                message: `Internal server error ${err}`,
+                message: "Internal Server Error",
+                error: err instanceof Error ? err.message : err,
             },
-            {
-                status: 500,
-            }
+            { status: 500 }
         );
     }
 }
