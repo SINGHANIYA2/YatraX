@@ -1,8 +1,6 @@
 'use client'
 
-import {
-    Eye
-} from 'lucide-react'
+import { Eye, CheckCircle2, XCircle } from 'lucide-react'
 
 interface Props {
     data: any[]
@@ -11,159 +9,236 @@ interface Props {
     onReject: (app: any) => void
 }
 
+function StatusBadge({ status }: { status: string }) {
+    const colorMap: Record<string, string> = {
+        pending: 'bg-warning/15 text-warning',
+        approved: 'bg-success/15 text-success',
+        rejected: 'bg-destructive/15 text-destructive',
+        under_review: 'bg-primary/15 text-primary',
+    }
+    return (
+        <span
+            className={`
+            px-3 py-1 rounded-full text-xs font-medium
+            ${colorMap[status] ?? 'bg-secondary text-foreground'}
+            `}
+        >
+            {status}
+        </span>
+    )
+}
+
+/* ── Desktop table row ── */
+function DesktopRow({
+    app,
+    onView,
+    onApprove,
+    onReject,
+}: {
+    app: any
+    onView: (a: any) => void
+    onApprove: (a: any) => void
+    onReject: (a: any) => void
+}) {
+    return (
+        <tr className="border-b border-border last:border-0 hover:bg-secondary/20 transition-colors">
+            <td className="p-5">
+                <p className="text-foreground font-medium truncate">{app.name}</p>
+                <p className="text-muted-foreground text-sm truncate">{app.phone}</p>
+            </td>
+
+            <td className="py-5 pr-4 text-muted-foreground truncate">{app.city}</td>
+
+            <td className="py-5 pr-4 text-muted-foreground truncate">{app.experience} Yrs</td>
+
+            <td className="py-5 pr-4">
+                <StatusBadge status={app.status} />
+            </td>
+
+            <td className="py-5 pr-4 text-muted-foreground text-sm truncate">
+                {app.appliedAt
+                    ? new Date(app.appliedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+                    : app.createdAt
+                        ? new Date(app.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+                        : '—'}
+            </td>
+
+            <td className="py-5">
+                <div className="flex items-center gap-1.5 whitespace-nowrap">
+                    <button
+                        onClick={() => onView(app)}
+                        title="View details"
+                        className="p-1.5 cursor-pointer rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-primary flex-shrink-0"
+                    >
+                        <Eye size={16} />
+                    </button>
+
+                    {app.status === 'pending' && (
+                        <>
+                            <button
+                                onClick={() => onApprove(app)}
+                                className="flex cursor-pointer items-center gap-1 px-2.5 py-1.5 rounded-lg bg-success/15 text-success text-xs font-medium hover:bg-success/25 transition-colors flex-shrink-0"
+                            >
+                                <CheckCircle2 size={13} />
+                                Approve
+                            </button>
+
+                            <button
+                                onClick={() => onReject(app)}
+                                className="flex cursor-pointer items-center gap-1 px-2.5 py-1.5 rounded-lg bg-destructive/15 text-destructive text-xs font-medium hover:bg-destructive/25 transition-colors flex-shrink-0"
+                            >
+                                <XCircle size={13} />
+                                Reject
+                            </button>
+                        </>
+                    )}
+
+                    {app.status === 'approved' && (
+                        <span className="text-success text-sm font-medium">Approved</span>
+                    )}
+
+                    {app.status === 'rejected' && (
+                        <span className="text-destructive text-sm font-medium">Rejected</span>
+                    )}
+                </div>
+            </td>
+        </tr>
+    )
+}
+
+/* ── Mobile card ── */
+function MobileCard({
+    app,
+    onView,
+    onApprove,
+    onReject,
+}: {
+    app: any
+    onView: (a: any) => void
+    onApprove: (a: any) => void
+    onReject: (a: any) => void
+}) {
+    return (
+        <div className="p-4 border-b border-border last:border-0">
+            <div className="flex items-start justify-between mb-3">
+                <div>
+                    <p className="text-foreground font-medium">{app.name}</p>
+                    <p className="text-muted-foreground text-sm">{app.phone}</p>
+                </div>
+                <StatusBadge status={app.status} />
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground mb-3">
+                <span>📍 {app.city || '—'}</span>
+                <span>🚗 {app.experience} Yrs exp</span>
+                <span className="col-span-2">
+                    📅 {app.appliedAt
+                        ? new Date(app.appliedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+                        : app.createdAt
+                            ? new Date(app.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+                            : '—'}
+                </span>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+                <button
+                    onClick={() => onView(app)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary text-foreground text-sm font-medium"
+                >
+                    <Eye size={14} />
+                    View
+                </button>
+
+                {app.status === 'pending' && (
+                    <>
+                        <button
+                            onClick={() => onApprove(app)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-success/15 text-success text-sm font-medium"
+                        >
+                            <CheckCircle2 size={14} />
+                            Approve
+                        </button>
+
+                        <button
+                            onClick={() => onReject(app)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-destructive/15 text-destructive text-sm font-medium"
+                        >
+                            <XCircle size={14} />
+                            Reject
+                        </button>
+                    </>
+                )}
+            </div>
+        </div>
+    )
+}
+
 export default function ApplicationTable({
     data,
     onView,
     onApprove,
     onReject
 }: Props) {
+
+    if (data.length === 0) {
+        return (
+            <div className="mt-6 rounded-3xl bg-card border border-primary/10 p-12 text-center text-muted-foreground">
+                No applications found.
+            </div>
+        )
+    }
+
     return (
-        <div
-            className="
-            mt-6
-            rounded-3xl
-            bg-[#071427]
-            border
-            border-blue-500/10
-            "
-        >
-            <table className="w-full">
+        <div className="mt-6 font-sans rounded-3xl bg-card border border-primary/10 overflow-hidden">
 
-                <thead>
-                    <tr
-                        className="
-                        text-slate-400
-                        border-b
-                        border-slate-800
-                        "
-                    >
-                        <th className="p-5 text-left">
-                            Applicant
-                        </th>
-
-                        <th className="text-left">
-                            City
-                        </th>
-
-                        <th className="text-left">
-                            Experience
-                        </th>
-
-                        <th className="text-left">
-                            Status
-                        </th>
-
-                        <th className=" text-left">
-                            Applied
-                        </th>
-
-                        <th className="pl-[10%] text-left">
-                            Actions
-                        </th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {data.map(app => (
-                        <tr
-                            key={app.id}
-                            className="
-                            border-b
-                            border-slate-800
-                            "
-                        >
-                            <td className="p-5">
-                                <p className="text-white">
-                                    {app.name}
-                                </p>
-
-                                <p className="text-slate-500 text-sm">
-                                    {app.phone}
-                                </p>
-                            </td>
-
-                            <td className="text-slate-300">
-                                {app.city}
-                            </td>
-
-                            <td className="text-slate-300">
-                                {app.experience} Years
-                            </td>
-
-                            <td>
-                                <span
-                                    className="
-                                    px-3
-                                    py-1
-                                    rounded-full
-                                    text-xs
-                                    bg-slate-800
-                                    text-white
-                                    "
-                                >
-                                    {app.status}
-                                </span>
-                            </td>
-
-                            <td className="text-slate-300">
-                                {app.appliedAt}
-                            </td>
-
-                            <td className='px-[3.3%]'>
-                                <div className="flex justify-between items-center">
-
-                                    <Eye
-                                        size={18}
-                                        onClick={() => onView(app)}
-                                        className="
-                                        cursor-pointer
-                                        text-slate-400
-                                        hover:text-blue-400
-                                        "/>
-
-                                    {app.status === "pending" && (
-                                        <>
-                                            <button
-                                                onClick={() => onApprove(app)}
-                                                className="
-                                        px-3 py-1.5 rounded-lg
-                                        bg-green-500/15
-                                        text-green-400
-                                        "
-                                            >
-                                                Approve
-                                            </button>
-
-                                            <button
-                                                onClick={() => onReject(app)}
-                                                className={`px-3 py-1.5 rounded-lg
-                                        bg-red-500/15
-                                        text-red-400`}
-                                            >
-                                                Reject
-                                            </button>
-                                        </>
-                                    )}
-
-                                    {app.status === "approved" && (
-                                        <span className="text-green-400">
-                                            Approved
-                                        </span>
-                                    )}
-
-                                    {app.status === "rejected" && (
-                                        <span className="text-red-400">
-                                            Rejected
-                                        </span>
-                                    )}
-
-                                </div>
-                            </td>
+            {/* Desktop */}
+            <div className="hidden md:block overflow-x-auto">
+                <table className="w-full table-fixed">
+                    <colgroup>
+                        <col className="w-[24%]" />
+                        <col className="w-[12%]" />
+                        <col className="w-[13%]" />
+                        <col className="w-[13%]" />
+                        <col className="w-[14%]" />
+                        <col className="w-[24%]" />
+                    </colgroup>
+                    <thead>
+                        <tr className="text-muted-foreground border-b border-border text-sm">
+                            <th className="p-5 text-left font-medium">Applicant</th>
+                            <th className="py-5 pr-4 text-left font-medium">City</th>
+                            <th className="py-5 pr-4 text-left font-medium">Experience</th>
+                            <th className="py-5 pr-4 text-left font-medium">Status</th>
+                            <th className="py-5 pr-4 text-left font-medium">Applied</th>
+                            <th className="py-5 pr-5 text-center font-medium">Actions</th>
                         </tr>
-                    ))}
-                </tbody>
+                    </thead>
+                    <tbody>
+                        {data.map(app => (
+                            <DesktopRow
+                                key={app._id}
+                                app={app}
+                                onView={onView}
+                                onApprove={onApprove}
+                                onReject={onReject}
+                            />
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
-            </table>
+            {/* Mobile */}
+            <div className="md:hidden">
+                {data.map(app => (
+                    <MobileCard
+                        key={app._id}
+                        app={app}
+                        onView={onView}
+                        onApprove={onApprove}
+                        onReject={onReject}
+                    />
+                ))}
+            </div>
+
         </div>
     )
 }

@@ -6,13 +6,13 @@ export default function ContactForm() {
             className="
             rounded-2xl
             border
-            border-blue-500/10
-            bg-[#071427]
+            border-primary/10
+            bg-card
             p-8
-            shadow-[0_0_15px_rgba(59,130,246,0.15)]
+            shadow-sm
             "
         >
-            <h2 className="text-2xl font-bold text-white mb-8">
+            <h2 className="text-2xl font-bold text-foreground mb-8">
                 Send us a Message
             </h2>
 
@@ -21,7 +21,7 @@ export default function ContactForm() {
                 <div className="grid grid-cols-2 gap-4">
 
                     <div>
-                        <label className="text-sm text-slate-400">
+                        <label className="text-sm text-muted-foreground">
                             Your Name
                         </label>
 
@@ -33,18 +33,18 @@ export default function ContactForm() {
                             w-full
                             rounded-xl
                             border
-                            border-slate-700
-                            bg-slate-900
+                            border-border
+                            bg-card
                             px-4
                             py-3
-                            text-white
+                            text-foreground
                             outline-none
                             "
                         />
                     </div>
 
                     <div>
-                        <label className="text-sm text-slate-400">
+                        <label className="text-sm text-muted-foreground">
                             Email
                         </label>
 
@@ -56,11 +56,11 @@ export default function ContactForm() {
                             w-full
                             rounded-xl
                             border
-                            border-slate-700
-                            bg-slate-900
+                            border-border
+                            bg-card
                             px-4
                             py-3
-                            text-white
+                            text-foreground
                             outline-none
                             "
                         />
@@ -69,7 +69,7 @@ export default function ContactForm() {
                 </div>
 
                 <div>
-                    <label className="text-sm text-slate-400">
+                    <label className="text-sm text-muted-foreground">
                         Subject
                     </label>
 
@@ -81,18 +81,18 @@ export default function ContactForm() {
                         w-full
                         rounded-xl
                         border
-                        border-slate-700
-                        bg-slate-900
+                        border-border
+                        bg-card
                         px-4
                         py-3
-                        text-white
+                        text-foreground
                         outline-none
                         "
                     />
                 </div>
 
                 <div>
-                    <label className="text-sm text-slate-400">
+                    <label className="text-sm text-muted-foreground">
                         Message
                     </label>
 
@@ -104,11 +104,11 @@ export default function ContactForm() {
                         w-full
                         rounded-xl
                         border
-                        border-slate-700
-                        bg-slate-900
+                        border-border
+                        bg-card
                         px-4
                         py-3
-                        text-white
+                        text-foreground
                         outline-none
                         resize-none
                         "
@@ -120,12 +120,12 @@ export default function ContactForm() {
                     className="
                     w-full
                     rounded-xl
-                    bg-blue-600
+                    bg-primary
                     py-3
                     font-medium
-                    text-white
+                    text-foreground
                     transition
-                    hover:bg-blue-700
+                    hover:bg-primary
                     "
                 >
                     Send Message

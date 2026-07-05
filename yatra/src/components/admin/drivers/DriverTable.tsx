@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useRouter } from 'next/navigation'
 import {
@@ -7,6 +7,7 @@ import {
     Trash2,
     Star
 } from 'lucide-react'
+import { getDriverStatus, getDriverStatusLabel, getVehicleLabel } from './lib'
 
 type Props = {
     partners: any[]
@@ -15,12 +16,17 @@ type Props = {
 
 function getStatusColor(status: string) {
     switch (status) {
-
         case 'available':
             return 'bg-green-500/20 text-green-400'
-
+        case 'assigned':
+        case 'on_trip':
+            return 'bg-blue-500/20 text-blue-400'
+        case 'offline':
+            return 'bg-red-500/20 text-red-400'
+        case 'maintenance':
+            return 'bg-yellow-500/20 text-yellow-400'
         default:
-            return 'bg-slate-500/20 text-slate-400'
+            return 'bg-muted/20 text-muted-foreground'
     }
 }
 
@@ -35,36 +41,46 @@ export default function DriverTable({
             prev.filter(partner => partner._id !== id)
         )
     }
-    console.log(partners);
+
+    if (partners.length === 0) {
+        return (
+            <div className="rounded-2xl border border-primary/10 bg-card mt-4 p-12 text-center text-sm text-muted-foreground">
+                No drivers found.
+            </div>
+        )
+    }
 
     return (
         <div
             className="
             rounded-2xl
             border
-            border-blue-500/10
-            bg-[#0b1220]
+            border-primary/10
+            bg-card
             overflow-hidden
             mt-4
-            shadow-[0_0_15px_rgba(59,130,246,0.08)]
+            font-sans
+            shadow-sm
             "
         >
+            {/* ── Desktop table ── */}
+            <div className="hidden md:block overflow-x-auto">
             <table className="w-full">
 
                 {/* Header */}
-                <thead className="bg-slate-900/60">
+                <thead className="bg-card">
 
-                    <tr className="text-left">
+                    <tr className="text-center">
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Driver
                         </th>
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Vehicle
                         </th>
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Phone
                         </th>
 
@@ -76,11 +92,11 @@ export default function DriverTable({
                             Trips
                         </th> */}
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Status
                         </th>
 
-                        <th className="px-6 py-4 text-sm font-medium text-slate-400">
+                        <th className="px-6 py-4 text-sm font-medium text-muted-foreground">
                             Action
                         </th>
 
@@ -89,7 +105,7 @@ export default function DriverTable({
                 </thead>
 
                 {/* Body */}
-                <tbody>
+                <tbody className="text-center">
 
                     {partners.map((partner) => (
 
@@ -97,8 +113,8 @@ export default function DriverTable({
                             key={partner._id}
                             className="
                             border-t
-                            border-slate-800
-                            hover:bg-slate-900/40
+                            border-border
+                            hover:bg-card
                             transition
                             "
                         >
@@ -112,7 +128,7 @@ export default function DriverTable({
                                     </p>
 
                                     <p className="text-xs text-slate-500">
-                                        {partner._id}
+                                        {partner._id.slice(-6) + '......'}
                                     </p>
                                 </div>
 
@@ -120,7 +136,7 @@ export default function DriverTable({
 
                             {/* Vehicle */}
                             <td className="px-6 py-4 text-slate-300">
-                                {partner.assignedVehicleId.vehicleType}
+                                {getVehicleLabel(partner)}
                             </td>
 
                             {/* Phone */}
@@ -148,18 +164,17 @@ export default function DriverTable({
                                     py-1
                                     text-xs
                                     font-medium
-                                    ${getStatusColor(partner.assignedVehicleId.status)}
+                                    ${getStatusColor(getDriverStatus(partner))}
                                     `}
                                 >
-                                    {partner.assignedVehicleId.status}
+                                    {getDriverStatusLabel(getDriverStatus(partner))}
                                 </span>
 
                             </td>
 
                             {/* Actions */}
-                            <td className="px-6 py-4">
-
-                                <div className="flex items-center gap-3">
+                            <td className="px-6 py-4 text-center text-slate-400">
+                                <div className="flex items-center justify-center gap-3">
 
                                     <button
                                         onClick={() =>
@@ -176,8 +191,8 @@ export default function DriverTable({
 
                                     {/* <button
                                         className="
-                                        text-slate-400
-                                        hover:text-yellow-400
+                                        text-muted-foreground
+                                        hover:text-warning
                                         cursor-pointer
 
                                         "
@@ -190,8 +205,8 @@ export default function DriverTable({
                                             handleDeletePartner(partner._id)
                                         }
                                         className="
-                                        text-slate-400
-                                        hover:text-red-400
+                                        text-muted-foreground
+                                        hover:text-destructive
                                         cursor-pointer
                                         "
                                     >
@@ -209,6 +224,47 @@ export default function DriverTable({
                 </tbody>
 
             </table>
-        </div >
+            </div>
+
+            {/* ── Mobile cards ── */}
+            <div className="md:hidden divide-y divide-border">
+                {partners.map((partner) => (
+                    <div key={partner._id} className="p-4">
+                        <div className="flex items-start justify-between mb-2">
+                            <div>
+                                <p className="font-medium text-white text-base">{partner.name}</p>
+                                <p className="text-xs text-slate-500 mt-0.5">{partner._id.slice(-6) + '......'}</p>
+                            </div>
+                            <span
+                                className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusColor(getDriverStatus(partner))}`}
+                            >
+                                {getDriverStatusLabel(getDriverStatus(partner))}
+                            </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-1 text-sm text-muted-foreground mb-3">
+                            <span>🚗 {getVehicleLabel(partner)}</span>
+                            <span>📞 {partner.phone}</span>
+                            <span>🧭 {partner.experience} yrs exp</span>
+                        </div>
+
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => router.push(`/admin/drivers/${partner._id}`)}
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary text-foreground text-sm"
+                            >
+                                <Eye size={14} /> View
+                            </button>
+                            <button
+                                onClick={() => handleDeletePartner(partner._id)}
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-destructive/15 text-destructive text-sm"
+                            >
+                                <Trash2 size={14} /> Delete
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
     )
 }

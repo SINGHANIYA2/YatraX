@@ -23,10 +23,9 @@ export async function GET(
             );
         }
 
-        // const admin = await Admin.findOne({
-        //     email: session.user.email,
-        // });
-        const admin = await Admin.findById('6a3e89c071940960de5b6a2c'); // Replace with the actual admin ID
+        const admin = await Admin.findOne({
+            email: session.user.email,
+        });
 
         if (!admin) {
             return NextResponse.json(

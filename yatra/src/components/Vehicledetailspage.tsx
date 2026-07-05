@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 
 import AssignDriverModal from './Assigndrivermodal';
+import LoadingState from '@/components/ui/LoadingState';
 import {
     ArrowLeft,
     Bike,
@@ -17,6 +18,7 @@ import {
     Navigation2,
     Truck,
     User,
+    UserX,
     Wifi,
     WifiOff,
 } from "lucide-react";
@@ -136,6 +138,29 @@ export default function VehicleDetailsPage({ vehicleId }: { vehicleId: string })
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [showAssign, setShowAssign] = useState(false);
+    const [showUnassignConfirm, setShowUnassignConfirm] = useState(false);
+    const [unassigning, setUnassigning] = useState(false);
+    const [unassignError, setUnassignError] = useState<string | null>(null);
+
+    async function handleUnassign() {
+        setUnassigning(true);
+        setUnassignError(null);
+        try {
+            const res = await fetch(`/api/admin/vehicle/${vehicleId}/unassign`, {
+                method: "PATCH",
+            });
+            const json = await res.json();
+            if (!res.ok || !json.success) {
+                throw new Error(json?.message || "Failed to unassign driver");
+            }
+            setShowUnassignConfirm(false);
+            await reload();
+        } catch (err: any) {
+            setUnassignError(err?.message || "Something went wrong");
+        } finally {
+            setUnassigning(false);
+        }
+    }
 
     // single reusable fetcher - used on mount AND after assigning a driver
     async function reload() {
@@ -151,7 +176,7 @@ export default function VehicleDetailsPage({ vehicleId }: { vehicleId: string })
             setLoading(true);
             setError(null);
             try {
-                const res = await fetch(`/api/admin/partner/${vehicleId}`);
+                const res = await fetch(`/api/admin/vehicle/${vehicleId}`);
                 const json = await res.json();
 
                 if (!res.ok || !json.success) {
@@ -175,7 +200,7 @@ export default function VehicleDetailsPage({ vehicleId }: { vehicleId: string })
     if (loading) {
         return (
             <div className="min-h-[60vh] flex items-center justify-center">
-                <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+                <LoadingState label="Loading vehicle..." />
             </div>
         );
     }
@@ -272,12 +297,25 @@ export default function VehicleDetailsPage({ vehicleId }: { vehicleId: string })
                             )}
                         </div>
                         {assignment.partner && (
-                            <span
-                                className={`h-2 w-2 rounded-full ${assignment.partner.isOnline
-                                    ? "bg-emerald-400"
-                                    : "bg-gray-600"
-                                    }`}
-                            />
+                            <div className="flex items-center gap-2">
+                                <span
+                                    className={`h-2 w-2 rounded-full ${assignment.partner.isOnline
+                                        ? "bg-emerald-400"
+                                        : "bg-gray-600"
+                                        }`}
+                                />
+                                <button
+                                    onClick={() => {
+                                        setUnassignError(null);
+                                        setShowUnassignConfirm(true);
+                                    }}
+                                    title="Unassign driver"
+                                    className="flex items-center gap-1 rounded-md border border-red-500/30 bg-red-500/10 px-2 py-1 text-xs font-medium text-red-400 hover:bg-red-500/20 hover:border-red-500/50 transition-colors"
+                                >
+                                    <UserX className="h-3 w-3" />
+                                    Unassign
+                                </button>
+                            </div>
                         )}
                     </div>
 
@@ -420,6 +458,59 @@ export default function VehicleDetailsPage({ vehicleId }: { vehicleId: string })
                     })}
                 </div>
             </motion.div>
+
+            {/* unassign confirmation modal */}
+            {showUnassignConfirm && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: 12 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="w-full max-w-sm rounded-2xl border border-white/10 bg-[#0d1117] p-6 shadow-2xl"
+                    >
+                        <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-red-500/10">
+                            <UserX className="h-5 w-5 text-red-400" />
+                        </div>
+                        <h3 className="text-base font-semibold text-white">Unassign Driver?</h3>
+                        <p className="mt-1.5 text-sm text-gray-400">
+                            <span className="font-medium text-gray-200">{assignment.partner?.name}</span> will be removed from this vehicle. This cannot be undone while a trip is active.
+                        </p>
+
+                        {unassignError && (
+                            <p className="mt-3 rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-xs text-red-400">
+                                {unassignError}
+                            </p>
+                        )}
+
+                        <div className="mt-5 flex gap-3">
+                            <button
+                                onClick={() => {
+                                    setShowUnassignConfirm(false);
+                                    setUnassignError(null);
+                                }}
+                                disabled={unassigning}
+                                className="flex-1 rounded-xl border border-white/10 bg-white/[0.04] py-2.5 text-sm font-medium text-gray-300 hover:bg-white/[0.08] transition-colors disabled:opacity-50"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleUnassign}
+                                disabled={unassigning}
+                                className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-red-500/90 py-2.5 text-sm font-semibold text-white hover:bg-red-500 transition-colors disabled:opacity-60"
+                            >
+                                {unassigning ? (
+                                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                ) : (
+                                    <>
+                                        <UserX className="h-4 w-4" />
+                                        Unassign
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
 
             {/* assign driver modal */}
             <AssignDriverModal

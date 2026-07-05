@@ -4,14 +4,14 @@ import {
     Users,
     UserCheck,
     UserX,
-    Star,
 } from 'lucide-react'
 
 import DriverStatsCard from './DriverStatsCard'
+import { getDriverStatus } from './lib'
 
 type Partner = {
-    status: string
-    rating: number
+    isOnline?: boolean
+    assignedVehicleId?: { status?: string } | null
 }
 
 export default function DriverStats({
@@ -22,47 +22,36 @@ export default function DriverStats({
 
     const totalDrivers = partners.length
 
-    const onDuty = partners.filter(
-        partner => partner.status === 'available' || partner.status === 'Busy'
+    const availableDrivers = partners.filter(
+        partner => getDriverStatus(partner) === 'available'
     ).length
 
-    const offDuty = partners.filter(
-        partner => partner.status === 'busy' || partner.status === 'Offline'
+    const offlineDrivers = partners.filter(
+        partner => !partner.isOnline
     ).length
-
-    const avgRating =
-        partners.length > 0
-            ? (
-                partners.reduce(
-                    (sum, partner) =>
-                        sum + partner.rating,
-                    0
-                ) / partners.length
-            ).toFixed(1)
-            : '0.0'
 
     return (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
 
             <DriverStatsCard
                 title="Total Drivers"
                 value={totalDrivers}
                 icon={Users}
-                color="text-blue-400"
+                color="text-primary"
             />
 
             <DriverStatsCard
                 title="Available Drivers"
-                value={onDuty}
+                value={availableDrivers}
                 icon={UserCheck}
-                color="text-green-400"
+                color="text-success"
             />
 
             <DriverStatsCard
-                title="offline Drivers"
-                value={offDuty}
+                title="Offline Drivers"
+                value={offlineDrivers}
                 icon={UserX}
-                color="text-red-400"
+                color="text-destructive"
             />
 
         </div>

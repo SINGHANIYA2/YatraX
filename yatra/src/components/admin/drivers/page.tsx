@@ -7,22 +7,13 @@ import DriverStats from './DriverStats'
 import DriverFilters from './DriverFilters'
 import DriverTable from './DriverTable'
 import DriverManagementTopBar from './DriverTopBar'
-
-type Partner = {
-    _id: string
-    name: string
-    vehicle: string
-    phone: string
-    rating: number
-    status: string
-    experience: string
-    trips: number
-}
+import { getDriverStatus } from './lib'
+import LoadingState from '@/components/ui/LoadingState'
 
 export default function DriversPage() {
 
     const [partners, setPartners] =
-        useState<Partner[]>([])
+        useState<any[]>([])
 
     const [loading, setLoading] =
         useState(true)
@@ -71,25 +62,24 @@ export default function DriversPage() {
         if (selectedStatus !== 'All Status') {
             filtered = filtered.filter(
                 partner =>
-                    partner.status === selectedStatus
+                    getDriverStatus(partner) === selectedStatus.toLowerCase()
             )
         }
 
         if (search.trim()) {
-            filtered = filtered.filter(
-                partner =>
-                    partner.name
-                        .toLowerCase()
-                        .includes(search.toLowerCase()) ||
+            const query = search.toLowerCase()
 
-                    partner._id
-                        .toLowerCase()
-                        .includes(search.toLowerCase()) ||
+            filtered = filtered.filter(partner => {
+                const vehicle = partner.assignedVehicleId
 
-                    partner.vehicle
-                        .toLowerCase()
-                        .includes(search.toLowerCase())
-            )
+                return (
+                    partner.name?.toLowerCase().includes(query) ||
+                    partner._id?.toLowerCase().includes(query) ||
+                    partner.phone?.toLowerCase().includes(query) ||
+                    vehicle?.vehicleNumber?.toLowerCase().includes(query) ||
+                    vehicle?.vehicleType?.toLowerCase().includes(query)
+                )
+            })
         }
 
         return filtered
@@ -102,10 +92,17 @@ export default function DriversPage() {
 
     return (
 
-        <div className='bg-[#030712] h-screen'>
-            <div className="w-full fixed top-0 z-40">
+        <div className='bg-background min-h-screen'>
+            {/* Desktop — fixed, matches AdminTopbar behavior */}
+            <div className="hidden md:block w-full fixed top-0 z-40">
                 <DriverManagementTopBar />
             </div>
+
+            {/* Mobile — normal flow, sits below AdminLayout's own topbar instead of over it */}
+            <div className="md:hidden">
+                <DriverManagementTopBar />
+            </div>
+
             <motion.div
                 initial={{ y: 40, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -113,28 +110,23 @@ export default function DriversPage() {
                 className=''
             >
 
-                <div className="bg-[#030712] px-6 pt-6 mt-[100px] font-sans">
+                <div className="bg-background px-4 pt-4 sm:px-6 md:pt-6 md:mt-[72px] font-sans">
 
                     {loading ? (
-                        <div className="flex items-center justify-center py-20">
-                            <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
-                        </div>
+                        <LoadingState label="Loading drivers..." />
                     ) : error ? (
                         <p className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
                             {error}
                         </p>
                     ) : (
                         <>
-                            {/* Stats */}
+                            {/* Stats reflect the full, unfiltered driver list */}
                             <DriverStats
-                                partners={filteredPartners}
+                                partners={partners}
                             />
 
                             {/* Filters */}
                             <DriverFilters
-                                partners={partners}
-                                setPartners={setPartners}
-
                                 selectedStatus={selectedStatus}
                                 setSelectedStatus={setSelectedStatus}
 
@@ -147,6 +139,12 @@ export default function DriversPage() {
                                 partners={filteredPartners}
                                 setPartners={setPartners}
                             />
+
+                            {filteredPartners.length === 0 && (
+                                <p className="mt-4 text-center text-sm text-muted-foreground">
+                                    No drivers match the current filters.
+                                </p>
+                            )}
                         </>
                     )}
 

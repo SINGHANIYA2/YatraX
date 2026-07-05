@@ -53,27 +53,18 @@ export async function proxy(req: NextRequest) {
     }
 
     // Allow public APIs
-    // if (
-    //     PUBLIC_API.some((api) =>
-    //         pathname.startsWith(api)
-    //     )
-    // ) {
-    //     return NextResponse.next();
-    // }
-
-    // Allow public pages
     if (
-        PUBLIC_ROUTES.some(
-            (route) =>
-                pathname === route ||
-                pathname.startsWith(route + "/")
+        PUBLIC_API.some((api) =>
+            pathname.startsWith(api)
         )
     ) {
         return NextResponse.next();
     }
 
-    // Allow public pages
-    if (PUBLIC_ROUTES.includes(pathname)) {
+    // Allow public pages (exact match OR prefix match for dynamic routes)
+    if (PUBLIC_ROUTES.some((route) =>
+        pathname === route || pathname.startsWith(route + "/")
+    )) {
         return NextResponse.next();
     }
 

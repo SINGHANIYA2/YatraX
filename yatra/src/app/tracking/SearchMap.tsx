@@ -49,7 +49,7 @@ const sourceIcon = new L.DivIcon({
   html: `
     <div style="display:flex;flex-direction:column;align-items:center;">
       <div style="
-        background:#16a34a;
+        background:var(--success);
         color:#fff;
         padding:5px 14px;
         border-radius:10px;
@@ -58,11 +58,11 @@ const sourceIcon = new L.DivIcon({
       ">
         SOURCE
       </div>
-      <div style="width:2px;height:10px;background:#16a34a;"></div>
+      <div style="width:2px;height:10px;background:var(--success);"></div>
       <div style="
         width:13px;
         height:13px;
-        background:#16a34a;
+        background:var(--success);
         border-radius:50%;
         border:3px solid #fff;
       "></div>
@@ -77,7 +77,7 @@ const destinationIcon = new L.DivIcon({
   html: `
     <div style="display:flex;flex-direction:column;align-items:center;">
       <div style="
-        background:#ef4444;
+        background:var(--destructive);
         color:#fff;
         padding:5px 14px;
         border-radius:10px;
@@ -86,11 +86,11 @@ const destinationIcon = new L.DivIcon({
       ">
         DESTINATION
       </div>
-      <div style="width:2px;height:10px;background:#ef4444;"></div>
+      <div style="width:2px;height:10px;background:var(--destructive);"></div>
       <div style="
         width:13px;
         height:13px;
-        background:#ef4444;
+        background:var(--destructive);
         border-radius:50%;
         border:3px solid #fff;
       "></div>
@@ -105,7 +105,7 @@ const currentLocationIcon = new L.DivIcon({
   html: `
     <div style="display:flex;flex-direction:column;align-items:center;">
       <div style="
-        background:#2563eb;
+        background:var(--primary);
         color:#fff;
         padding:5px 14px;
         border-radius:10px;
@@ -114,11 +114,11 @@ const currentLocationIcon = new L.DivIcon({
       ">
         CURRENT LOCATION
       </div>
-      <div style="width:2px;height:10px;background:#2563eb;"></div>
+      <div style="width:2px;height:10px;background:var(--primary);"></div>
       <div style="
         width:13px;
         height:13px;
-        background:#2563eb;
+        background:var(--primary);
         border-radius:50%;
         border:3px solid #fff;
       "></div>
@@ -298,7 +298,7 @@ const destinationPoint = coordinates?.length > 0
           <Polyline
             positions={route}
             pathOptions={{
-              color: '#2563eb',
+              color: 'var(--primary)',
               weight: 5,
               opacity: 0.8,
             }}

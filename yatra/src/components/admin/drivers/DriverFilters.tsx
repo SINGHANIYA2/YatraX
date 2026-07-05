@@ -1,11 +1,8 @@
 'use client'
 
-import { Search, ChevronDown, Plus } from 'lucide-react'
+import { Search, ChevronDown } from 'lucide-react'
 
 type Props = {
-    partners: any[]
-    setPartners: React.Dispatch<React.SetStateAction<any[]>>
-
     selectedStatus: string
     setSelectedStatus: React.Dispatch<React.SetStateAction<string>>
 
@@ -14,9 +11,6 @@ type Props = {
 }
 
 export default function DriverFilters({
-    partners,
-    setPartners,
-
     selectedStatus,
     setSelectedStatus,
 
@@ -24,44 +18,22 @@ export default function DriverFilters({
     setSearch,
 }: Props) {
 
-    function handleAddDriver() {
-
-        const newDriver = {
-            id: crypto.randomUUID(),
-
-            name: 'New Driver',
-            vehicle: 'Not Assigned',
-
-            phone: '+91 9876543210',
-
-            rating: 4.5,
-
-            status: 'Off Duty',
-
-            experience: '1 Year',
-
-            trips: 0,
-        }
-
-        setPartners(prev => [...prev, newDriver])
-    }
-
     return (
         <div
             className="
             mt-4
             rounded-2xl
             border
-            border-blue-500/10
-            bg-[#0b1220]
+            border-primary/10
+            bg-card
             p-4
-            shadow-[0_0_15px_rgba(59,130,246,0.08)]
+            shadow-sm
             "
         >
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
 
                 {/* Status Filter */}
-                <div className="relative w-52">
+                <div className="relative w-full sm:w-52">
 
                     <select
                         value={selectedStatus}
@@ -73,28 +45,30 @@ export default function DriverFilters({
                         appearance-none
                         rounded-xl
                         border
-                        border-slate-700
-                        bg-slate-900
+                        border-border
+                        bg-card
                         px-4
                         py-3
                         text-sm
-                        text-white
+                        text-foreground
                         outline-none
                         "
                     >
-                        <option>All Status</option>
-                        <option>On Duty</option>
-                        <option>Off Duty</option>
+                        <option value="All Status">All Status</option>
+                        <option value="Available">Available</option>
+                        <option value="Assigned">Assigned</option>
+                        <option value="Maintenance">Maintenance</option>
                     </select>
 
                     <ChevronDown
                         size={18}
                         className="
+                        pointer-events-none
                         absolute
                         right-4
                         top-1/2
                         -translate-y-1/2
-                        text-slate-400
+                        text-muted-foreground
                         "
                     />
                 </div>
@@ -109,7 +83,7 @@ export default function DriverFilters({
                         left-4
                         top-1/2
                         -translate-y-1/2
-                        text-slate-500
+                        text-muted-foreground
                         "
                     />
 
@@ -124,13 +98,13 @@ export default function DriverFilters({
                         w-full
                         rounded-xl
                         border
-                        border-slate-700
-                        bg-slate-900
+                        border-border
+                        bg-card
                         py-3
                         pl-11
                         pr-4
                         text-sm
-                        text-white
+                        text-foreground
                         outline-none
                         "
                     />

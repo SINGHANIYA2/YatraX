@@ -13,7 +13,7 @@ export default function SelectSeat() {
   return (
     <div
       className="
-        bg-[#07142C]
+        bg-card
         rounded-2xl
         p-4
         sm:p-5
@@ -21,8 +21,8 @@ export default function SelectSeat() {
         lg:w-[32%]
         self-start
         border
-        border-blue-500/10
-        shadow-[0_0_15px_rgba(59,130,246,0.15)]
+        border-primary/10
+        shadow-sm
       "
     >
       {/* Heading */}
@@ -33,17 +33,17 @@ export default function SelectSeat() {
       {/* Legend */}
       <div className="flex flex-wrap gap-4 text-xs sm:text-sm mb-5">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-blue-600 rounded" />
+          <div className="w-3 h-3 bg-primary rounded" />
           <span>Available</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-green-500 rounded" />
+          <div className="w-3 h-3 bg-success rounded" />
           <span>Selected</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-red-500 rounded" />
+          <div className="w-3 h-3 bg-destructive rounded" />
           <span>Booked</span>
         </div>
       </div>
@@ -60,8 +60,8 @@ export default function SelectSeat() {
                 h-9
                 sm:h-10
                 rounded-lg
-                bg-[#102B56]
-                hover:bg-blue-600
+                bg-card
+                hover:bg-primary
                 transition
                 text-sm
                 sm:text-base
@@ -77,7 +77,7 @@ export default function SelectSeat() {
       {/* Summary */}
       <div className="flex flex-col sm:flex-row sm:justify-between gap-4 mt-6 text-sm">
         <div>
-          <p className="text-gray-400">
+          <p className="text-muted-foreground">
             Selected Seats
           </p>
           <p className="font-semibold">
@@ -86,7 +86,7 @@ export default function SelectSeat() {
         </div>
 
         <div>
-          <p className="text-gray-400">
+          <p className="text-muted-foreground">
             Total Fare
           </p>
           <p className="font-semibold">
@@ -97,7 +97,7 @@ export default function SelectSeat() {
 
       {/* Button */}
       <button
-        className="w-full mt-6 py-3 rounded-xl bg-gradient-to-r from-blue-700 to-blue-500 hover:opacity-90 transition text-sm
+        className="w-full mt-6 py-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover transition-colors hover:opacity-90 transition text-sm
           sm:text-base font-semibold cursor-pointer
         "
       >

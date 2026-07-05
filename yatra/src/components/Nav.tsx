@@ -52,6 +52,10 @@ export default function Navbar() {
 
   const { data: session, status } = useSession();
 
+  // Session-derived role — used to decide what the profile popup shows
+  // (user -> Dashboard + Become Partner, admin/partner -> Dashboard).
+  const sessionRole = session?.user?.role;
+
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -61,12 +65,14 @@ export default function Navbar() {
       if (session?.user?.role === "admin") {
         setRole("admin")
         setProfileOpen(true)
-      }
-
-      if (session?.user?.role === "partner") {
+      } else if (session?.user?.role === "partner") {
         // do partner stuff
         setRole("partner")
         setProfileOpen(true)
+      } else {
+        // Regular user — no auto-opened popup, just switch the
+        // navbar over to the profile icon instead of Login/Sign Up.
+        setRole("user")
       }
       // console.log("role : ", role)
     }
@@ -79,6 +85,7 @@ export default function Navbar() {
     if(role == "partner")dispatch(setPartnerData(null))
     if(role == "admin")dispatch(setAdminData(null))
     setProfileOpen(false)
+    setRole("")
   }
 
 
@@ -120,11 +127,10 @@ export default function Navbar() {
             className="
               flex items-center justify-between
               rounded-2xl
-              border border-white/10
-            bg-[#030712]
-              backdrop-blur-xl
+              border border-border/10
+            bg-background
               px-6 py-4
-              shadow-[0_0_50px_rgba(0,0,0,0.6)]
+              shadow-sm
               
             "
           >
@@ -134,9 +140,7 @@ export default function Navbar() {
                 className="
                   flex h-11 w-11 items-center justify-center
                   rounded-xl
-                  bg-gradient-to-br
-                  from-blue-500
-                  to-blue-700
+                  bg-primary text-primary-foreground hover:bg-primary-hover transition-colors
                   shadow-lg
                 "
               >
@@ -144,8 +148,8 @@ export default function Navbar() {
               </div>
 
               <h1 className="text-3xl font-bold">
-                <span className="text-white">Yatra</span>
-                <span className="text-blue-500">X</span>
+                <span className="text-foreground">Yatra</span>
+                <span className="text-primary">X</span>
               </h1>
             </Link>
 
@@ -163,8 +167,8 @@ export default function Navbar() {
                     <motion.span
                       whileHover={{ scale: 1.05 }}
                       className={`text-sm font-medium transition-all duration-300 ${active
-                        ? "text-blue-500"
-                        : "text-gray-300 hover:text-white"
+                        ? "text-primary"
+                        : "text-muted-foreground hover:text-foreground"
                         }`}
                     >
                       {item.name}
@@ -173,7 +177,7 @@ export default function Navbar() {
                     {active && (
                       <motion.div
                         layoutId="activeTab"
-                        className="absolute -bottom-2 left-0 right-0 mx-auto h-[2px] w-full bg-blue-500"
+                        className="absolute -bottom-2 left-0 right-0 mx-auto h-[2px] w-full bg-primary"
                         transition={{
                           type: "spring",
                           stiffness: 300,
@@ -191,14 +195,14 @@ export default function Navbar() {
               {role == "" ? (
                 <>
                   <button
-                    className="rounded-xl border border-white/10 px-5 py-2.5 text-sm text-white transition-all hover:border-blue-500 hover:bg-blue-500/10"
+                    className="rounded-xl border border-border/10 px-5 py-2.5 text-sm text-foreground transition-all hover:border-primary hover:bg-primary/10"
                     onClick={handleLogin}
                   >
                     Login
                   </button>
 
                   <button
-                    className="rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-5 py-2.5 text-sm font-medium text-white shadow-[0_0_25px_rgba(37,99,235,0.4)] transition-all hover:scale-105"
+                    className="rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover transition-colors px-5 py-2.5 text-sm font-medium"
                     onClick={handleSignup}
                   >
                     Sign Up
@@ -208,7 +212,7 @@ export default function Navbar() {
                 <div className="relative">
                   <button
                     onClick={() => setProfileOpen(!profileOpen)}
-                    className="h-11 w-11 rounded-full bg-gradient-to-r from-blue-600 to-blue-500 flex items-center justify-center text-white font-bold text-lg border border-blue-400/30"
+                    className="h-11 w-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg border border-primary/30"
                   >
                     {userData?.name?.charAt(0)?.toUpperCase()}
                     {adminData?.name?.charAt(0)?.toUpperCase()}
@@ -227,24 +231,24 @@ export default function Navbar() {
                           initial={{ opacity: 0, y: 15 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: 15 }}
-                          className="absolute right-0 top-14 w-72 rounded-2xl border border-white/10 bg-[#08111F] backdrop-blur-xl shadow-2xl z-50 overflow-hidden"
+                          className="absolute right-0 top-14 w-72 rounded-2xl border border-border/10 bg-card shadow-lg z-50 overflow-hidden"
                         >
-                          <div className="p-5 border-b border-white/10">
+                          <div className="p-5 border-b border-border/10">
                             <div className="flex items-center gap-3">
-                              <div className="h-12 w-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xl">
+                              <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-xl">
                                 {userData?.name?.charAt(0)?.toUpperCase()}
                                 {adminData?.name?.charAt(0)?.toUpperCase()}
                                 {partnerData?.name?.charAt(0)?.toUpperCase()}
                               </div>
 
                               <div>
-                                <h3 className="text-white font-semibold">
+                                <h3 className="text-foreground font-semibold">
                                   {userData?.name?.toUpperCase()}
                                   {adminData?.name?.toUpperCase()}
                                   {partnerData?.name?.toUpperCase()}
                                 </h3>
 
-                                <p className="text-xs text-gray-400 uppercase">
+                                <p className="text-xs text-muted-foreground uppercase">
                                   {userData?.role?.toLowerCase()}
                                   {partnerData?.role?.toLowerCase()}
                                   {adminData?.role?.toLowerCase()}
@@ -253,50 +257,53 @@ export default function Navbar() {
                             </div>
                           </div>
 
-                          {
-                            adminData && (
                           <div className="p-3">
-                            <Link
-                              href="/profile"
-                              className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/5 hover:text-white transition"
-                            >
-                              Profile
-                            </Link>
+                            {/* Regular user: Dashboard + Become Partner */}
+                            {sessionRole === "user" && (
+                              <>
+                                <Link
+                                  href="/user"
+                                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
+                                >
+                                  Dashboard
+                                </Link>
 
-                            <Link
-                              href="/booking/my-bookings"
-                              className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/5 hover:text-white transition"
-                            >
-                              My Bookings
-                            </Link>
-                            <Link href={"/partner/onboarding"}
-                              className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/5 hover:text-white transition"
+                                <Link
+                                  href="/partner/onboarding"
+                                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
+                                >
+                                  Become Partner
+                                </Link>
+                              </>
+                            )}
 
-                            >
-                              Become Partner
-                            </Link>
-
-                            {adminData && (
+                            {/* Admin / Partner: just a normal Dashboard link */}
+                            {sessionRole === "admin" && (
                               <Link
                                 href="/admin"
-                                className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/5 hover:text-white transition"
+                                className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
                               >
-                                Admin Dashboard
+                                Dashboard
+                              </Link>
+                            )}
+
+                            {sessionRole === "partner" && (
+                              <Link
+                                href="/partner/dashboard"
+                                className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
+                              >
+                                Dashboard
                               </Link>
                             )}
 
                             <button
                               onClick={handleLogOut}
-                              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition mt-2"
+                              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-destructive hover:bg-destructive/10 transition mt-2"
                             >
                               <LogOut size={16} />
                               Logout
                             </button>
-
                           </div>
-
-                            )
-                          }
                         </motion.div>
                       </>
                     )}
@@ -308,10 +315,9 @@ export default function Navbar() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="lg:hidden text-white"
+              className="lg:hidden text-foreground"
             >
               {menuOpen ? <X size={28} /> : <Menu size={28} />}
-
             </button>
           </div>
         </div>
@@ -323,14 +329,14 @@ export default function Navbar() {
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
-          className="fixed top-24 left-4 right-4 z-40 rounded-2xl border border-white/10 bg-[#080B16] backdrop-blur-xl shadow-2xl lg:hidden">
+          className="fixed top-24 left-4 right-4 z-40 rounded-2xl border border-border/10 bg-card shadow-lg lg:hidden">
           <div className="flex flex-col p-4">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 onClick={() => setMenuOpen(false)}
-                className="rounded-xl px-4 py-3 text-gray-300 transition-all hover:bg-blue-500/10 hover:text-blue-400">
+                className="rounded-xl px-4 py-3 text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary">
 
                 {item.name}
 
@@ -340,14 +346,14 @@ export default function Navbar() {
             {
               !profileOpen && (
                 <div className="mt-4 flex flex-col gap-3">
-                  <button className="rounded-xl border border-white/10 py-3 text-white"
+                  <button className="rounded-xl border border-border/10 py-3 text-foreground"
                     onClick={handleLogin}
                   >
                     Login
                   </button>
 
                   <button
-                    className="rounded-xl  bg-gradient-to-r from-blue-600 to-blue-500 py-3 font-medium text-white"
+                    className="rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover transition-colors py-3 font-medium"
                     onClick={handleSignup}
                   >
                     Sign Up
@@ -372,7 +378,7 @@ export default function Navbar() {
                     animate={{ y: 0 }}
                     exit={{ y: 400 }}
                     transition={{ type: "spring", damping: 25 }}
-                    className="fixed inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-2xl z-50 md:hidden"
+                    className="fixed inset-x-0 bottom-0 bg-card rounded-t-3xl shadow-lg border-t border-border z-50 md:hidden"
                   >
                     <div className='p-5'>
                       <p className="font-semibold text-lg">
@@ -380,25 +386,25 @@ export default function Navbar() {
                         {adminData?.name} 
                         {partnerData?.name}
                         </p>
-                      <p className='text-xs uppercase text-gray-500 mb-4'>{role}</p>
+                      <p className='text-xs uppercase text-muted-foreground mb-4'>{role}</p>
                       
                       {
                           role == "user" &&
                         (
-                          <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl'
+                          <div className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
                             onClick={() => router.push("/partner/onboarding/vehicle")}
                           >
 
                             <div className='flex space-x-2'>
-                              <div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center">
+                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
                                 <Bike size={14} />
                               </div>
 
-                              <div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center">
+                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
                                 <Car size={14} />
                               </div>
 
-                              <div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center">
+                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
                                 <Truck size={14} />
                               </div>
 
@@ -413,20 +419,20 @@ export default function Navbar() {
                       {
                           role == "admin" &&
                         (
-                          <div className='w-full flex items-center gap-3 py-3 hover:bg-gray-100 rounded-xl'
+                          <div className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
                             onClick={() => router.push("/partner/onboarding/vehicle")}
                           >
 
                             <div className='flex space-x-2'>
-                              <div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center">
+                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
                                 <Bike size={14} />
                               </div>
 
-                              <div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center">
+                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
                                 <Car size={14} />
                               </div>
 
-                              <div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center">
+                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
                                 <Truck size={14} />
                               </div>
 
@@ -438,7 +444,7 @@ export default function Navbar() {
                         )}
 
                         
-                      <button className="h-full rounded-xl flex items-center gap-3 py-3 hover:bg-gray-100 mt-2"
+                      <button className="h-full rounded-xl flex items-center gap-3 py-3 hover:bg-secondary mt-2"
                         onClick={handleLogOut}>
                         <LogOut size={16} />
                         Log out

@@ -8,6 +8,7 @@ type RevenueStatCardProps = {
     change: string
     icon: ReactNode
     iconColor: string
+    trend?: 'up' | 'down' | 'flat'
 }
 
 export default function RevenueStatCard({
@@ -16,16 +17,23 @@ export default function RevenueStatCard({
     change,
     icon,
     iconColor,
+    trend = 'up',
 }: RevenueStatCardProps) {
+    const badgeClass =
+        trend === 'down'
+            ? 'bg-destructive/10 text-destructive'
+            : trend === 'flat'
+            ? 'bg-muted text-muted-foreground'
+            : 'bg-success/10 text-success'
     return (
         <div
             className="
             rounded-3xl
             border
-            border-blue-500/10
-            bg-[#071427]
+            border-primary/10
+            bg-card
             p-5
-            shadow-[0_0_25px_rgba(59,130,246,.06)]
+            shadow-sm
             "
         >
             <div className="flex items-start justify-between">
@@ -38,7 +46,7 @@ export default function RevenueStatCard({
                     items-center
                     justify-center
                     rounded-2xl
-                    bg-slate-800/50
+                    bg-secondary/50
                     "
                 >
                     <div className={iconColor}>
@@ -47,15 +55,14 @@ export default function RevenueStatCard({
                 </div>
 
                 <span
-                    className="
+                    className={`
                     rounded-full
-                    bg-green-500/10
                     px-3
                     py-1
                     text-xs
                     font-medium
-                    text-green-400
-                    "
+                    ${badgeClass}
+                    `}
                 >
                     {change}
                 </span>
@@ -67,7 +74,7 @@ export default function RevenueStatCard({
                 <h3
                     className="
                     text-sm
-                    text-slate-400
+                    text-muted-foreground
                     "
                 >
                     {title}
@@ -78,7 +85,7 @@ export default function RevenueStatCard({
                     mt-2
                     text-4xl
                     font-bold
-                    text-white
+                    text-foreground
                     "
                 >
                     {value}

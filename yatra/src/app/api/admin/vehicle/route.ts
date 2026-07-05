@@ -24,11 +24,11 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // const admin = await Admin.findOne({
-        //     email: session.user.email,
-        // });
+        const admin = await Admin.findOne({
+            email: session.user.email,
+        });
 
-        const admin = await Admin.findById('6a3e89c071940960de5b6a2c');
+
 
         if (!admin) {
             return NextResponse.json(
@@ -166,10 +166,9 @@ export async function GET(req: NextRequest) {
             );
         }
 
-        // const admin = await Admin.findOne({
-        //     email: authSession.user.email,
-        // });
-        const admin = await Admin.findById('6a3e89c071940960de5b6a2c');
+        const admin = await Admin.findOne({
+            email: authSession.user.email,
+        });
 
 
         if (!admin) {

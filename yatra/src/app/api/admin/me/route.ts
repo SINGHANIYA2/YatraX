@@ -5,15 +5,14 @@ import Admin from "@/models/admin.models"
 export async function GET(req:Request){
     try{
         await connectDb()
-        // const session = await auth()
-        // if(!session || !session.user){
-        //     return Response.json(
-        //         {message:"Admin not found"},
-        //         {status:400}
-        //     )
-        // }
-        // const admin = await Admin.findOne({email:session.user.email})
-        const admin = await Admin.findById('6a3e89c071940960de5b6a2c')
+        const session = await auth()
+        if(!session || !session.user){
+            return Response.json(
+                {message:"Admin not found"},
+                {status:400}
+            )
+        }
+        const admin = await Admin.findOne({email:session.user.email})
 
         if(!admin){
             return Response.json(

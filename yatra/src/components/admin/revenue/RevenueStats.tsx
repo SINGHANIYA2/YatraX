@@ -4,26 +4,51 @@ import {
     IndianRupee,
     Wallet,
     TrendingUp,
-    ArrowUpRight
+    Calendar,
 } from 'lucide-react'
 
 import RevenueStatCard from './RevenueStatCard'
-import { revenueStats } from './demo'
+import { formatINR } from '@/lib/utils'
+import type { RevenueStatsData } from './types'
 
-export default function RevenueStats() {
+export default function RevenueStats({ stats }: { stats: RevenueStatsData }) {
 
-    const icons = [
-        <IndianRupee size={22} />,
-        <Wallet size={22} />,
-        <TrendingUp size={22} />,
-        <ArrowUpRight size={22} />
-    ]
+    const growthTrend: 'up' | 'down' | 'flat' =
+        stats.growthRate > 0 ? 'up' : stats.growthRate < 0 ? 'down' : 'flat'
 
-    const iconColors = [
-        'text-yellow-400',
-        'text-green-400',
-        'text-blue-400',
-        'text-cyan-400'
+    const cards = [
+        {
+            title: 'Total Revenue',
+            value: formatINR(stats.totalRevenue),
+            change: `${stats.totalBookings} bookings`,
+            icon: <IndianRupee size={22} />,
+            iconColor: 'text-warning',
+            trend: 'flat' as const,
+        },
+        {
+            title: "Today's Revenue",
+            value: formatINR(stats.todayRevenue),
+            change: 'Today',
+            icon: <Calendar size={22} />,
+            iconColor: 'text-success',
+            trend: 'flat' as const,
+        },
+        {
+            title: 'Monthly Revenue',
+            value: formatINR(stats.monthlyRevenue),
+            change: 'This month',
+            icon: <Wallet size={22} />,
+            iconColor: 'text-primary',
+            trend: 'flat' as const,
+        },
+        {
+            title: 'Growth Rate',
+            value: `${stats.growthRate > 0 ? '+' : ''}${stats.growthRate}%`,
+            change: growthTrend === 'flat' ? 'No change' : 'vs last month',
+            icon: <TrendingUp size={22} />,
+            iconColor: 'text-primary',
+            trend: growthTrend,
+        },
     ]
 
     return (
@@ -37,14 +62,15 @@ export default function RevenueStats() {
             mb-8
             "
         >
-            {revenueStats.map((stat, index) => (
+            {cards.map((stat) => (
                 <RevenueStatCard
                     key={stat.title}
                     title={stat.title}
                     value={stat.value}
                     change={stat.change}
-                    icon={icons[index]}
-                    iconColor={iconColors[index]}
+                    icon={stat.icon}
+                    iconColor={stat.iconColor}
+                    trend={stat.trend}
                 />
             ))}
         </div>

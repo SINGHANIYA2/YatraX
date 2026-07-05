@@ -1,18 +1,18 @@
 'use client'
 
-import { transactions } from './demo'
+import type { RevenueTransaction } from './types'
 
-export default function RevenueTable() {
+export default function RevenueTable({ transactions }: { transactions: RevenueTransaction[] }) {
     return (
         <div
             className="
             mt-6
             rounded-3xl
             border
-            border-blue-500/10
-            bg-[#071427]
+            border-primary/10
+            bg-card
             p-6
-            shadow-[0_0_25px_rgba(59,130,246,.06)]
+            shadow-sm
             "
         >
             {/* Header */}
@@ -21,7 +21,7 @@ export default function RevenueTable() {
                     className="
                     text-xl
                     font-bold
-                    text-white
+                    text-foreground
                     "
                 >
                     Recent Transactions
@@ -31,7 +31,7 @@ export default function RevenueTable() {
                     className="
                     mt-1
                     text-sm
-                    text-slate-400
+                    text-muted-foreground
                     "
                 >
                     Latest booking payments and revenue records
@@ -39,6 +39,14 @@ export default function RevenueTable() {
             </div>
 
             {/* Table */}
+            {transactions.length === 0 ? (
+                <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
+                    <p className="text-sm font-medium text-foreground">No transactions yet</p>
+                    <p className="text-xs text-muted-foreground max-w-xs">
+                        Paid bookings from your partners will appear here as they come in.
+                    </p>
+                </div>
+            ) : (
             <div className="overflow-x-auto">
                 <table className="w-full">
 
@@ -46,35 +54,35 @@ export default function RevenueTable() {
                         <tr
                             className="
                             border-b
-                            border-slate-800
+                            border-border
                             text-left
                             "
                         >
-                            <th className="pb-4 text-sm text-slate-400">
+                            <th className="pb-4 text-sm text-muted-foreground">
                                 Transaction ID
                             </th>
 
-                            <th className="pb-4 text-sm text-slate-400">
+                            <th className="pb-4 text-sm text-muted-foreground">
                                 Booking ID
                             </th>
 
-                            <th className="pb-4 text-sm text-slate-400">
+                            <th className="pb-4 text-sm text-muted-foreground">
                                 Vehicle
                             </th>
 
-                            <th className="pb-4 text-sm text-slate-400">
+                            <th className="pb-4 text-sm text-muted-foreground">
                                 Customer
                             </th>
 
-                            <th className="pb-4 text-sm text-slate-400">
+                            <th className="pb-4 text-sm text-muted-foreground">
                                 Amount
                             </th>
 
-                            <th className="pb-4 text-sm text-slate-400">
+                            <th className="pb-4 text-sm text-muted-foreground">
                                 Date
                             </th>
 
-                            <th className="pb-4 text-sm text-slate-400">
+                            <th className="pb-4 text-sm text-muted-foreground">
                                 Status
                             </th>
                         </tr>
@@ -86,44 +94,44 @@ export default function RevenueTable() {
                                 key={transaction.id}
                                 className="
                                 border-b
-                                border-slate-900
-                                hover:bg-slate-900/30
+                                border-border
+                                hover:bg-card
                                 transition
                                 "
                             >
                                 <td
                                     className="
                                     py-4
-                                    text-white
+                                    text-foreground
                                     font-medium
                                     "
                                 >
                                     {transaction.id}
                                 </td>
 
-                                <td className="py-4 text-slate-300">
+                                <td className="py-4 text-muted-foreground">
                                     {transaction.bookingId}
                                 </td>
 
-                                <td className="py-4 text-slate-300">
+                                <td className="py-4 text-muted-foreground">
                                     {transaction.vehicle}
                                 </td>
 
-                                <td className="py-4 text-slate-300">
+                                <td className="py-4 text-muted-foreground">
                                     {transaction.customer}
                                 </td>
 
                                 <td
                                     className="
                                     py-4
-                                    text-green-400
+                                    text-success
                                     font-semibold
                                     "
                                 >
                                     ₹{transaction.amount}
                                 </td>
 
-                                <td className="py-4 text-slate-300">
+                                <td className="py-4 text-muted-foreground">
                                     {transaction.date}
                                 </td>
 
@@ -138,10 +146,10 @@ export default function RevenueTable() {
 
                                         ${
                                             transaction.status === 'Paid'
-                                                ? 'bg-green-500/15 text-green-400'
+                                                ? 'bg-success/15 text-success'
                                                 : transaction.status === 'Pending'
-                                                ? 'bg-yellow-500/15 text-yellow-400'
-                                                : 'bg-red-500/15 text-red-400'
+                                                ? 'bg-warning/15 text-warning'
+                                                : 'bg-destructive/15 text-destructive'
                                         }
                                         `}
                                     >
@@ -154,6 +162,7 @@ export default function RevenueTable() {
 
                 </table>
             </div>
+            )}
         </div>
     )
 }

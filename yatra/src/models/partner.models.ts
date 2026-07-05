@@ -14,10 +14,12 @@ export interface IPartner extends Document {
   adminId: Types.ObjectId;
   locationId: Types.ObjectId;
   assignedVehicleId?: Types.ObjectId | null;
+  isPhoneVerified: boolean;
+  isEmailVerified: boolean;
 
   name: string;
   phone: string;
-  email?: string;
+  email: string;
   role: string;
 
   dob?: Date;
@@ -50,11 +52,7 @@ export interface IPartner extends Document {
     upiId?: string;
   };
 
-  applicationStatus:
-    | "pending"
-    | "approved"
-    | "rejected"
-    | "suspended";
+  applicationStatus: "pending" | "approved" | "rejected" | "suspended";
 
   approvedAt?: Date;
   rejectedAt?: Date;
@@ -67,6 +65,9 @@ export interface IPartner extends Document {
 
   socketId?: string | null;
   lastSeen?: Date;
+
+  emailVerificationStatus: boolean;
+  mobileVerificationStatus: boolean;
 
   totalRides: number;
   completedRides: number;
@@ -85,6 +86,10 @@ export interface IPartner extends Document {
 
   joinedAt?: Date;
   lastRideAt?: Date;
+
+  emailOtp: string
+  mobileOtp: string
+  otpExpiresAt: Date
 
   createdAt: Date;
   updatedAt: Date;
@@ -115,7 +120,17 @@ const PartnerSchema = new Schema(
       ref: "Location",
       required: true,
     },
-
+    emailOtp: {
+      type: String,
+      default: ""
+    },
+    mobileOtp: {
+      type: String,
+      default: ""
+    },
+    otpExpiresAt: {
+      type: Date
+    },
     assignedVehicleId: {
       type: Schema.Types.ObjectId,
       ref: "Vehicle",
@@ -127,6 +142,14 @@ const PartnerSchema = new Schema(
       type: String,
       required: true,
       trim: true,
+    },
+    isEmailVerified: {
+      type: Boolean,
+      default: false
+    },
+    isPhoneVerified: {
+      type: Boolean,
+      default: false
     },
 
     phone: {
@@ -173,6 +196,7 @@ const PartnerSchema = new Schema(
       unique: true,
     },
 
+
     experience: {
       type: Number,
       default: 0,
@@ -193,6 +217,15 @@ const PartnerSchema = new Schema(
       ifsc: String,
       bankName: String,
       upiId: String,
+    },
+
+    emailVerificationStatus: {
+      type: Boolean,
+      default: false
+    },
+    mobileVerificationStatus: {
+      type: Boolean,
+      default: false
     },
 
     applicationStatus: {
@@ -312,6 +345,6 @@ const PartnerSchema = new Schema(
   }
 );
 
-const Partner = mongoose.models.Partner || mongoose.model<IPartner>("Partner",PartnerSchema);
+const Partner = mongoose.models.Partner || mongoose.model<IPartner>("Partner", PartnerSchema);
 
 export default Partner;

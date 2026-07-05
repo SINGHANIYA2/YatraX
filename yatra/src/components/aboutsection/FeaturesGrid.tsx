@@ -13,28 +13,28 @@ const features = [
         description:
             'Track vehicles live with accurate ETA updates.',
         icon: Route,
-        color: 'text-blue-400'
+        color: 'text-primary'
     },
     {
         title: 'Smart Booking',
         description:
             'Book tickets quickly and securely.',
         icon: Ticket,
-        color: 'text-cyan-400'
+        color: 'text-primary'
     },
     {
         title: 'Fleet Optimization',
         description:
             'Optimize routes and vehicle utilization.',
         icon: Bell,
-        color: 'text-yellow-400'
+        color: 'text-warning'
     },
     {
         title: 'Secure & Reliable',
         description:
             'Built with modern security practices.',
         icon: ShieldCheck,
-        color: 'text-green-400'
+        color: 'text-success'
     }
 ]
 
@@ -51,12 +51,12 @@ export default function FeaturesGrid() {
                         className="
                         rounded-2xl
                         border
-                        border-blue-500/10
-                        bg-[#071427]
+                        border-primary/10
+                        bg-card
                         p-5
-                        shadow-[0_0_15px_rgba(59,130,246,0.15)]
+                        shadow-sm
                         transition-all
-                        hover:border-blue-500/30
+                        hover:border-primary/30
                         "
                     >
                         <Icon
@@ -64,11 +64,11 @@ export default function FeaturesGrid() {
                             className={`${feature.color} mb-4`}
                         />
 
-                        <h3 className="text-white font-semibold">
+                        <h3 className="text-foreground font-semibold">
                             {feature.title}
                         </h3>
 
-                        <p className="mt-2 text-sm text-slate-400 leading-6">
+                        <p className="mt-2 text-sm text-muted-foreground leading-6">
                             {feature.description}
                         </p>
                     </div>

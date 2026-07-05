@@ -3,17 +3,42 @@
 import { motion } from 'motion/react'
 
 import DashboardStats from '@/components/admin/dashboard/DashboardStats'
-import { fleetVehicles } from '@/components/fleet/demo'
 import FleetAnalytics from '@/components/fleet/FleetAnalytics'
 import AdminTopbar from '@/components/admin/dashboard/DashboardTopbar'
 import FleetTable from '@/components/fleet/FleetTable'
+import { useEffect, useState } from 'react'
+import LoadingState from '@/components/ui/LoadingState'
 
 
 export default function AdminPage() {
+
+    const [vehicles, setVehicles] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchVehicles = async () => {
+        try {
+            setLoading(true);
+            const res = await fetch("/api/admin/vehicle");
+            const data = await res.json();
+
+            if (data.success) {
+                setVehicles(data.vehicles);
+            }
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchVehicles();
+    }, []);
+
     return (
 
 
-        <div className='bg-[#030712] mb-9'>
+        <div className='bg-background mb-9'>
             <AdminTopbar></AdminTopbar>
             <motion.div
                 initial={{ y: 40, opacity: 0 }}
@@ -22,22 +47,31 @@ export default function AdminPage() {
             >
 
                 <div className='mt-7'>
-                    <DashboardStats />
+                    {loading ? (
+                        <LoadingState  label="Loading Dashboard..."/>
+                    ) : (
+                        <>
+                            <DashboardStats loading={loading} setLoading={setLoading}/>
+                            <div className='px-6 mt-6' >
+                                <FleetTable
+                                    vehicles={vehicles}
+                                    setVehicles={setVehicles}
+                                    loading={loading}
+                                    setLoading={setLoading}
+                                />
+                            </div>
+
+                            {/* <div className='px-6'>
+                                <FleetAnalytics
+                                    vehicles={vehicles}
+                                />
+                            </div> */}
+                        </>
+                    )}
                 </div>
 
 
-                <div className='px-6 mt-6'>
-                    <FleetTable
-                        vehicles={fleetVehicles}
-                        setVehicles={() => { }}
-                    />
-                </div>
 
-                <div className='px-6'>
-                    <FleetAnalytics
-                        vehicles={fleetVehicles}
-                    />
-                </div>
 
             </motion.div>
         </div>

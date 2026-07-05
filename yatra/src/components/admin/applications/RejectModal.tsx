@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { X } from 'lucide-react'
+import { motion } from 'motion/react'
 
 interface Props {
     onClose: () => void
@@ -13,124 +14,103 @@ export default function RejectModal({
     onSubmit
 }: Props) {
 
-    const [reason, setReason] =
-        useState('')
+    const [reason, setReason] = useState('')
 
     return (
         <div
             className="
             fixed inset-0 z-[110]
-            flex items-center justify-center
+            flex items-end sm:items-center justify-center
             bg-black/70
-            backdrop-blur-sm
+            p-0 sm:p-4
             "
         >
-            <div
+            <motion.div
+                initial={{ y: 40, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.22 }}
                 className="
-                w-[500px]
-                rounded-3xl
-                bg-[#071427]
+                w-full sm:w-[480px]
+                rounded-t-3xl sm:rounded-3xl
+                bg-card
                 border
-                border-blue-500/10
-                p-6
+                border-primary/10
+                p-5 sm:p-6
                 "
             >
 
                 <div className="flex items-center justify-between">
-
                     <div>
-                        <h2
-                            className="
-                            text-xl
-                            font-bold
-                            text-white
-                            "
-                        >
+                        <h2 className="text-xl font-bold text-foreground">
                             Reject Application
                         </h2>
-
-                        <p className="text-slate-400 text-sm">
+                        <p className="text-muted-foreground text-sm">
                             Provide a rejection reason
                         </p>
                     </div>
 
                     <button
                         onClick={onClose}
-                        className="
-                        p-2
-                        rounded-lg
-                        hover:bg-slate-800
-                        text-slate-400
-                        "
+                        className="p-2 rounded-lg hover:bg-secondary text-muted-foreground"
                     >
                         <X size={18} />
                     </button>
-
                 </div>
 
                 <textarea
                     value={reason}
-                    onChange={(e) =>
-                        setReason(e.target.value)
-                    }
-                    placeholder="
-                    Example:
-                    Driving license image is unclear
-                    "
+                    onChange={(e) => setReason(e.target.value)}
+                    placeholder="Example: Driving license image is unclear"
                     className="
                     mt-5
-                    h-36
+                    h-32
                     w-full
                     resize-none
                     rounded-xl
-                    bg-slate-900
+                    bg-background
                     border
-                    border-slate-800
+                    border-border
                     p-4
-                    text-white
+                    text-foreground
                     outline-none
+                    text-sm
                     "
                 />
 
-                <div
-                    className="
-                    mt-5
-                    flex
-                    justify-end
-                    gap-3
-                    "
-                >
+                <div className="mt-4 flex flex-col-reverse sm:flex-row justify-end gap-3">
                     <button
                         onClick={onClose}
                         className="
-                        px-4
-                        py-2
+                        w-full sm:w-auto
+                        px-4 py-2.5
                         rounded-xl
-                        bg-slate-800
-                        text-white
+                        bg-secondary
+                        text-foreground
+                        font-medium
                         "
                     >
                         Cancel
                     </button>
 
                     <button
-                        onClick={() =>
-                            onSubmit(reason)
-                        }
+                        onClick={() => onSubmit(reason)}
+                        disabled={!reason.trim()}
                         className="
-                        px-4
-                        py-2
+                        w-full sm:w-auto
+                        px-4 py-2.5
                         rounded-xl
-                        bg-red-500
+                        bg-destructive
                         text-white
+                        font-medium
+                        disabled:opacity-50
+                        disabled:cursor-not-allowed
                         "
                     >
                         Reject Application
                     </button>
-
                 </div>
 
-            </div>
+            </motion.div>
         </div>
     )
 }

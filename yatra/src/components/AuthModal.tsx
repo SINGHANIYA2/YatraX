@@ -28,6 +28,8 @@ function AuthModal({ open, steps, onClose }: propType) {
     const [emailOtp, setEmailOtp] = useState(["", "", "", "", "", ""])
     const [role, setRole] = useState("user")
     const [mobileOtp, setMobileOtp] = useState(["", "", "", "", "", ""])
+    const [resendTimer, setResendTimer] = useState(60)
+    const [resending, setResending] = useState(false)
     const { data: session, status } = useSession();
 
     useEffect(() => {
@@ -70,9 +72,9 @@ function AuthModal({ open, steps, onClose }: propType) {
 
     });
 
-    const canSubmit = !!(adminData.accountHolderName && adminData.registrationNumber && adminData.accountNumber && adminData.addressLine1 && adminData.alternatePhone && adminData.bankName &&
+    const canSubmit = !!(adminData.accountHolderName && adminData.registrationNumber && adminData.accountNumber && adminData.address && adminData.alternatePhone && adminData.bankName &&
         adminData.city && adminData.gstNumber && adminData.ifscCode && adminData.organizationName && adminData.organizationType &&
-        adminData.panNumber && adminData.pincode && adminData.state && adminData.upiId && adminData.addressLine1
+        adminData.panNumber && adminData.pincode && adminData.state && adminData.upiId && adminData.address 
     )
 
     React.useEffect(() => {
@@ -81,6 +83,23 @@ function AuthModal({ open, steps, onClose }: propType) {
     }, [steps])
 
     const { data } = useSession()
+
+    // Resend-OTP countdown — ticks every second while on the otp step
+    // and the timer hasn't run out yet.
+    useEffect(() => {
+        if (step !== "otp") return;
+        if (resendTimer <= 0) return;
+
+        const t = setTimeout(() => setResendTimer((s) => s - 1), 1000);
+        return () => clearTimeout(t);
+    }, [step, resendTimer]);
+
+    // Reset the countdown whenever a fresh otp step is entered
+    useEffect(() => {
+        if (step === "otp") {
+            setResendTimer(60);
+        }
+    }, [step]);
 
     const handleSignUp = async () => {
         setLoading(true)
@@ -94,19 +113,47 @@ function AuthModal({ open, steps, onClose }: propType) {
 
         } catch (error: any) {
             setLoading(false);
-            setErr(`${error.response.data.message ?? error.message}`)
+            setErr(`${error.response?.data?.message ?? error.message}`)
 
+        }
+    }
+
+    const handleResendOtp = async () => {
+        if (resendTimer > 0 || resending) return;
+
+        setResending(true)
+        setErr("")
+        try {
+            await axios.post("/api/auth/register", {
+                name, email, mobileNumber, password, role
+            })
+            setResendTimer(60)
+        } catch (error: any) {
+            setErr(`${error.response?.data?.message ?? error.message}`)
+        } finally {
+            setResending(false)
         }
     }
 
     const handleLogIn = async () => {
         setLoading(true)
-        const res = await signIn("credentials", {
-            email, password, redirect: false
-        })
-        setLoading(false)
-        console.log(res)
+        setErr("")
+        try {
+            const res = await signIn("credentials", {
+                email, password, redirect: false
+            })
 
+            if (res?.error) {
+                setErr("Invalid email or password")
+                return
+            }
+
+            onClose()
+        } catch (error: any) {
+            setErr(error?.message ?? "Something went wrong")
+        } finally {
+            setLoading(false)
+        }
     }
 
     const handleGoogleLogIn = async () => {
@@ -140,8 +187,7 @@ function AuthModal({ open, steps, onClose }: propType) {
 
         // Move to previous box if current is already empty
         if (index > 0) {
-            const prevId =
-                type === "email"
+            const prevId = type === "email"
                     ? `emailOtp-${index - 1}`
                     : `mobileOtp-${index - 1}`;
 
@@ -176,12 +222,7 @@ function AuthModal({ open, steps, onClose }: propType) {
                 return setErr("PAN number is required");
             }
 
-            if (!panRegex.test(
-                adminData.panNumber
-                    .trim()
-                    .toUpperCase()
-            )
-            ) {
+            if (!panRegex.test(adminData.panNumber.trim().toUpperCase())){
                 return setErr("Invalid PAN number");
             }
 
@@ -194,10 +235,7 @@ function AuthModal({ open, steps, onClose }: propType) {
                 return setErr("Invalid GST number");
             }
 
-            if (adminData.alternatePhone && !phoneRegex.test(
-                adminData.alternatePhone
-            )
-            ) {
+            if (adminData.alternatePhone && !phoneRegex.test(adminData.alternatePhone)) {
                 return setErr("Invalid alternate phone number");
             }
 
@@ -274,9 +312,6 @@ function AuthModal({ open, steps, onClose }: propType) {
                 return setErr("Invalid UPI ID");
             }
 
-            // set correct bank name according to IFSC CODE
-            fetchBankDetails
-
             const payload = {
                 email,
                 ...adminData,
@@ -289,7 +324,7 @@ function AuthModal({ open, steps, onClose }: propType) {
 
             console.log(data);
 
-            setStep(null);
+            setStep("");
             onClose();
         } catch (error: any) {
             setErr(
@@ -331,27 +366,32 @@ function AuthModal({ open, steps, onClose }: propType) {
     }
 
 useEffect(() => {
-    if (/^[A-Z]{4}0[A-Z0-9]{6}$/.test(adminData.ifscCode)) {
+    if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(adminData.ifscCode)) return;
+
+    let cancelled = false;
+
     const fetchBankDetails = async () => {
         try {
-            if(!adminData.ifscCode){
-                return setErr("Enter IFSC code")
-            }
             const { data } = await axios.get(`https://ifsc.razorpay.com/${adminData.ifscCode}`);
+            if (cancelled) return;
 
             setAdminData((prev) => ({
                 ...prev,
                 bankName: data.BANK,
                 city: prev.city || data.CITY,
-                state:prev.state || data.STATE,
+                state: prev.state || data.STATE,
             }));
         } catch {
-            setErr("Invalid IFSC code");
+            if (!cancelled) setErr("Invalid IFSC code");
         }
     };
-    fetchBankDetails()
-}
-})
+
+    fetchBankDetails();
+
+    return () => {
+        cancelled = true;
+    };
+}, [adminData.ifscCode])
 
     const handleVerification = async () => {
         setLoading(true);
@@ -404,15 +444,14 @@ useEffect(() => {
                         w-full
                         max-w-md
                         rounded-3xl
-                        bg-[#08111F]
-                        border border-blue-500/20
-                        shadow-[0_0_50px_rgba(37,99,235,0.25)]
-                        backdrop-blur-xl
+                        bg-card
+                        border border-primary/20
+                        shadow-sm
                         p-6 sm:p-8
-                        text-white
+                        text-foreground
                         overflow-hidden
                         ">
-                        <div className='absolute right-4 top-4 text-gray-400 hover:text-white transition'
+                        <div className='absolute right-4 top-4 text-muted-foreground hover:text-foreground transition'
                             onClick={() => {
                                 if (!(role === "admin" && !canSubmit)) {
                                     onClose();
@@ -423,11 +462,11 @@ useEffect(() => {
 
                         <div className="mb-8 text-center">
                             <h1 className="text-4xl font-bold">
-                                <span className="text-blue-950">Yatra</span>
-                                <span className="text-blue-500">X</span>
+                                <span className="text-foreground">Yatra</span>
+                                <span className="text-primary">X</span>
                             </h1>
 
-                            <p className="mt-2 text-sm text-gray-400">
+                            <p className="mt-2 text-sm text-muted-foreground">
                                 Smart Transport Booking & Live Tracking
                             </p>
                         </div>
@@ -439,11 +478,11 @@ useEffect(() => {
                                     <button className="
                                 w-full h-12
                                 rounded-xl
-                                border border-white/10
-                                bg-white/5
-                                text-white
+                                border border-border/10
+                                bg-accent
+                                text-foreground
                                 flex items-center justify-center gap-3
-                                hover:bg-white/10
+                                hover:bg-accent
                                 transition
                                 cursor-pointer
                                 "
@@ -453,9 +492,9 @@ useEffect(() => {
                                     </button>
 
                                     <div className='flex items-center gap-4 my-6'>
-                                        <div className='flex-1 h-[1px] bg-white/50' />
-                                        <div className='text-xs text-gray-400'>OR</div>
-                                        <div className='flex-1 h-[1px] bg-white/50' />
+                                        <div className='flex-1 h-[1px] bg-accent' />
+                                        <div className='text-xs text-muted-foreground'>OR</div>
+                                        <div className='flex-1 h-[1px] bg-accent' />
                                     </div>
 
                                 </div>
@@ -472,38 +511,38 @@ useEffect(() => {
                                     >
                                         <h1 className='text-xl font-semibold'>Welcome back</h1>
                                         <div className='mt-5 space-y-4'>
-                                            <div className='flex items-center gap-3 border border-white/10 bg-white/5 rounded-xl px-4 py-3'>
-                                                <Mail size={18} className='text-gray-400' />
+                                            <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
+                                                <Mail size={18} className='text-muted-foreground' />
                                                 <input type="email" placeholder='Email' className='flex-1 outline-none bg-transparent text-sm'
                                                     onChange={(e) => { setEmail(e.target.value) }} value={email}
                                                 />
                                             </div>
-                                            <div className='flex items-center gap-3 border border-white/10 bg-white/5 rounded-xl px-4 py-3'>
-                                                <Lock size={18} className='text-gray-400' />
+                                            <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
+                                                <Lock size={18} className='text-muted-foreground' />
                                                 <input type="password" placeholder='Password' className='flex-1 outline-none bg-transparent text-sm'
                                                     onChange={(e) => { setPassword(e.target.value) }} value={password}
                                                 />
                                             </div>
 
 
-                                            <button className='w-full h-11 rounded-xl bg-black text-white font-semibold hover:bg-white hover:text-black'
+                                            <button className='w-full h-11 rounded-xl bg-foreground text-background font-semibold hover:bg-card hover:text-foreground'
                                                 onClick={handleLogIn}
                                             >
                                                 {!loading ? "Log In" :
-                                                    <CircleDashed size={18} color='white' className='animate-spin ml-45' />}
+                                                    <CircleDashed size={18} className='animate-spin ml-45 text-background' />}
 
                                             </button>
 
 
                                         </div>
 
-                                        <p className='mt-6 text-center text-sm text-gray-400'>
+                                        <p className='mt-6 text-center text-sm text-muted-foreground'>
 
                                             Don&apos;t have an account?{" "}
                                             <br></br>
                                             <span
                                                 onClick={() => setStep("signup")}
-                                                className='text-white font-medium hover:underline cursor-pointer'
+                                                className='text-foreground font-medium hover:underline cursor-pointer'
                                             >
                                                 Sign up
                                             </span>
@@ -524,72 +563,72 @@ useEffect(() => {
 
 
                                         <div className='mt-5 space-y-4'>
-                                            <div className='flex items-center gap-3 border border-white/10 bg-white/5 rounded-xl px-4 py-3'>
-                                                <User size={18} className='text-gray-400' />
+                                            <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
+                                                <User size={18} className='text-muted-foreground' />
                                                 <input type="text" placeholder='Full name' className='flex-1 outline-none bg-transparent text-sm'
                                                     onChange={(e) => { setName(e.target.value) }} value={name}
                                                 />
                                             </div>
 
-                                            <div className='flex items-center gap-3 border border-white/10 bg-white/5 rounded-xl px-4 py-3'>
-                                                <Mail size={18} className='text-gray-400' />
+                                            <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
+                                                <Mail size={18} className='text-muted-foreground' />
                                                 <input type="email" placeholder='Email' className='flex-1 outline-none bg-transparent text-sm'
                                                     onChange={(e) => { setEmail(e.target.value) }} value={email}
                                                 />
                                             </div>
-                                            <div className='flex items-center gap-3 border border-white/10 bg-white/5 rounded-xl px-4 py-3'>
-                                                <Phone size={18} className='text-gray-400' />
+                                            <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
+                                                <Phone size={18} className='text-muted-foreground' />
                                                 <input type="text" placeholder='Mobile Number' className='flex-1 outline-none bg-transparent text-sm'
                                                     onChange={(e) => { setMobileNumber(e.target.value) }} value={mobileNumber}
                                                 />
                                             </div>
 
-                                            <div className='flex items-center gap-3 border border-white/10 bg-white/5 rounded-xl px-4 py-3'>
-                                                <Lock size={18} className='text-gray-400' />
+                                            <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
+                                                <Lock size={18} className='text-muted-foreground' />
                                                 <input type="password" placeholder='Password' className='flex-1 outline-none bg-transparent text-sm'
                                                     onChange={(e) => { setPassword(e.target.value) }} value={password}
                                                 />
                                             </div>
-                                            <div className='flex items-center gap-3 border border-white/10 bg-white/5 rounded-xl px-4 py-3'>
-                                                <GrUserAdmin size={18} className='text-gray-400' />
+                                            <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
+                                                <GrUserAdmin size={18} className='text-muted-foreground' />
 
                                                 <select
-                                                    className='flex-1 outline-none bg-transparent text-sm text-white'
+                                                    className='flex-1 outline-none bg-transparent text-sm text-foreground'
                                                     value={role}
                                                     onChange={(e) => setRole(e.target.value)}
                                                 >
-                                                    <option value="" className='text-black'>
+                                                    <option value="" className='text-foreground'>
                                                         Select Role
                                                     </option>
-                                                    <option value="user" className='text-black'>
+                                                    <option value="user" className='text-foreground'>
                                                         User
                                                     </option>
-                                                    <option value="admin" className='text-black'>
+                                                    <option value="admin" className='text-foreground'>
                                                         Owner
                                                     </option>
                                                 </select>
                                             </div>
 
-                                            {err && <p className='text-red-500'>*{err}</p>}
+                                            {err && <p className='text-destructive'>*{err}</p>}
 
-                                            <button className='w-full h-11 rounded-xl bg-black text-white font-semibold
-                                            transition flex justify-center items-center cursor-pointer hover:bg-white hover:text-black'
+                                            <button className='w-full h-11 rounded-xl bg-primary text-primary-foreground font-semibold
+                                            transition flex justify-center items-center cursor-pointer hover:bg-primary-hover'
                                                 onClick={handleSignUp}
                                                 disabled={loading}
                                             >
                                                 {!loading ? "Send otp" :
-                                                    <CircleDashed size={18} color='white' className='animate-spin hover:text-black' />}
+                                                    <CircleDashed size={18} className='animate-spin' />}
                                             </button>
 
 
                                         </div>
 
-                                        <p className='mt-6 text-center text-sm text-gray-400'>
+                                        <p className='mt-6 text-center text-sm text-muted-foreground'>
                                             Already have an account <br>
                                             </br>
                                             <span
                                                 onClick={() => setStep("login")}
-                                                className='text-white font-medium hover:underline cursor-pointer'
+                                                className='text-foreground font-medium hover:underline cursor-pointer'
 
                                             >
                                                 Log In
@@ -608,11 +647,11 @@ useEffect(() => {
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, x: -20 }}
                                     >
-                                        <h2 className="text-2xl font-semibold text-white">
+                                        <h2 className="text-2xl font-semibold text-foreground">
                                             Verify Account
                                         </h2>
 
-                                        <p className="text-gray-400 mt-9">
+                                        <p className="text-muted-foreground mt-9">
                                             Email Otp
                                         </p>
 
@@ -630,17 +669,17 @@ useEffect(() => {
                                                         w-12 h-12
                                                         rounded-xl
                                                         text-center
-                                                        bg-white/5
-                                                        border border-white/10
-                                                        text-white
+                                                        bg-accent
+                                                        border border-border/10
+                                                        text-foreground
                                                         outline-none
-                                                        focus:border-blue-500
+                                                        focus:border-primary
                                                         "
                                                 />
 
                                             ))}
                                         </div>
-                                        <p className="text-gray-400 mt-10">
+                                        <p className="text-muted-foreground mt-10">
                                             Mobile Otp
                                         </p>
 
@@ -655,11 +694,11 @@ useEffect(() => {
                                                             w-12 h-12
                                                             rounded-xl
                                                             text-center
-                                                            bg-white/5
-                                                            border border-white/10
-                                                            text-white
+                                                            bg-accent
+                                                            border border-border/10
+                                                            text-foreground
                                                             outline-none
-                                                            focus:border-blue-500
+                                                            focus:border-primary
                                                             "
                                                     onKeyDown={(e) =>
                                                         handleOtpKeyDown(e, i, "mobile")
@@ -669,22 +708,46 @@ useEffect(() => {
                                             ))}
                                         </div>
 
+                                        {err && <p className='text-destructive text-sm mt-4 text-center'>*{err}</p>}
+
                                         <button
                                             onClick={handleVerification}
                                             className="mt-8
                                                     w-full
                                                     h-12
                                                     rounded-xl
-                                                    bg-gradient-to-r
-                                                    from-blue-600
-                                                    to-blue-500
-                                                    text-white font-semibold
+                                                    bg-primary text-primary-foreground hover:bg-primary-hover transition-colors font-semibold
                                                     "
 
 
                                         >
 
                                             Verify OTP & Create Account </button>
+
+                                        <p className="mt-5 text-center text-sm text-muted-foreground">
+                                            {resendTimer > 0 ? (
+                                                <>
+                                                    Resend OTP in{" "}
+                                                    <span className="text-foreground font-medium">
+                                                        {resendTimer}s
+                                                    </span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    Didn&apos;t get the code?{" "}
+                                                    <span
+                                                        onClick={handleResendOtp}
+                                                        className="text-primary font-medium hover:text-primary-hover cursor-pointer inline-flex items-center gap-1 align-middle"
+                                                    >
+                                                        {resending ? (
+                                                            <CircleDashed size={14} className="animate-spin" />
+                                                        ) : (
+                                                            "Resend OTP"
+                                                        )}
+                                                    </span>
+                                                </>
+                                            )}
+                                        </p>
 
 
                                     </motion.div>
@@ -700,52 +763,52 @@ useEffect(() => {
                                     className="max-h-[70vh] overflow-y-auto space-y-4"
                                 >
 
-                                    <h2 className="text-2xl font-bold text-white">
+                                    <h2 className="text-2xl font-bold text-foreground">
                                         Organization Details
                                     </h2>
 
                                     <input
                                         placeholder="Organization Name"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.organizationName}
                                         onChange={(e) => setAdminData({ ...adminData, organizationName: e.target.value })}
                                     />
 
                                     <select
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.organizationType}
                                         onChange={(e) => setAdminData({ ...adminData, organizationType: e.target.value })}
                                     >
-                                        <option value="" className='text-black'>Select Organization Type</option>
-                                        <option value="Bus Operator text-black">Bus Operator</option>
-                                        <option value="Travel Agency text-black">Travel Agency</option>
-                                        <option value="Fleet Owner text-black">Fleet Owner</option>
+                                        <option value="" className='text-foreground'>Select Organization Type</option>
+                                        <option value="Bus Operator text-foreground">Bus Operator</option>
+                                        <option value="Travel Agency text-foreground">Travel Agency</option>
+                                        <option value="Fleet Owner text-foreground">Fleet Owner</option>
                                     </select>
 
                                     <input
                                         placeholder="GST Number"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.gstNumber}
                                         onChange={(e) => setAdminData({ ...adminData, gstNumber: e.target.value })}
                                     />
 
                                     <input
                                         placeholder="PAN Number"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.panNumber}
                                         onChange={(e) => setAdminData({ ...adminData, panNumber: e.target.value })}
                                     />
 
                                     <input
                                         placeholder="Registration Number"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.registrationNumber}
                                         onChange={(e) => setAdminData({ ...adminData, registrationNumber: e.target.value })}
                                     />
 
                                     <input
                                         placeholder="Address"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.address}
                                         onChange={(e) => setAdminData({ ...adminData, address: e.target.value })}
                                     />
@@ -754,14 +817,14 @@ useEffect(() => {
 
                                         <input
                                             placeholder="City"
-                                            className="border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                            className="border border-border/10 bg-accent rounded-xl px-4 py-3"
                                             value={adminData.city}
                                             onChange={(e) => setAdminData({ ...adminData, city: e.target.value })}
                                         />
 
                                         <input
                                             placeholder="State"
-                                            className="border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                            className="border border-border/10 bg-accent rounded-xl px-4 py-3"
                                             value={adminData.state}
                                             onChange={(e) => setAdminData({ ...adminData, state: e.target.value })}
                                         />
@@ -770,62 +833,63 @@ useEffect(() => {
 
                                     <input
                                         placeholder="Pincode"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.pincode}
                                         onChange={(e) => setAdminData({ ...adminData, pincode: e.target.value })}
                                     />
 
                                     <input
                                         placeholder="Total Vehicles"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.totalVehicles}
                                         onChange={(e) => setAdminData({ ...adminData, totalVehicles: e.target.value })}
                                     />
 
-                                    <h3 className="text-lg font-semibold text-white mt-4">
+                                    <h3 className="text-lg font-semibold text-foreground mt-4">
                                         Bank Details
                                     </h3>
 
                                     <input
                                         placeholder="Bank Name"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.bankName}
                                         onChange={(e) => setAdminData({ ...adminData, bankName: e.target.value })}
                                     />
 
                                     <input
                                         placeholder="Account Holder Name"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.accountHolderName}
                                         onChange={(e) => setAdminData({ ...adminData, accountHolderName: e.target.value })}
                                     />
 
                                     <input
                                         placeholder="Account Number"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.accountNumber}
                                         onChange={(e) => setAdminData({ ...adminData, accountNumber: e.target.value })}
                                     />
 
                                     <input
                                         placeholder="IFSC Code"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.ifscCode}
                                         onChange={(e) => setAdminData({ ...adminData, ifscCode: e.target.value })}
                                     />
 
                                     <input
                                         placeholder="UPI ID"
-                                        className="w-full border border-white/10 bg-white/5 rounded-xl px-4 py-3"
+                                        className="w-full border border-border/10 bg-accent rounded-xl px-4 py-3"
                                         value={adminData.upiId}
                                         onChange={(e) => setAdminData({ ...adminData, upiId: e.target.value })}
                                     />
 
-                                    {err && (<p className='text-red-600 text-xl'>*{err}</p>)}
+                                    {err && (<p className='text-destructive text-xl'>*{err}</p>)}
 
                                     <button
-                                        className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 cursor-pointer to-blue-500 font-semibold mt-4"
-                                        onClick={() => {handleAdminDetailsSubmit}}
+                                        className="w-full h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover transition-colors font-semibold mt-4"
+                                        onClick={handleAdminDetailsSubmit}
+                                        disabled={loading}
                                     >
                                         Submit
                                     </button>

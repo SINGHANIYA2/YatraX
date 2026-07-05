@@ -4,6 +4,7 @@ import Admin from "@/models/admin.models";
 import Booking from "@/models/booking.models";
 import Partner from "@/models/partner.models";
 import Vehicle from "@/models/vehicle.models";
+import PartnerApplication from "@/models/partnerApplication.models";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -130,6 +131,12 @@ export async function GET(req: NextRequest) {
         // ]);
 
     
+        // pending requests (partner applications awaiting review)
+        const pendingRequests = await PartnerApplication.countDocuments({
+            adminId: admin._id,
+            status: "pending",
+        });
+
         // revenue
         const revenue = await Booking.aggregate([
             {
@@ -239,6 +246,7 @@ export async function GET(req: NextRequest) {
                 stats: {
                     vehicles: {
                         total: totalVehicles,
+                        active: assignedVehicles + availableVehicles,
                         assigned: assignedVehicles,
                         available: availableVehicles,
                         maintenance: maintenanceVehicles,
@@ -249,6 +257,8 @@ export async function GET(req: NextRequest) {
                         online: onlinePartners,
                         available: availablePartners,
                     },
+
+                    pendingRequests,
 
                     // bookings: {
                     //     total: totalBookings,

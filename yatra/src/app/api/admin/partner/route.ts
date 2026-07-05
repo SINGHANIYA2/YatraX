@@ -14,27 +14,24 @@ export async function GET(req: NextRequest) {
 
         await connectDb();
 
-        // const session = await auth();
+        const session = await auth();
 
-        // if (!session?.user?.email) {
-        //     return NextResponse.json(
-        //         {
-        //             success: false,
-        //             message: "Unauthorized",
-        //         },
-        //         {
-        //             status: 401,
-        //         }
-        //     );
-        // }
+        if (!session?.user?.email) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "Unauthorized",
+                },
+                {
+                    status: 401,
+                }
+            );
+        }
 
-        // const admin = await Admin.findOne({
-        //     email: session.user.email,
-        // });
+        const admin = await Admin.findOne({
+            email: session.user.email,
+        });
 
-        const admin = await Admin.findById(
-            "6a3e89c071940960de5b6a2c"
-        );
 
         if (!admin) {
             return NextResponse.json(

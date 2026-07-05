@@ -20,10 +20,10 @@ export default function DriverStatsCard({
             className="
             rounded-2xl
             border
-            border-blue-500/10
-            bg-[#0b1220]
+            border-primary/10
+            bg-card
             p-5
-            shadow-[0_0_15px_rgba(59,130,246,0.08)]
+            shadow-sm
             "
         >
             <div className="flex items-start justify-between">
@@ -36,7 +36,7 @@ export default function DriverStatsCard({
                     items-center
                     justify-center
                     rounded-xl
-                    bg-slate-900
+                    bg-card
                     ${color}
                     `}
                 >
@@ -51,7 +51,7 @@ export default function DriverStatsCard({
                     className="
                     text-3xl
                     font-bold
-                    text-white
+                    text-foreground
                     "
                 >
                     {value}
@@ -61,7 +61,7 @@ export default function DriverStatsCard({
                     className="
                     mt-2
                     text-sm
-                    text-slate-400
+                    text-muted-foreground
                     "
                 >
                     {title}

@@ -139,7 +139,7 @@ export default function AssignDriverModal({
 
                 {loadingOptions ? (
                     <div className="flex items-center justify-center py-10">
-                        <Loader2 className="h-5 w-5 animate-spin text-blue-400" />
+                        <Loader2 className="h-5 w-5 animate-spin text-primary" />
                     </div>
                 ) : (
                     <div className="mt-4 space-y-4">

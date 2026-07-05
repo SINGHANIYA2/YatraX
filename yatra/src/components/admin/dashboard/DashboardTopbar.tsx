@@ -1,152 +1,64 @@
 'use client'
 
-import { Bell, Search, ChevronDown } from 'lucide-react'
+import { Bell, Search, Settings } from 'lucide-react'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/redux/store'
+import Link from 'next/link'
+import useGetAdminMe from '@/hooks/useGetAdminMe'
 
 export default function AdminTopbar() {
+    useGetAdminMe()
+    const admin = useSelector((state: RootState) => state.admin.adminData)
+
+    const initials = admin?.name
+        ? admin.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
+        : 'A'
+
     return (
-        <div
-            className="
-             sticky
-            top-0
-            z-50
-            h-21
-            px-8
-            flex
-            items-center
-            justify-between
-
-            bg-[#071427]
-            border-b border-slate-800
-            shadow-[0_4px_20px_rgba(0,0,0,0.25)]
-
-            border-b
-            border-blue-500/10
-            "
-        >
-
+       <div className="hidden font-sans md:flex sticky top-0 z-50 h-[72px] px-6 items-center justify-between bg-card border-b border-border shadow-sm">
             {/* Left */}
             <div>
-                <h1 className="text-3xl font-bold text-white">
-                    Dashboard
-                </h1>
-
-                <p className="text-sm text-slate-400">
-                    Welcome back, Admin
+                <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+                <p className="text-sm text-muted-foreground">
+                    Welcome back, {admin?.name?.split(' ')[0] ?? 'Admin'}
                 </p>
             </div>
 
             {/* Right */}
-            <div className="flex items-center gap-4">
-
-                {/* Search */}
-                <div className="relative">
-                    <Search
-                        size={18}
-                        className="
-                        absolute
-                        left-4
-                        top-1/2
-                        -translate-y-1/2
-                        text-slate-500
-                        "
-                    />
-
+            <div className="flex items-center gap-3">
+                {/* Search — hidden on small topbar sizes */}
+                <div className="relative hidden lg:block">
+                    <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     <input
                         type="text"
-                        placeholder="Search..."
-                        className="
-                        w-72
-                        rounded-xl
-                        border
-                        border-slate-800
-                        bg-[#071427]
-                        py-3
-                        pl-11
-                        pr-4
-                        text-sm
-                        text-white
-                        outline-none
-                        focus:border-blue-500/40
-                        "
+                        placeholder="Search…"
+                        className="w-60 rounded-xl border border-border bg-card py-2.5 pl-10 pr-4 text-sm text-foreground outline-none focus:border-primary/40 transition-colors"
                     />
                 </div>
 
-                {/* Notification */}
-                <button
-                    className="
-                    relative
-                    flex
-                    h-11
-                    w-11
-                    items-center
-                    justify-center
-                    rounded-xl
-                    bg-[#071427]
-                    border
-                    border-slate-800
-                    text-slate-300
-                    hover:text-white
-                    hover:border-blue-500/20
-                    transition
-                    "
-                >
-                    <Bell size={18} />
-
-                    <span
-                        className="
-                        absolute
-                        right-3
-                        top-3
-                        h-2
-                        w-2
-                        rounded-full
-                        bg-red-500
-                        "
-                    />
+                {/* Bell */}
+                <button className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-card border border-border text-muted-foreground hover:text-foreground hover:border-primary/20 transition">
+                    <Bell size={17} />
+                    <span className="absolute right-2.5 top-2.5 h-1.5 w-1.5 rounded-full bg-destructive" />
                 </button>
 
-                {/* Profile */}
-                <button
-                    className="
-                    flex
-                    items-center
-                    gap-3
-                    rounded-xl
-                    bg-[#071427]
-                    border
-                    border-slate-800
-                    px-3
-                    py-2
-                    hover:border-blue-500/20
-                    transition
-                    "
+                {/* Profile chip */}
+                <Link
+                    href="/admin/settings"
+                    className="flex items-center gap-2.5 rounded-xl bg-card border border-border px-3 py-2 hover:border-primary/20 transition"
                 >
-                    <img
-                        src="https://i.pravatar.cc/100?img=12"
-                        alt="Admin"
-                        className="
-                        h-10
-                        w-10
-                        rounded-full
-                        "
-                    />
-
-                    <div className="text-left">
-                        <p className="text-sm font-medium text-white">
-                            Admin
-                        </p>
-
-                        <p className="text-xs text-slate-400">
-                            System Manager
-                        </p>
-                    </div>
-
-                    <ChevronDown
-                        size={16}
-                        className="text-slate-500"
-                    />
-                </button>
-
+                    {admin?.profilePhoto?.url ? (
+                        <img
+                            src={admin.profilePhoto.url}
+                            alt={admin.name}
+                            className="h-8 w-8 rounded-full object-cover"
+                        />
+                    ) : (
+                        <div className="h-10 w-10 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold">
+                            {initials}
+                        </div>
+                    )}
+                </Link>
             </div>
         </div>
     )

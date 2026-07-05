@@ -12,7 +12,7 @@ import AddVehicleForm from "@/components/AddVehicleForm";
 
 export default function Home() {
   return (
-    <div className="w-full min-h-screen bg-[#1f2527] scroll-thin">
+    <div className="w-full min-h-screen bg-secondary scroll-thin">
       {/* <LiveTracking></LiveTracking> */}
       {/* <FleetManagement/> */}
       {/* <PublicHome /> */}

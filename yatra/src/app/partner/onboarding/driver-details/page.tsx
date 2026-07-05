@@ -34,9 +34,9 @@ function Input({
     return (
         <div>
             <div
-                className="flex items-center gap-3 bg-slate-900/60 border  border-slate-800 rounded-xl px-4 py-3"
+                className="flex items-center gap-3 bg-card border  border-border rounded-xl px-4 py-3"
             >
-                <div className="text-slate-400">
+                <div className="text-muted-foreground">
                     {icon}
                 </div>
 
@@ -48,8 +48,8 @@ function Input({
                     className="
                     flex-1
                     bg-transparent
-                    text-white
-                    placeholder:text-slate-500
+                    text-foreground
+                    placeholder:text-muted-foreground
                     outline-none
                     "
                 />
@@ -102,7 +102,7 @@ export default function DriverDetailsPage() {
     };
 
     return (
-        <div className="min-h-[80%] bg-[#020617] relative overflow-auto">
+        <div className="min-h-[80%] bg-background relative overflow-auto">
 
             {/* Glow */}
             <div className="absolute inset-0 " />
@@ -116,11 +116,10 @@ export default function DriverDetailsPage() {
                     w-full
                     max-w-2xl
                     rounded-3xl
-                    bg-slate-950/70
-                    backdrop-blur-xl
+                    bg-card
                     border
-                    border-blue-500/20
-                    shadow-[0_0_60px_rgba(37,99,235,0.15)]
+                    border-primary/20
+                    shadow-sm
                     p-6 sm:p-8
                     "
                 >
@@ -137,42 +136,42 @@ export default function DriverDetailsPage() {
                                 h-10
                                 rounded-full
                                 border
-                                border-slate-700
+                                border-border
                                 flex
                                 items-center
                                 justify-center
-                                text-white
-                                hover:border-blue-500
+                                text-foreground
+                                hover:border-primary
                                 transition
                                 "
                         >
                             <ArrowLeft size={18} />
                         </button>
 
-                        <p className="text-blue-400 text-sm">
+                        <p className="text-primary text-sm">
                             Step 1 of 4
                         </p>
 
-                        <h1 className="text-3xl font-bold text-white mt-2">
+                        <h1 className="text-3xl font-bold text-foreground mt-2">
                             Driver Information
                         </h1>
 
-                        <p className="text-slate-400 mt-2">
+                        <p className="text-muted-foreground mt-2">
                             Provide your driving details for verification
                         </p>
                     </div>
 
                     {/* Progress */}
                     <div className="flex justify-center gap-2 mt-6">
-                        <div className="h-2 w-10 rounded-full bg-blue-500" />
-                        <div className="h-2 w-2 rounded-full bg-slate-700" />
-                        <div className="h-2 w-2 rounded-full bg-slate-700" />
-                        <div className="h-2 w-2 rounded-full bg-slate-700" />
+                        <div className="h-2 w-10 rounded-full bg-primary" />
+                        <div className="h-2 w-2 rounded-full bg-secondary" />
+                        <div className="h-2 w-2 rounded-full bg-secondary" />
+                        <div className="h-2 w-2 rounded-full bg-secondary" />
                     </div>
 
                     {/* Form */}
                     <div className="space-y-5 mt-8">
-                         <label className="text-sm text-slate-400">
+                         <label className="text-sm text-muted-foreground">
                                 Date of birth
                         </label>
                         <Input
@@ -186,7 +185,7 @@ export default function DriverDetailsPage() {
                         />
 
                         <div>
-                            <label className="text-sm text-slate-400">
+                            <label className="text-sm text-muted-foreground">
                                 Gender
                             </label>
 
@@ -201,15 +200,15 @@ export default function DriverDetailsPage() {
                                 className="
                                     mt-2
                                     w-full
-                                    bg-slate-900/60
+                                    bg-card
                                     border
-                                    border-slate-800
+                                    border-border
                                     rounded-xl
                                     px-4
                                     py-3
-                                    text-white
+                                    text-foreground
                                     outline-none
-                                    focus:border-blue-500
+                                    focus:border-primary
                                 "
                             >
                                 <option value="">Select Gender</option>
@@ -256,14 +255,14 @@ export default function DriverDetailsPage() {
                         />
 
                         <div>
-                            <label className="text-sm text-slate-400">
+                            <label className="text-sm text-muted-foreground">
                                 Address
                             </label>
 
-                            <div className="mt-2 flex gap-3 bg-slate-900/60 border border-slate-800 rounded-xl p-3">
+                            <div className="mt-2 flex gap-3 bg-card border border-border rounded-xl p-3">
                                 <MapPin
                                     size={18}
-                                    className="text-slate-400 mt-1"
+                                    className="text-muted-foreground mt-1"
                                 />
 
                                 <textarea
@@ -279,8 +278,8 @@ export default function DriverDetailsPage() {
                                     className="
                   flex-1
                   bg-transparent
-                  text-white
-                  placeholder:text-slate-500
+                  text-foreground
+                  placeholder:text-muted-foreground
                   outline-none
                   resize-none
                 "
@@ -290,7 +289,7 @@ export default function DriverDetailsPage() {
                     </div>
 
                     {error && (
-                        <p className="text-red-500 mt-5 text-sm">
+                        <p className="text-destructive mt-5 text-sm">
                             * {error}
                         </p>
                     )}
@@ -305,10 +304,7 @@ export default function DriverDetailsPage() {
             w-full
             h-14
             rounded-2xl
-            bg-gradient-to-r
-            from-blue-600
-            to-blue-500
-            text-white
+            bg-primary text-primary-foreground hover:bg-primary-hover transition-colors
             font-semibold
             flex
             items-center

@@ -26,9 +26,9 @@ function Section({
     children: React.ReactNode;
 }) {
     return (
-        <div className="mt-8 rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+        <div className="mt-8 rounded-2xl border border-border bg-card p-5">
 
-            <div className="flex items-center gap-2 text-white font-semibold mb-4">
+            <div className="flex items-center gap-2 text-foreground font-semibold mb-4">
                 {icon}
                 {title}
             </div>
@@ -49,13 +49,13 @@ function Info({
     value?: string;
 }) {
     return (
-        <div className="flex justify-between items-center border-b border-slate-800 pb-2">
+        <div className="flex justify-between items-center border-b border-border pb-2">
 
-            <span className="text-slate-400">
+            <span className="text-muted-foreground">
                 {label}
             </span>
 
-            <span className="text-white text-sm">
+            <span className="text-foreground text-sm">
                 {value || "-"}
             </span>
 
@@ -142,36 +142,36 @@ export default function ReviewPage() {
 
 
     return (
-        <div className="min-h-screen bg-[#1f2527] relative overflow-auto">
+        <div className="min-h-screen bg-secondary relative overflow-auto">
 
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,[#2563eb55],transparent_55%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,var(--border),transparent_55%)]" />
 
             <div className="relative z-10 px-4 py-10">
 
                 <motion.div
                     initial={{ opacity: 0, y: 25 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="max-w-3xl mx-auto rounded-3xl bg-slate-950/70 backdrop-blur-xl border border-blue-500/20 shadow-[0_0_60px_rgba(37,99,235,0.15)] p-6 sm:p-8"
+                    className="max-w-3xl mx-auto rounded-3xl bg-card border border-primary/20 shadow-sm p-6 sm:p-8"
                 >
 
                     <div className="relative text-center">
 
                         <button
                             onClick={() => router.back()}
-                            className="absolute left-0 top-0 w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center text-white hover:border-blue-500"
+                            className="absolute left-0 top-0 w-10 h-10 rounded-full border border-border flex items-center justify-center text-foreground hover:border-primary"
                         >
                             <ArrowLeft size={18} />
                         </button>
 
-                        <p className="text-blue-400 text-sm">
+                        <p className="text-primary text-sm">
                             Final Step
                         </p>
 
-                        <h1 className="text-3xl font-bold text-white mt-2">
+                        <h1 className="text-3xl font-bold text-foreground mt-2">
                             Review Application
                         </h1>
 
-                        <p className="text-slate-400 mt-2">
+                        <p className="text-muted-foreground mt-2">
                             Please verify your details before
                             submission
                         </p>
@@ -293,9 +293,9 @@ export default function ReviewPage() {
                         />
                     </Section>
 
-                    <div className="mt-6 rounded-2xl bg-blue-500/10 border border-blue-500/20 p-4 flex gap-3">
-                        <CheckCircle2 className="text-blue-400" />
-                        <p className="text-slate-300 text-sm">
+                    <div className="mt-6 rounded-2xl bg-primary/10 border border-primary/20 p-4 flex gap-3">
+                        <CheckCircle2 className="text-primary" />
+                        <p className="text-muted-foreground text-sm">
                             By submitting this application,
                             you confirm that all information
                             provided is accurate.
@@ -307,7 +307,7 @@ export default function ReviewPage() {
                         whileTap={{ scale: 0.98 }}
                         onClick={handleSubmit}
                         disabled={loading}
-                        className="mt-8 w-full h-14 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
+                        className="mt-8 w-full h-14 rounded-2xl bg-primary text-primary-foreground hover:bg-primary-hover transition-colors font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                         {loading ? (
                             <CircleDashed className="animate-spin" />

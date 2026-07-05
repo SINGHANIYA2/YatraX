@@ -10,18 +10,18 @@ import {
     CartesianGrid,
 } from 'recharts'
 
-import { revenueChartData } from './demo'
+import type { RevenueChartPoint } from './types'
 
-export default function RevenueChart() {
+export default function RevenueChart({ data }: { data: RevenueChartPoint[] }) {
     return (
         <div
             className="
             rounded-3xl
             border
-            border-blue-500/10
-            bg-[#071427]
+            border-primary/10
+            bg-card
             p-6
-            shadow-[0_0_25px_rgba(59,130,246,.06)]
+            shadow-sm
             "
         >
             <div className="mb-6">
@@ -30,7 +30,7 @@ export default function RevenueChart() {
                     className="
                     text-xl
                     font-bold
-                    text-white
+                    text-foreground
                     "
                 >
                     Revenue Overview
@@ -40,7 +40,7 @@ export default function RevenueChart() {
                     className="
                     mt-1
                     text-sm
-                    text-slate-400
+                    text-muted-foreground
                     "
                 >
                     Monthly revenue performance
@@ -49,47 +49,55 @@ export default function RevenueChart() {
             </div>
 
             <div className="h-[350px]">
-
-                <ResponsiveContainer
-                    width="100%"
-                    height="100%"
-                >
-                    <BarChart
-                        data={revenueChartData}
+                {data.every((d) => d.revenue === 0) ? (
+                    <div className="flex h-full flex-col items-center justify-center gap-2 text-center">
+                        <p className="text-sm font-medium text-foreground">No revenue yet</p>
+                        <p className="text-xs text-muted-foreground max-w-xs">
+                            Completed and paid bookings will show up here once your partners start driving.
+                        </p>
+                    </div>
+                ) : (
+                    <ResponsiveContainer
+                        width="100%"
+                        height="100%"
                     >
-                        <CartesianGrid
-                            strokeDasharray="3 3"
-                            stroke="#1e293b"
-                        />
+                        <BarChart
+                            data={data}
+                        >
+                            <CartesianGrid
+                                strokeDasharray="3 3"
+                                stroke="var(--border)"
+                            />
 
-                        <XAxis
-                            dataKey="month"
-                            stroke="#94a3b8"
-                        />
+                            <XAxis
+                                dataKey="month"
+                                stroke="var(--muted-foreground)"
+                            />
 
-                        <YAxis
-                            stroke="#94a3b8"
-                        />
+                            <YAxis
+                                stroke="var(--muted-foreground)"
+                            />
 
-                        <Tooltip
-                            cursor={false}
-                            contentStyle={{
-                                background: '#071427',
-                                border: '1px solid #1e293b',
-                                borderRadius: '12px',
-                                color: '#fff',
-                            }}
-                        />
+                            <Tooltip
+                                cursor={false}
+                                contentStyle={{
+                                    background: 'var(--card)',
+                                    border: '1px solid var(--border)',
+                                    borderRadius: '12px',
+                                    color: 'var(--foreground)',
+                                }}
+                                formatter={(value: number) => [`₹${value.toLocaleString('en-IN')}`, 'Revenue']}
+                            />
 
-                        <Bar
-                            dataKey="revenue"
-                            fill="#3b82f6"
-                            radius={[8, 8, 0, 0]}
-                            activeBar={false}
-                        />
-                    </BarChart>
-                </ResponsiveContainer>
-
+                            <Bar
+                                dataKey="revenue"
+                                fill="var(--primary)"
+                                radius={[8, 8, 0, 0]}
+                                activeBar={false}
+                            />
+                        </BarChart>
+                    </ResponsiveContainer>
+                )}
             </div>
         </div>
     )

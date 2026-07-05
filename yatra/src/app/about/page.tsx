@@ -58,10 +58,10 @@ export default function AboutPage(){
   ];
   const router = useRouter()
   return (
-    <div className="bg-[#020617] text-white">
+    <div className="bg-background text-foreground">
 
       {/* Background */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#2563eb30,transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,var(--border),transparent_60%)]" />
 
       <div className="relative z-10">
 
@@ -74,10 +74,10 @@ export default function AboutPage(){
             className="text-center"
           >
             <h1 className="text-5xl md:text-7xl font-bold">
-              About <span className="text-blue-500">YatraX</span>
+              About <span className="text-primary">YatraX</span>
             </h1>
 
-            <p className="text-slate-400 text-lg max-w-3xl mx-auto mt-6">
+            <p className="text-muted-foreground text-lg max-w-3xl mx-auto mt-6">
               YatraX is a smart transportation platform that simplifies
               intercity travel through real-time vehicle tracking,
               seamless booking experiences, and secure management
@@ -91,13 +91,13 @@ export default function AboutPage(){
               <motion.div
                 key={i}
                 whileHover={{ y: -5 }}
-                className="rounded-3xl border border-slate-800 bg-slate-900/60 backdrop-blur-xl p-8 text-center"
+                className="rounded-3xl border border-border bg-card p-8 text-center"
               >
-                <h2 className="text-4xl font-bold text-blue-500">
+                <h2 className="text-4xl font-bold text-primary">
                   {item.title}
                 </h2>
 
-                <p className="text-slate-400 mt-2">
+                <p className="text-muted-foreground mt-2">
                   {item.subtitle}
                 </p>
               </motion.div>
@@ -112,7 +112,7 @@ export default function AboutPage(){
             Why Choose YatraX?
           </h2>
 
-          <p className="text-slate-400 text-center mt-4">
+          <p className="text-muted-foreground text-center mt-4">
             We make transportation simple, secure and efficient.
           </p>
 
@@ -124,17 +124,17 @@ export default function AboutPage(){
                 <motion.div
                   key={i}
                   whileHover={{ y: -5 }}
-                  className="rounded-3xl border border-slate-800 bg-slate-900/60 p-8"
+                  className="rounded-3xl border border-border bg-card p-8"
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center">
-                    <Icon className="text-blue-500" size={28} />
+                  <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center">
+                    <Icon className="text-primary" size={28} />
                   </div>
 
                   <h3 className="text-xl font-semibold mt-6">
                     {feature.title}
                   </h3>
 
-                  <p className="text-slate-400 mt-3">
+                  <p className="text-muted-foreground mt-3">
                     {feature.desc}
                   </p>
                 </motion.div>
@@ -150,15 +150,15 @@ export default function AboutPage(){
 
             <motion.div
               whileHover={{ y: -5 }}
-              className="rounded-3xl bg-slate-900/60 border border-slate-800 p-10"
+              className="rounded-3xl bg-card border border-border p-10"
             >
-              <Target className="text-blue-500" size={40} />
+              <Target className="text-primary" size={40} />
 
               <h2 className="text-3xl font-bold mt-6">
                 Our Mission
               </h2>
 
-              <p className="text-slate-400 mt-4 leading-8">
+              <p className="text-muted-foreground mt-4 leading-8">
                 To revolutionize transportation by connecting
                 travellers with reliable transport providers
                 through technology-driven solutions and real-time
@@ -168,15 +168,15 @@ export default function AboutPage(){
 
             <motion.div
               whileHover={{ y: -5 }}
-              className="rounded-3xl bg-slate-900/60 border border-slate-800 p-10"
+              className="rounded-3xl bg-card border border-border p-10"
             >
-              <Rocket className="text-blue-500" size={40} />
+              <Rocket className="text-primary" size={40} />
 
               <h2 className="text-3xl font-bold mt-6">
                 Our Vision
               </h2>
 
-              <p className="text-slate-400 mt-4 leading-8">
+              <p className="text-muted-foreground mt-4 leading-8">
                 To become India's most trusted transportation
                 ecosystem by delivering seamless journeys and
                 empowering transport businesses through digital
@@ -191,7 +191,7 @@ export default function AboutPage(){
         <section className="max-w-6xl mx-auto px-6 py-20 text-center">
 
           <Globe
-            className="mx-auto text-blue-500"
+            className="mx-auto text-primary"
             size={50}
           />
 
@@ -199,7 +199,7 @@ export default function AboutPage(){
             Connecting Cities, Connecting People
           </h2>
 
-          <p className="text-slate-400 mt-6 max-w-4xl mx-auto leading-8">
+          <p className="text-muted-foreground mt-6 max-w-4xl mx-auto leading-8">
             YatraX was created with one goal: to remove the
             complexities of transportation. Whether you're booking
             a bus, reserving a taxi, or tracking your ride in
@@ -211,7 +211,7 @@ export default function AboutPage(){
         {/* CTA */}
         <section className="max-w-5xl mx-auto px-6 py-24">
 
-          <div className="rounded-[40px] bg-gradient-to-r from-blue-600 to-blue-500 p-14 text-center">
+          <div className="rounded-[40px] bg-primary text-primary-foreground p-14 text-center">
 
             <Users className="mx-auto" size={50} />
 
@@ -219,12 +219,12 @@ export default function AboutPage(){
               Join the Journey with YatraX
             </h2>
 
-            <p className="mt-4 text-blue-100">
+            <p className="mt-4 text-primary-foreground/80">
               Experience smarter travel with real-time tracking,
               seamless booking and reliable transportation.
             </p>
 
-            <button className="mt-8 bg-white text-blue-600 px-8 py-4 rounded-2xl font-semibold inline-flex items-center gap-2"
+            <button className="mt-8 bg-card text-primary px-8 py-4 rounded-2xl font-semibold inline-flex items-center gap-2"
               onClick={() => router.push('/booking')}
             >
               Book Your Trip

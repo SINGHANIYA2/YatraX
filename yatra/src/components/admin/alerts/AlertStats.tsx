@@ -20,10 +20,10 @@ export default function AlertStats() {
     ]
 
     const colors = [
-        'text-blue-400',
-        'text-red-400',
-        'text-yellow-400',
-        'text-green-400',
+        'text-primary',
+        'text-destructive',
+        'text-warning',
+        'text-success',
     ]
 
     return (

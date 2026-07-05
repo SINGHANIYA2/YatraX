@@ -22,11 +22,11 @@ type VehicleProps = {
 function VehicleCard({ vehicle }: VehicleProps) {
     const Icon = vehicle.icon
     return (
-        <div className="bg-[#07142C] rounded-xl p-4 flex gap-5 pr-[23px] border shadow-[0_0_15px_rgba(59,130,246,0.15)] border-blue-500/10">
+        <div className="bg-card rounded-xl p-4 flex gap-5 pr-[23px] border shadow-sm border-primary/10">
 
             <Icon
                 size={50}
-                className="text-blue-400"
+                className="text-primary"
             />
 
             <div className="flex-1">
@@ -34,7 +34,7 @@ function VehicleCard({ vehicle }: VehicleProps) {
                     {vehicle.name}
                 </h3>
 
-                <p className="text-gray-400 text-sm mt-1">
+                <p className="text-muted-foreground text-sm mt-1">
                     {vehicle.type}
                 </p>
             </div>
@@ -46,7 +46,7 @@ function VehicleCard({ vehicle }: VehicleProps) {
                     <span>{vehicle.arrivalTime}</span>
                 </div>
 
-                <div className="text-sm text-gray-400 flex justify-between py-3">
+                <div className="text-sm text-muted-foreground flex justify-between py-3">
                     {vehicle.from}
                     <span className="">
                         {vehicle.to}
@@ -54,9 +54,9 @@ function VehicleCard({ vehicle }: VehicleProps) {
                 </div>
 
                 <div className="flex justify-between">
-                    <p className="text-[15px] text-gray-400">{vehicle.availableSeats} Seats Available</p>
+                    <p className="text-[15px] text-muted-foreground">{vehicle.availableSeats} Seats Available</p>
                     <span
-                        className="text-green-400 
+                        className="text-success 
                         font-bold text-right"
                     >
                         ₹{vehicle.price}

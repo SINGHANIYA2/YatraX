@@ -1,7 +1,7 @@
 
 
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Manrope, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import "leaflet/dist/leaflet.css";
 
@@ -9,13 +9,16 @@ import Provider from "@/lib/Provider";
 import ReduxProvider from "@/redux/ReduxProvider";
 import InitUser from "@/InitUser";
 import PartnerLocationTracker from "@/components/PartnerLocationTracker";
+import { ThemeProvider } from "@/lib/theme/ThemeProvider";
+import ThemeScript from "@/lib/theme/ThemeScript";
+import FloatingThemeToggle from "@/components/theme/FloatingThemeToggle";
 
-const geistSans = Geist({
+const manrope = Manrope({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
+const jetbrainsMono = JetBrains_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
@@ -33,19 +36,26 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
+      className={`${manrope.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-screen bg-background flex flex-col">
-        <Provider>
-          <ReduxProvider>
-            <InitUser />
+      <head>
+        <ThemeScript />
+      </head>
+      <body className="min-h-screen bg-background text-foreground flex flex-col">
+        <ThemeProvider>
+          <Provider>
+            <ReduxProvider>
+              <InitUser />
 
-            {/* Runs only for authenticated partners */}
-            <PartnerLocationTracker />
+              {/* Runs only for authenticated partners */}
+              <PartnerLocationTracker />
 
-            {children}
-          </ReduxProvider>
-        </Provider>
+              {children}
+            </ReduxProvider>
+          </Provider>
+          <FloatingThemeToggle />
+        </ThemeProvider>
       </body>
     </html>
   );
