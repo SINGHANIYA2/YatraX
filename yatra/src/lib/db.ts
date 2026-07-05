@@ -27,11 +27,13 @@ const connectDb= async () =>{
     
     try{
         const conn = await cached.promise
-        cached.conn = conn;
+        cached.conn = conn
         console.log("new Connection Established")
         return conn 
     }catch(error){
+        cached.promise = null
         console.log(error)
+        throw error
     }
 }
 

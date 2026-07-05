@@ -33,10 +33,18 @@ export async function GET(req: Request) {
             );
         }
 
+<<<<<<< HEAD
         return Response.json(partner, {
             status: 200,
         });
 
+=======
+        return Response.json(partner,
+            {
+                status: 200,
+            }
+        );
+>>>>>>> a3afb67d23d53bb6365f8489ab63d00f4b008582
     } catch (err) {
         console.error(err);
 

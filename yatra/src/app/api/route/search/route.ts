@@ -1,5 +1,5 @@
 import connectDb from "@/lib/db";
-import Route from "@/models/Route.models";
+import Route from "@/models/route.models";
 import Location from "@/models/location.models";
 import { NextRequest, NextResponse } from "next/server";
 

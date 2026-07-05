@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import connectDb from "@/lib/db";
 import Admin from "@/models/admin.models";
-import Route from "@/models/Route.models";
+import Route from "@/models/route.models";
 import Vehicle from "@/models/vehicle.models";
 import { NextRequest, NextResponse } from "next/server";
 import Location from "@/models/location.models";

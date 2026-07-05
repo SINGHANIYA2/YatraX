@@ -9,6 +9,7 @@ interface IBankDetails {
   ifsc?: string;
   bankName?: string;
   upiId?: string;
+
 }
 
 export interface IAdmin extends Document {
@@ -16,14 +17,14 @@ export interface IAdmin extends Document {
   email: string;
   phone: string;
   password: string;
-  isPhoneVerified:boolean;
-  isEmailVerified:boolean;
-  role:string
-  otp:string
-  otpExpiresAt:Date
+  isPhoneVerified: boolean;
+  isEmailVerified: boolean;
+  role: string
+  otp: string
+  otpExpiresAt: Date
 
-  emailVerificationStatus:boolean;
-  mobileVerificationStatus:boolean;
+  emailVerificationStatus: boolean;
+  mobileVerificationStatus: boolean;
 
   profilePhoto?: IFile;
 
@@ -156,6 +157,13 @@ const AdminSchema = new Schema({
     type: String,
     default: "",
   },
+  otp: {
+    type: String,
+    default: ""
+  },
+  otpExpiresAt: {
+    type: Date
+  },
 
   standLatitude: Number,
 
@@ -218,29 +226,26 @@ const AdminSchema = new Schema({
     type: Number,
     default: 0,
   },
-  isEmailVerified:{
-      type:Boolean,
-      default:false
-    },
-    isPhoneVerified:{
-      type:Boolean,
-      default:false
-    },
+  isEmailVerified: {
+    type: Boolean,
+    default: false
+  },
+  isPhoneVerified: {
+    type: Boolean,
+    default: false
+  },
 
   activeVehicles: {
     type: Number,
     default: 0,
   },
-  emailOtp:{
-    type:String,
-    default:""
+  emailOtp: {
+    type: String,
+    default: ""
   },
-  mobileOtp:{
-    type:String,
-    default:""
-  },
-  otpExpiresAt:{
-    type:Date
+  mobileOtp: {
+    type: String,
+    default: ""
   },
   totalTrips: {
     type: Number,
@@ -267,15 +272,15 @@ const AdminSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  emailVerificationStatus:{
-    type:Boolean,
-    default:false
+  emailVerificationStatus: {
+    type: Boolean,
+    default: false
   },
-  mobileVerificationStatus:{
-    type:Boolean,
-    default:false
+  mobileVerificationStatus: {
+    type: Boolean,
+    default: false
   },
- 
+
 
   lastSeen: Date,
 },

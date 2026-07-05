@@ -1,11 +1,8 @@
 'use client'
 
-import { Search, ChevronDown, Plus } from 'lucide-react'
+import { Search, ChevronDown } from 'lucide-react'
 
 type Props = {
-    drivers: any[]
-    setDrivers: React.Dispatch<React.SetStateAction<any[]>>
-
     selectedStatus: string
     setSelectedStatus: React.Dispatch<React.SetStateAction<string>>
 
@@ -14,37 +11,12 @@ type Props = {
 }
 
 export default function DriverFilters({
-    drivers,
-    setDrivers,
-
     selectedStatus,
     setSelectedStatus,
 
     search,
     setSearch,
 }: Props) {
-
-    function handleAddDriver() {
-
-        const newDriver = {
-            id: crypto.randomUUID(),
-
-            name: 'New Driver',
-            vehicle: 'Not Assigned',
-
-            phone: '+91 9876543210',
-
-            rating: 4.5,
-
-            status: 'Off Duty',
-
-            experience: '1 Year',
-
-            trips: 0,
-        }
-
-        setDrivers(prev => [...prev, newDriver])
-    }
 
     return (
         <div
@@ -58,10 +30,10 @@ export default function DriverFilters({
             shadow-sm
             "
         >
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
 
                 {/* Status Filter */}
-                <div className="relative w-52">
+                <div className="relative w-full sm:w-52">
 
                     <select
                         value={selectedStatus}
@@ -82,14 +54,16 @@ export default function DriverFilters({
                         outline-none
                         "
                     >
-                        <option>All Status</option>
-                        <option>On Duty</option>
-                        <option>Off Duty</option>
+                        <option value="All Status">All Status</option>
+                        <option value="Available">Available</option>
+                        <option value="Assigned">Assigned</option>
+                        <option value="Maintenance">Maintenance</option>
                     </select>
 
                     <ChevronDown
                         size={18}
                         className="
+                        pointer-events-none
                         absolute
                         right-4
                         top-1/2
@@ -135,29 +109,6 @@ export default function DriverFilters({
                         "
                     />
                 </div>
-
-                {/* Add Driver */}
-                <button
-                    onClick={handleAddDriver}
-                    className="
-                    flex
-                    items-center
-                    gap-2
-                    rounded-xl
-                    bg-primary
-                    px-5
-                    py-3
-                    text-sm
-                    font-medium
-                    text-foreground
-                    transition
-                    hover:bg-primary
-                    "
-                >
-                    <Plus size={18} />
-                    Add Driver
-                </button>
-
             </div>
         </div>
     )
