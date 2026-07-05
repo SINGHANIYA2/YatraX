@@ -4,45 +4,34 @@ import {
     Users,
     UserCheck,
     UserX,
-    Star,
 } from 'lucide-react'
 
 import DriverStatsCard from './DriverStatsCard'
+import { getDriverStatus } from './lib'
 
-type Driver = {
-    status: string
-    rating: number
+type Partner = {
+    isOnline?: boolean
+    assignedVehicleId?: { status?: string } | null
 }
 
 export default function DriverStats({
-    drivers,
+    partners,
 }: {
-    drivers: Driver[]
+    partners: Partner[]
 }) {
 
-    const totalDrivers = drivers.length
+    const totalDrivers = partners.length
 
-    const onDuty = drivers.filter(
-        driver => driver.status === 'On Duty'
+    const availableDrivers = partners.filter(
+        partner => getDriverStatus(partner) === 'available'
     ).length
 
-    const offDuty = drivers.filter(
-        driver => driver.status === 'Off Duty'
+    const offlineDrivers = partners.filter(
+        partner => !partner.isOnline
     ).length
-
-    const avgRating =
-        drivers.length > 0
-            ? (
-                drivers.reduce(
-                    (sum, driver) =>
-                        sum + driver.rating,
-                    0
-                ) / drivers.length
-            ).toFixed(1)
-            : '0.0'
 
     return (
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
 
             <DriverStatsCard
                 title="Total Drivers"
@@ -52,24 +41,17 @@ export default function DriverStats({
             />
 
             <DriverStatsCard
-                title="On Duty"
-                value={onDuty}
+                title="Available Drivers"
+                value={availableDrivers}
                 icon={UserCheck}
                 color="text-success"
             />
 
             <DriverStatsCard
-                title="Off Duty"
-                value={offDuty}
+                title="Offline Drivers"
+                value={offlineDrivers}
                 icon={UserX}
                 color="text-destructive"
-            />
-
-            <DriverStatsCard
-                title="Avg Rating"
-                value={avgRating}
-                icon={Star}
-                color="text-warning"
             />
 
         </div>

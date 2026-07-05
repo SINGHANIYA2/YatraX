@@ -72,9 +72,9 @@ function AuthModal({ open, steps, onClose }: propType) {
 
     });
 
-    const canSubmit = !!(adminData.accountHolderName && adminData.registrationNumber && adminData.accountNumber && adminData.addressLine1 && adminData.alternatePhone && adminData.bankName &&
+    const canSubmit = !!(adminData.accountHolderName && adminData.registrationNumber && adminData.accountNumber && adminData.address && adminData.alternatePhone && adminData.bankName &&
         adminData.city && adminData.gstNumber && adminData.ifscCode && adminData.organizationName && adminData.organizationType &&
-        adminData.panNumber && adminData.pincode && adminData.state && adminData.upiId && adminData.addressLine1
+        adminData.panNumber && adminData.pincode && adminData.state && adminData.upiId && adminData.address 
     )
 
     React.useEffect(() => {
@@ -113,7 +113,7 @@ function AuthModal({ open, steps, onClose }: propType) {
 
         } catch (error: any) {
             setLoading(false);
-            setErr(`${error.response.data.message ?? error.message}`)
+            setErr(`${error.response?.data?.message ?? error.message}`)
 
         }
     }
@@ -137,12 +137,23 @@ function AuthModal({ open, steps, onClose }: propType) {
 
     const handleLogIn = async () => {
         setLoading(true)
-        const res = await signIn("credentials", {
-            email, password, redirect: false
-        })
-        setLoading(false)
-        console.log(res)
+        setErr("")
+        try {
+            const res = await signIn("credentials", {
+                email, password, redirect: false
+            })
 
+            if (res?.error) {
+                setErr("Invalid email or password")
+                return
+            }
+
+            onClose()
+        } catch (error: any) {
+            setErr(error?.message ?? "Something went wrong")
+        } finally {
+            setLoading(false)
+        }
     }
 
     const handleGoogleLogIn = async () => {
@@ -301,9 +312,6 @@ function AuthModal({ open, steps, onClose }: propType) {
                 return setErr("Invalid UPI ID");
             }
 
-            // set correct bank name according to IFSC CODE
-            fetchBankDetails()
-
             const payload = {
                 email,
                 ...adminData,
@@ -316,7 +324,7 @@ function AuthModal({ open, steps, onClose }: propType) {
 
             console.log(data);
 
-            setStep(null);
+            setStep("");
             onClose();
         } catch (error: any) {
             setErr(
@@ -358,27 +366,32 @@ function AuthModal({ open, steps, onClose }: propType) {
     }
 
 useEffect(() => {
-    if (/^[A-Z]{4}0[A-Z0-9]{6}$/.test(adminData.ifscCode)) {
+    if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(adminData.ifscCode)) return;
+
+    let cancelled = false;
+
     const fetchBankDetails = async () => {
         try {
-            if(!adminData.ifscCode){
-                return setErr("Enter IFSC code")
-            }
             const { data } = await axios.get(`https://ifsc.razorpay.com/${adminData.ifscCode}`);
+            if (cancelled) return;
 
             setAdminData((prev) => ({
                 ...prev,
                 bankName: data.BANK,
                 city: prev.city || data.CITY,
-                state:prev.state || data.STATE,
+                state: prev.state || data.STATE,
             }));
         } catch {
-            setErr("Invalid IFSC code");
+            if (!cancelled) setErr("Invalid IFSC code");
         }
     };
-    fetchBankDetails()
-}
-})
+
+    fetchBankDetails();
+
+    return () => {
+        cancelled = true;
+    };
+}, [adminData.ifscCode])
 
     const handleVerification = async () => {
         setLoading(true);
@@ -875,7 +888,8 @@ useEffect(() => {
 
                                     <button
                                         className="w-full h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover transition-colors font-semibold mt-4"
-                                        onClick={() => {handleAdminDetailsSubmit}}
+                                        onClick={handleAdminDetailsSubmit}
+                                        disabled={loading}
                                     >
                                         Submit
                                     </button>

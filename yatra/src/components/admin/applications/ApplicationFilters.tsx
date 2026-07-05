@@ -26,7 +26,9 @@ export default function ApplicationFilters({
             border
             border-primary/10
             flex
-            gap-4
+            flex-col
+            sm:flex-row
+            gap-3
         "
         >
 
@@ -36,13 +38,15 @@ export default function ApplicationFilters({
                     setStatus(e.target.value)
                 }
                 className="
-                w-56
+                w-full
+                sm:w-48
                 rounded-xl
-                bg-card
+                bg-background
                 border
                 outline-none
                 border-border
                 px-4
+                py-3
                 text-foreground
                 "
             >
@@ -73,7 +77,7 @@ export default function ApplicationFilters({
                     className="
                     w-full
                     rounded-xl
-                    bg-card
+                    bg-background
                     border
                     border-border
                     py-3

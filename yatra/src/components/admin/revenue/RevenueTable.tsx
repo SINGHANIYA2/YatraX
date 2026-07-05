@@ -1,8 +1,8 @@
 'use client'
 
-import { transactions } from './demo'
+import type { RevenueTransaction } from './types'
 
-export default function RevenueTable() {
+export default function RevenueTable({ transactions }: { transactions: RevenueTransaction[] }) {
     return (
         <div
             className="
@@ -39,6 +39,14 @@ export default function RevenueTable() {
             </div>
 
             {/* Table */}
+            {transactions.length === 0 ? (
+                <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
+                    <p className="text-sm font-medium text-foreground">No transactions yet</p>
+                    <p className="text-xs text-muted-foreground max-w-xs">
+                        Paid bookings from your partners will appear here as they come in.
+                    </p>
+                </div>
+            ) : (
             <div className="overflow-x-auto">
                 <table className="w-full">
 
@@ -154,6 +162,7 @@ export default function RevenueTable() {
 
                 </table>
             </div>
+            )}
         </div>
     )
 }

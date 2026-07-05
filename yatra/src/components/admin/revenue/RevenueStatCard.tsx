@@ -8,6 +8,7 @@ type RevenueStatCardProps = {
     change: string
     icon: ReactNode
     iconColor: string
+    trend?: 'up' | 'down' | 'flat'
 }
 
 export default function RevenueStatCard({
@@ -16,7 +17,14 @@ export default function RevenueStatCard({
     change,
     icon,
     iconColor,
+    trend = 'up',
 }: RevenueStatCardProps) {
+    const badgeClass =
+        trend === 'down'
+            ? 'bg-destructive/10 text-destructive'
+            : trend === 'flat'
+            ? 'bg-muted text-muted-foreground'
+            : 'bg-success/10 text-success'
     return (
         <div
             className="
@@ -47,15 +55,14 @@ export default function RevenueStatCard({
                 </div>
 
                 <span
-                    className="
+                    className={`
                     rounded-full
-                    bg-success/10
                     px-3
                     py-1
                     text-xs
                     font-medium
-                    text-success
-                    "
+                    ${badgeClass}
+                    `}
                 >
                     {change}
                 </span>

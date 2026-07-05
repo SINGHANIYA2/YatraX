@@ -28,9 +28,11 @@ export async function GET(req: Request) {
             );
         }
 
-        return Response.json(partner, {
-            status: 200,
-        });
+        return Response.json(partner,
+            {
+                status: 200,
+            }
+        );
     } catch (err) {
         return Response.json(
             {

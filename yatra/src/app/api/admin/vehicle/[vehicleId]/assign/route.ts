@@ -1,10 +1,13 @@
 import connectDb from "@/lib/db";
 import Partner from "@/models/partner.models";
 import { auth } from "@/auth";
-import Route from "@/models/Route.models";
+import Route from "@/models/route.models";
 import Admin from "@/models/admin.models";
 import vehicleModels from "@/models/vehicle.models";
 import { NextRequest } from "next/server";
+import Location from "@/models/location.models";
+
+console.log(Location)
 
 export async function PATCH(
     req: NextRequest,
@@ -14,22 +17,18 @@ export async function PATCH(
 
         await connectDb();
 
-        // const session = await auth();
+        const session = await auth();
 
-        // if (!session?.user?.email) {
-        //     return Response.json(
-        //         { message: "Unauthorized" },
-        //         { status: 401 }
-        //     );
-        // }
+        if (!session?.user?.email) {
+            return Response.json(
+                { message: "Unauthorized" },
+                { status: 401 }
+            );
+        }
 
-        // const admin = await Admin.findOne({
-        //     email: session.user.email,
-        // });
-
-        const admin = await Admin.findById(
-            "6a3e89c071940960de5b6a2c"
-        );
+        const admin = await Admin.findOne({
+            email: session.user.email,
+        });
 
         if (!admin) {
             return Response.json(
@@ -39,9 +38,9 @@ export async function PATCH(
         }
 
         const { vehicleId } = await params;
-
+        
         const { partnerId, routeId } = await req.json();
-
+        
         if (!partnerId || !routeId) {
             return Response.json(
                 {
@@ -139,6 +138,7 @@ export async function PATCH(
         vehicle.assignedPartnerId = partner._id;
         vehicle.routeId = route._id;
         vehicle.status = "assigned";
+        vehicle.availableSeats = vehicle.seatingCapacity;
 
         await vehicle.save();
 

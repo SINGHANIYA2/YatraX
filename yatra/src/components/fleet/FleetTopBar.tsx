@@ -1,40 +1,17 @@
-'use client'
+﻿'use client'
 
-export default function DriverManagementTopBar() {
+export default function FleetTopBar() {
     return (
-        <div
-            className="
-            sticky
-            top-0
-            z-50
-            h-21
-            px-8
-            flex
-            font-sans
-            items-center
-            justify-between
-
-            bg-card
-            border-b border-border
-            shadow-sm
-
-            border-b
-            border-primary/10
-            "
-        >
-
-            {/* Left */}
+        <div className="font-sans flex sticky top-0 z-50 h-[72px] px-4 sm:px-6 items-center justify-between bg-card border-b border-border shadow-sm">
             <div>
-                <h1 className="text-3xl font-bold text-foreground">
+                <h1 className="text-xl sm:text-2xl font-semibold text-foreground">
                     Fleet Management
                 </h1>
-
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                     Manage and monitor your entire fleet
                 </p>
             </div>
-
-
         </div>
     )
 }
+

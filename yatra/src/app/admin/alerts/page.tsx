@@ -8,8 +8,14 @@ import AlertTable from '@/components/admin/alerts/AlertTable'
 
 export default function AlertsPage() {
     return (
-        <div className='bg-background h-screen'>
-            <div className="w-full fixed top-0 z-40">
+        <div className='bg-background min-h-screen'>
+            {/* Desktop — fixed, matches AdminTopbar behavior */}
+            <div className="hidden md:block w-full fixed top-0 z-40">
+                <AlertTopBar />
+            </div>
+
+            {/* Mobile — normal flow, sits below AdminLayout's own topbar instead of over it */}
+            <div className="md:hidden">
                 <AlertTopBar />
             </div>
 
@@ -22,9 +28,11 @@ export default function AlertsPage() {
                 <div
                     className="
                     bg-background
-                    px-6
-                    pt-6
-                    mt-[100px]
+                    px-4
+                    pt-4
+                    sm:px-6
+                    md:pt-6
+                    md:mt-[84px]
                     font-sans
                     "
                 >

@@ -19,7 +19,7 @@ export interface IPartner extends Document {
 
   name: string;
   phone: string;
-  email?: string;
+  email: string;
   role: string;
 
   dob?: Date;

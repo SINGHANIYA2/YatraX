@@ -8,9 +8,12 @@ import {
 } from 'lucide-react'
 
 import ApplicationStatsCard from './ApplicationStatsCard'
-import { applications } from './demo'
 
-export default function ApplicationStats() {
+interface Props {
+    applications: any[]
+}
+
+export default function ApplicationStats({ applications }: Props) {
 
     const pending =
         applications.filter(
@@ -28,7 +31,7 @@ export default function ApplicationStats() {
         ).length
 
     return (
-        <div className="grid grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
 
             <ApplicationStatsCard
                 title="Total Applications"
