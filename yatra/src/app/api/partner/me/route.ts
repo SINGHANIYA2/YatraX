@@ -10,10 +10,10 @@ export async function GET(req: Request) {
 
         const session = await auth();
 
-        console.log(session);
+   
 
         if (!session || !session?.user) {
-            console.log(session?.user?.email)
+            
             return Response.json(
                 { message: "Unauthorized" },
                 { status: 401 }
@@ -26,6 +26,7 @@ export async function GET(req: Request) {
             .populate("locationId", "name city state")
             .populate("assignedVehicleId");
 
+            
         if (!partner) {
             return Response.json(
                 { message: "Partner not found" },
@@ -33,18 +34,9 @@ export async function GET(req: Request) {
             );
         }
 
-<<<<<<< HEAD
         return Response.json(partner, {
             status: 200,
         });
-
-=======
-        return Response.json(partner,
-            {
-                status: 200,
-            }
-        );
->>>>>>> a3afb67d23d53bb6365f8489ab63d00f4b008582
     } catch (err) {
         console.error(err);
 

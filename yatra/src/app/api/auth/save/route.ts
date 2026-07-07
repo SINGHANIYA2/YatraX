@@ -7,9 +7,18 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
     try {
         await connectDb();
-        const { userId, name, email, mobileNumber, role } = await req.json();
+        const { userId,name, email, phone, role } = await req.json();
+        
+        console.log({
+    userId,
+    name,
+    email,
+    phone,
+    role,
+});
 
-        if (!userId || !name || !email || !mobileNumber || !role) {
+        if (!userId || !name || !email || !phone || !role) {
+            console.log("missing")
             return NextResponse.json(
                 {
                     message: "Missing details",
@@ -22,14 +31,30 @@ export async function POST(req: NextRequest) {
 
 
         let account;
-        if (role === "user") {
-            account = await User.findById(userId);
-        } else if (role === "admin") {
-            account = await Admin.findById(userId);
-        } else {
-            account = await Partner.findById(userId);
-        }
+        switch (role) {
+            case "user":
+                account = await User.findById(userId);
+                break;
 
+            case "admin":
+                account = await Admin.findById(userId);
+                break;
+
+            case "partner":
+                account = await Partner.findById(userId);
+                break;
+
+            default:
+                return NextResponse.json(
+                    {
+                        success: false,
+                        message: "Invalid role.",
+                    },
+                    {
+                        status: 400,
+                    }
+                );
+        }
         if (!account) {
             return NextResponse.json({
                 success: false,
@@ -60,7 +85,7 @@ export async function POST(req: NextRequest) {
 
         account.name = name;
         account.email = email;
-        account.phone = mobileNumber;
+        account.phone = phone;
 
         account.isEmailVerified = true;
         account.isMobileVerified = true;
@@ -70,8 +95,6 @@ export async function POST(req: NextRequest) {
         account.mobileVerificationStatus = false;
 
         await account.save();
-
-        await account.save()
 
         return NextResponse.json({
             success: true,

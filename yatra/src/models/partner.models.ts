@@ -13,6 +13,9 @@ export interface IPartner extends Document {
   isPhoneVerified: boolean;
   isEmailVerified: boolean;
 
+  mobileOtpExpiresAt?: Date
+  emailOtpExpiresAt?: Date
+
   name: string;
   phone: string;
   email: string;
@@ -85,7 +88,7 @@ export interface IPartner extends Document {
 
   emailOtp: string
   mobileOtp: string
-  otpExpiresAt: Date
+  // otpExpiresAt: Date
 
   createdAt: Date;
   updatedAt: Date;
@@ -124,8 +127,13 @@ const PartnerSchema = new Schema(
       type: String,
       default: ""
     },
-    otpExpiresAt: {
-      type: Date
+    mobileOtpExpiresAt: {
+        type: Date
+        // default:null
+    },
+    emailOtpExpiresAt: {
+        type: Date
+        // default:null
     },
     assignedVehicleId: {
       type: Schema.Types.ObjectId,

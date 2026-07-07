@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
@@ -13,7 +14,8 @@
  * up your real API / redux actions.
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import {
@@ -34,12 +36,22 @@ import {
   Camera,
   Power,
   ChevronRight,
+  ChevronLeft,
+  Eye,
+  EyeOff,
+  ExternalLink,
   FileText,
 } from "lucide-react";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 
-// ---------------------------------------------------------------
+import { useDispatch } from "react-redux"
+import { AppDispatch } from "@/redux/store"
+import { setVehicleData } from "@/redux/vehicleSlice"
+
+
 // Types
-// ---------------------------------------------------------------
+
 
 type TabKey = "profile" | "vehicle" | "earnings";
 
@@ -49,6 +61,18 @@ interface PayoutItem {
   trips: number;
   amount: number;
   status: "paid" | "pending";
+}
+
+interface VehicleDetail {
+  vehicleType: keyof typeof VEHICLE_ICONS;
+  vehicleNumber: string;
+  model: string;
+  capacity: string;
+  insuranceExpiry: string;
+  rcVerified: boolean;
+  insuranceVerified: boolean;
+  rcDocumentUrl: string;
+  insuranceDocumentUrl: string;
 }
 
 // ---------------------------------------------------------------
@@ -104,33 +128,178 @@ function StatCard({
   );
 }
 
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-sm text-muted-foreground mb-1">{label}</p>
+      <p className="text-sm font-medium text-foreground">{value}</p>
+    </div>
+  );
+}
+
 // ---------------------------------------------------------------
-// Profile tab (personal details + verification)
+// Profile tab (personal details + verification + password)
 // ---------------------------------------------------------------
 
 function ProfileTab() {
   const { partnerData } = useSelector((state: RootState) => state.partner);
 
-  const [name, setName] = useState(partnerData?.name || "Ravi Kumar");
-  const [email, setEmail] = useState(partnerData?.email || "ravi.partner@example.com");
-  const [phone, setPhone] = useState(partnerData?.phone || "+91 98765 43210");
-  const [address, setAddress] = useState("Ranchi, Jharkhand");
-  const [licenseNumber, setLicenseNumber] = useState("JH-14 2019 0045821");
+  const initialValues = {
+    name: partnerData?.name || "Ravi Kumar",
+    email: partnerData?.email || "Ramu@example.com",
+    phone: partnerData?.phone || "+91 98765 43210",
+    address: "Ranchi, Jharkhand",
+    licenseNumber: "JH-14 2019 0045821",
+  };
+
+  const [name, setName] = useState(initialValues.name);
+  const [email, setEmail] = useState(initialValues.email);
+  const [phone, setPhone] = useState(initialValues.phone);
+  const [address, setAddress] = useState(initialValues.address);
+  const [licenseNumber, setLicenseNumber] = useState(initialValues.licenseNumber);
 
   const [emailVerified, setEmailVerified] = useState(true);
   const [phoneVerified, setPhoneVerified] = useState(true);
 
+  const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [savedMsg, setSavedMsg] = useState(false);
 
+  // ---- Change password state ----
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [pwSaving, setPwSaving] = useState(false);
+  const [pwError, setPwError] = useState("");
+  const [pwSavedMsg, setPwSavedMsg] = useState(false);
+
+  // ---- Password visibility toggles ----
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [Id ,setUserId] = useState("")
+  
+const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+
+  const {data : session} = useSession()
+  useEffect(() => {
+    if(!Id){
+      // console.log(partnerData)
+
+      const userId = session?.user?.id
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setUserId(userId)
+    }
+  })
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+    setSavedMsg(false);
+  };
+
+  const handleCancel = () => {
+    // revert any unsaved edits
+    setName(initialValues.name);
+    setEmail(initialValues.email);
+    setPhone(initialValues.phone);
+    setAddress(initialValues.address);
+    setLicenseNumber(initialValues.licenseNumber);
+    setIsEditing(false);
+  };
+
   const handleSave = async () => {
     setSaving(true);
-    // TODO: replace with your real update-partner-profile API call
-    await new Promise((res) => setTimeout(res, 800));
+    const payload = {
+        userId: Id,
+        phone : phone || partnerData?.phone,
+        email : email || partnerData?.email,
+        role: "partner",
+      };
+
+    const {data} = await axios.post("api/auth/save",payload);
+
     setSaving(false);
     setSavedMsg(true);
-    setTimeout(() => setSavedMsg(false), 2500);
+    setIsEditing(false);
   };
+
+  const handlePasswordSave = async () => {
+    setPwError("");
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setPwError("Please fill in all password fields.");
+      return;
+    }
+    if (newPassword.length < 8) {
+      setPwError("New password must be at least 8 characters.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPwError("New password and confirm password do not match.");
+      return;
+    }
+
+    setPwSaving(true);
+  
+    const payload = {
+      id : Id,
+      role: "partner",
+      newPassword,
+      currentPassword
+    }
+    
+    await axios.post("api/update-password",payload)
+
+    setPwSaving(false);
+    setPwSavedMsg(true);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setShowCurrentPassword(false);
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
+    setTimeout(() => setPwSavedMsg(false), 2500);
+  };
+
+
+  const handleSendotp = async (channel: "email" | "phone") => {
+    try {
+      setError("")
+      setLoading(true);
+
+      const payload = {
+        userId: Id,
+        mobileNumber: phone,
+        email,
+        role: "user",
+      };
+      // console.log("sending otp")
+      if (channel === "phone") {
+        await axios.post("/api/auth/send-phone-otp", payload);
+      }
+      if (channel === "email") {
+        await axios.post("/api/auth/send-email-otp", payload);
+     
+      }
+
+      setLoading(false);
+    } catch (error: any) {
+      console.log(error);
+      setError(error)
+      setLoading(false);
+    }
+  };
+  // Shared input classes so disabled (view-only) state looks intentional
+  const inputWrapClass = (disabled: boolean) =>
+    `flex items-center gap-2 h-12 rounded-xl border border-border px-4 ${
+      disabled ? "bg-secondary/40" : "bg-background"
+    }`;
+
+  const inputClass = (disabled: boolean) =>
+    `w-full bg-transparent text-sm focus:outline-none ${
+      disabled ? "text-muted-foreground cursor-default" : "text-foreground"
+    }`;
 
   return (
     <div className="space-y-6">
@@ -152,22 +321,35 @@ function ProfileTab() {
 
       {/* Personal details */}
       <div className="rounded-2xl border border-border bg-card p-6">
-        <h3 className="text-base font-semibold text-foreground mb-5">
-          Personal details
-        </h3>
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="text-base font-semibold text-foreground">
+            Personal details
+          </h3>
+
+          {!isEditing && (
+            <button
+              onClick={handleEditClick}
+              className="h-9 px-4 rounded-xl border border-border text-sm font-medium text-foreground hover:bg-hover transition-colors cursor-pointer flex items-center gap-1.5"
+            >
+              <User size={14} />
+              Edit profile
+            </button>
+          )}
+        </div>
 
         <div className="space-y-5">
           <div>
             <label className="text-sm text-muted-foreground mb-1.5 block">
               Full name
             </label>
-            <div className="flex items-center gap-2 h-12 rounded-xl border border-border bg-background px-4">
+            <div className={inputWrapClass(!isEditing)}>
               <User size={16} className="text-muted-foreground shrink-0" />
               <input
                 value={name}
+                disabled={!isEditing}
                 placeholder={partnerData?.name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full bg-transparent text-sm text-foreground focus:outline-none"
+                className={inputClass(!isEditing)}
               />
             </div>
           </div>
@@ -177,19 +359,22 @@ function ProfileTab() {
               <label className="text-sm text-muted-foreground">Email</label>
               <VerifyBadge verified={emailVerified} />
             </div>
-            <div className="flex items-center gap-2 h-12 rounded-xl border border-border bg-background px-4">
+            <div className={inputWrapClass(!isEditing)}>
               <Mail size={16} className="text-muted-foreground shrink-0" />
               <input
                 value={email}
-                placeholder={partnerData?.email}
+                disabled={!isEditing}
+                placeholder={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
                   setEmailVerified(false);
                 }}
-                className="w-full bg-transparent text-sm text-foreground focus:outline-none"
+                className={inputClass(!isEditing)}
               />
-              {!emailVerified && (
-                <button className="text-xs font-medium text-primary hover:text-primary-hover shrink-0 cursor-pointer">
+              {isEditing && !emailVerified && (
+                <button className="text-xs font-medium text-primary hover:text-primary-hover shrink-0 cursor-pointer"
+                  onClick={() => handleSendotp("email")}
+                >
                   Verify
                 </button>
               )}
@@ -201,18 +386,19 @@ function ProfileTab() {
               <label className="text-sm text-muted-foreground">Phone number</label>
               <VerifyBadge verified={phoneVerified} />
             </div>
-            <div className="flex items-center gap-2 h-12 rounded-xl border border-border bg-background px-4">
+            <div className={inputWrapClass(!isEditing)}>
               <Phone size={16} className="text-muted-foreground shrink-0" />
               <input
                 value={phone}
-                placeholder={partnerData?.phone}
+                disabled={!isEditing}
+                placeholder={phone}
                 onChange={(e) => {
                   setPhone(e.target.value);
                   setPhoneVerified(false);
                 }}
-                className="w-full bg-transparent text-sm text-foreground focus:outline-none"
+                className={inputClass(!isEditing)}
               />
-              {!phoneVerified && (
+              {isEditing && !phoneVerified && (
                 <button className="text-xs font-medium text-primary hover:text-primary-hover shrink-0 cursor-pointer">
                   Verify
                 </button>
@@ -224,13 +410,14 @@ function ProfileTab() {
             <label className="text-sm text-muted-foreground mb-1.5 block">
               Address
             </label>
-            <div className="flex items-center gap-2 h-12 rounded-xl border border-border bg-background px-4">
+            <div className={inputWrapClass(!isEditing)}>
               <MapPin size={16} className="text-muted-foreground shrink-0" />
               <input
                 value={address}
+                disabled={!isEditing}
                 placeholder="Sherghati,Gaya,Bihar"
                 onChange={(e) => setAddress(e.target.value)}
-                className="w-full bg-transparent text-sm text-foreground focus:outline-none"
+                className={inputClass(!isEditing)}
               />
             </div>
           </div>
@@ -239,117 +426,285 @@ function ProfileTab() {
             <label className="text-sm text-muted-foreground mb-1.5 block">
               Driving license number
             </label>
-            <div className="flex items-center gap-2 h-12 rounded-xl border border-border bg-background px-4">
+            <div className={inputWrapClass(!isEditing)}>
               <FileText size={16} className="text-muted-foreground shrink-0" />
               <input
                 value={licenseNumber}
+                disabled={!isEditing}
                 placeholder={partnerData?.dlNumber}
                 onChange={(e) => setLicenseNumber(e.target.value)}
-                className="w-full bg-transparent text-sm text-foreground focus:outline-none"
+                className={inputClass(!isEditing)}
               />
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 mt-6">
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="h-11 px-6 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary-hover transition-colors flex items-center justify-center cursor-pointer disabled:opacity-60"
-          >
-            {saving ? (
-              <CircleDashed size={16} className="animate-spin" />
-            ) : (
-              "Save changes"
+        {isEditing && (
+          <div className="flex items-center gap-3 mt-6">
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="h-11 px-6 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary-hover transition-colors flex items-center justify-center cursor-pointer disabled:opacity-60"
+            >
+              {saving ? (
+                <CircleDashed size={16} className="animate-spin" />
+              ) : (
+                "Save changes"
+              )}
+            </button>
+            <button
+              onClick={handleCancel}
+              disabled={saving}
+              className="h-11 px-6 rounded-xl border border-border text-sm font-medium text-foreground hover:bg-hover transition-colors cursor-pointer disabled:opacity-60"
+            >
+              Cancel
+            </button>
+            {savedMsg && <span className="text-sm text-success">Profile updated</span>}
+          </div>
+        )}
+      </div>
+
+      {/* Change password */}
+      <div className="rounded-2xl border border-border bg-card p-6">
+        <h3 className="text-base font-semibold text-foreground mb-5">
+          Change password
+        </h3>
+
+        <div className="space-y-5 max-w-md">
+          <div>
+            <label className="text-sm text-muted-foreground mb-1.5 block">
+              Current password
+            </label>
+            <div className="flex items-center gap-2 h-12 rounded-xl border border-border bg-background px-4">
+              <input
+                type={showCurrentPassword ? "text" : "password"}
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="Enter current password"
+                className="w-full bg-transparent text-sm text-foreground focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowCurrentPassword((v) => !v)}
+                className="shrink-0 text-muted-foreground hover:text-foreground cursor-pointer"
+                aria-label={showCurrentPassword ? "Hide password" : "Show password"}
+              >
+                {showCurrentPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm text-muted-foreground mb-1.5 block">
+              New password
+            </label>
+            <div className="flex items-center gap-2 h-12 rounded-xl border border-border bg-background px-4">
+              <input
+                type={showNewPassword ? "text" : "password"}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="At least 8 characters"
+                className="w-full bg-transparent text-sm text-foreground focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword((v) => !v)}
+                className="shrink-0 text-muted-foreground hover:text-foreground cursor-pointer"
+                aria-label={showNewPassword ? "Hide password" : "Show password"}
+              >
+                {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm text-muted-foreground mb-1.5 block">
+              Confirm new password
+            </label>
+            <div className="flex items-center gap-2 h-12 rounded-xl border border-border bg-background px-4">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Re-enter new password"
+                className="w-full bg-transparent text-sm text-foreground focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword((v) => !v)}
+                className="shrink-0 text-muted-foreground hover:text-foreground cursor-pointer"
+                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+              >
+                {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+
+          {pwError && <p className="text-sm text-destructive">{pwError}</p>}
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handlePasswordSave}
+              disabled={pwSaving}
+              className="h-11 px-6 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary-hover transition-colors flex items-center justify-center cursor-pointer disabled:opacity-60"
+            >
+              {pwSaving ? (
+                <CircleDashed size={16} className="animate-spin" />
+              ) : (
+                "Update password"
+              )}
+            </button>
+            {pwSavedMsg && (
+              <span className="text-sm text-success">Password updated</span>
             )}
-          </button>
-          {savedMsg && <span className="text-sm text-success">Profile updated</span>}
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-// Vehicle tab
+// ---------------------------------------------------------------
+// Vehicle tab (read-only — vehicle is fixed by backend, not editable)
+// ---------------------------------------------------------------
 
 function VehicleTab() {
-  const [vehicleType] = useState<keyof typeof VEHICLE_ICONS>("car");
-  const [vehicleNumber, setVehicleNumber] = useState("JH14 AB 4521");
-  const [model, setModel] = useState("Maruti Suzuki Dzire");
-  const [capacity, setCapacity] = useState("4 seats");
-  const [rcVerified] = useState(true);
-  const [insuranceVerified] = useState(false);
-  const [insuranceExpiry, setInsuranceExpiry] = useState("2027-02-14");
+  const dispatch = useDispatch<AppDispatch>();
 
-  const Icon = VEHICLE_ICONS[vehicleType];
+  // Which vehicle belongs to this partner
+  const { partnerData } = useSelector((state: RootState) => state.partner);
+  const assignedVehicleId = partnerData?.assignedVehicleId as string | undefined;
+
+  // Real vehicle data, once fetched, lives in the vehicle slice
+  const { vehicleData } = useSelector((state: RootState) => state.vehicle);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!assignedVehicleId) {
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    const fetchVehicle = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const { data } = await axios.get(`/api/vehicle/${assignedVehicleId}`);
+
+        if (!cancelled) {
+          dispatch(setVehicleData(data.vehicle));
+        }
+      } catch (err: any) {
+        if (!cancelled) {
+          setError(err?.response?.data?.message ?? err.message ?? "Failed to load vehicle");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    fetchVehicle();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [assignedVehicleId, dispatch]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <CircleDashed size={22} className="animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  // Fallback mock data — only used until a real vehicle has been fetched
+  // TODO: your Vehicle schema (vehicle.models.ts) doesn't currently store
+  // insuranceExpiry / rcVerified / insuranceVerified as booleans/dates —
+  // it only stores documents.rc / documents.insurance as IFile. Adjust the
+  // backend schema (or this mapping) once those fields exist for real.
+  const vehicle: VehicleDetail = vehicleData
+    ? {
+        vehicleType: (vehicleData.vehicleType as VehicleDetail["vehicleType"]) ?? "car",
+        vehicleNumber: vehicleData.vehicleNumber ?? "—",
+        model: vehicleData.model ?? vehicleData.brand ?? "—",
+        capacity: vehicleData.seatingCapacity
+          ? `${vehicleData.seatingCapacity} seats`
+          : "—",
+        insuranceExpiry: vehicleData.scheduledEndAt
+          ? String(vehicleData.scheduledEndAt)
+          : new Date().toISOString(),
+        rcVerified: !!vehicleData.documents?.rc?.url,
+        insuranceVerified: !!vehicleData.documents?.insurance?.url,
+        rcDocumentUrl: vehicleData.documents?.rc?.url ?? "",
+        insuranceDocumentUrl: vehicleData.documents?.insurance?.url ?? "",
+      }
+    : {
+        vehicleType: "car",
+        vehicleNumber: "JH14 AB 4521",
+        model: "Maruti Suzuki Dzire",
+        capacity: "4 seats",
+        insuranceExpiry: "2027-02-14",
+        rcVerified: true,
+        insuranceVerified: false,
+        rcDocumentUrl: "https://res.cloudinary.com/your-cloud-name/image/upload/v1/rc-doc.pdf",
+        insuranceDocumentUrl:
+          "https://res.cloudinary.com/your-cloud-name/image/upload/v1/insurance-doc.pdf",
+      };
+
+  const Icon = VEHICLE_ICONS[vehicle.vehicleType] ?? Car;
+
+  const formattedExpiry = new Date(vehicle.insuranceExpiry).toLocaleDateString(
+    "en-IN",
+    { day: "2-digit", month: "short", year: "numeric" }
+  );
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {error} — showing sample data below.
+        </div>
+      )}
+
+      {/* Summary */}
       <div className="rounded-2xl border border-border bg-card p-6 flex items-center gap-5">
         <div className="h-16 w-16 rounded-2xl bg-secondary flex items-center justify-center shrink-0">
           <Icon size={26} className="text-foreground" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold text-foreground">{model}</h2>
-          <p className="text-sm text-muted-foreground">{vehicleNumber}</p>
+          <h2 className="text-lg font-semibold text-foreground">{vehicle.model}</h2>
+          <p className="text-sm text-muted-foreground">{vehicle.vehicleNumber}</p>
         </div>
       </div>
 
+      {/* Vehicle details — read only */}
       <div className="rounded-2xl border border-border bg-card p-6">
-        <h3 className="text-base font-semibold text-foreground mb-5">
-          Vehicle details
-        </h3>
-
-        <div className="grid sm:grid-cols-2 gap-5">
-          <div>
-            <label className="text-sm text-muted-foreground mb-1.5 block">
-              Vehicle number
-            </label>
-            <input
-              value={vehicleNumber}
-              onChange={(e) => setVehicleNumber(e.target.value)}
-              className="w-full h-12 rounded-xl border border-border bg-background px-4 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm text-muted-foreground mb-1.5 block">
-              Model
-            </label>
-            <input
-              value={model}
-              onChange={(e) => setModel(e.target.value)}
-              className="w-full h-12 rounded-xl border border-border bg-background px-4 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm text-muted-foreground mb-1.5 block">
-              Seating capacity
-            </label>
-            <input
-              value={capacity}
-              onChange={(e) => setCapacity(e.target.value)}
-              className="w-full h-12 rounded-xl border border-border bg-background px-4 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm text-muted-foreground mb-1.5 block">
-              Insurance expiry
-            </label>
-            <input
-              type="date"
-              value={insuranceExpiry}
-              onChange={(e) => setInsuranceExpiry(e.target.value)}
-              className="w-full h-12 rounded-xl border border-border bg-background px-4 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            />
-          </div>
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="text-base font-semibold text-foreground">
+            Vehicle details
+          </h3>
+          <span className="text-xs text-muted-foreground bg-secondary/60 px-2.5 py-1 rounded-full">
+            Managed by YatraX
+          </span>
         </div>
 
-        <button className="h-11 px-6 mt-6 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary-hover transition-colors cursor-pointer">
-          Save changes
-        </button>
+        <div className="grid sm:grid-cols-2 gap-5">
+          <DetailRow label="Vehicle number" value={vehicle.vehicleNumber} />
+          <DetailRow label="Model" value={vehicle.model} />
+          <DetailRow label="Seating capacity" value={vehicle.capacity} />
+          <DetailRow label="Insurance expiry" value={formattedExpiry} />
+        </div>
+
+        <p className="text-xs text-muted-foreground mt-6">
+          Vehicle details are fixed and can only be updated by YatraX support.
+          Contact support if any of this information is incorrect.
+        </p>
       </div>
 
       {/* Documents */}
@@ -359,22 +714,52 @@ function VehicleTab() {
         </h3>
 
         <div className="space-y-3">
-          <div className="flex items-center justify-between rounded-xl border border-border px-4 py-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-border px-4 py-3">
             <div className="flex items-center gap-3">
               <FileText size={16} className="text-muted-foreground" />
               <span className="text-sm text-foreground">
                 Registration Certificate (RC)
               </span>
             </div>
-            <VerifyBadge verified={rcVerified} />
+            <div className="flex items-center gap-3 shrink-0">
+              <VerifyBadge verified={vehicle.rcVerified} />
+              {vehicle.rcDocumentUrl ? (
+                <a
+                  href={vehicle.rcDocumentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary-hover cursor-pointer"
+                >
+                  View document
+                  <ExternalLink size={12} />
+                </a>
+              ) : (
+                <span className="text-xs text-muted-foreground">Not uploaded</span>
+              )}
+            </div>
           </div>
 
-          <div className="flex items-center justify-between rounded-xl border border-border px-4 py-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-border px-4 py-3">
             <div className="flex items-center gap-3">
               <FileText size={16} className="text-muted-foreground" />
               <span className="text-sm text-foreground">Insurance</span>
             </div>
-            <VerifyBadge verified={insuranceVerified} />
+            <div className="flex items-center gap-3 shrink-0">
+              <VerifyBadge verified={vehicle.insuranceVerified} />
+              {vehicle.insuranceDocumentUrl ? (
+                <a
+                  href={vehicle.insuranceDocumentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary-hover cursor-pointer"
+                >
+                  View document
+                  <ExternalLink size={12} />
+                </a>
+              ) : (
+                <span className="text-xs text-muted-foreground">Not uploaded</span>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -382,9 +767,9 @@ function VehicleTab() {
   );
 }
 
-
+// ---------------------------------------------------------------
 // Earnings tab
-
+// ---------------------------------------------------------------
 
 function EarningsTab() {
   return (
@@ -437,14 +822,15 @@ function EarningsTab() {
   );
 }
 
-// ---------------------------------------------------------------
-// Page
-// ---------------------------------------------------------------
 
 export default function page() {
-    
+  const router = useRouter();
+  const { data: session } = useSession();
+
   const [tab, setTab] = useState<TabKey>("profile");
   const [online, setOnline] = useState(true);
+  const [statusLoading, setStatusLoading] = useState(false);
+  const [statusError, setStatusError] = useState("");
 
   const tabs: { key: TabKey; label: string }[] = [
     { key: "profile", label: "Profile" },
@@ -452,31 +838,83 @@ export default function page() {
     { key: "earnings", label: "Earnings" },
   ];
 
+  const handleOnline = async (nextStatus: boolean) => {
+    const partnerId = session?.user?.id;
+
+    if (!partnerId) {
+      setStatusError("Not signed in");
+      setOnline((prev) => !prev); // revert the optimistic flip
+      return;
+    }
+
+    setStatusLoading(true);
+    setStatusError("");
+
+    try {
+      await axios.post("/api/partner/toggle-status", {
+        partnerId,
+        isOnline: nextStatus,
+      });
+    } catch (error: any) {
+      // Revert the UI back if the server call fails
+      setOnline((prev) => !prev);
+      setStatusError(
+        error?.response?.data?.message ?? "Failed to update status"
+      );
+    } finally {
+      setStatusLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
         {/* Header */}
         <div className="flex items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              Partner dashboard
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Manage your profile, vehicle and earnings
-            </p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.back()}
+              aria-label="Go back"
+              className="h-10 w-10 shrink-0 rounded-full border border-border flex items-center justify-center hover:bg-hover transition-colors cursor-pointer"
+            >
+              <ChevronLeft size={18} className="text-foreground" />
+            </button>
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">
+                Partner dashboard
+              </h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Manage your profile, vehicle and earnings
+              </p>
+            </div>
           </div>
 
-          <button
-            onClick={() => setOnline((v) => !v)}
-            className={`shrink-0 inline-flex items-center gap-2 h-10 px-4 rounded-full text-sm font-medium cursor-pointer transition-colors ${
-              online
-                ? "bg-success/10 text-success"
-                : "bg-secondary text-muted-foreground"
-            }`}
-          >
-            <Power size={14} />
-            {online ? "Online" : "Offline"}
-          </button>
+          <div className="flex flex-col items-end gap-1">
+            <button
+              onClick={() => {
+                const next = !online;
+                setOnline(next); // optimistic UI update
+                handleOnline(next); // fire the actual API call
+              }}
+              disabled={statusLoading}
+              className={`shrink-0 inline-flex items-center gap-2 h-10 px-4 rounded-full text-sm font-medium cursor-pointer transition-colors disabled:opacity-60 ${
+                online
+                  ? "bg-success/10 text-success"
+                  : "bg-secondary text-muted-foreground"
+              }`}
+            >
+              {statusLoading ? (
+                <CircleDashed size={14} className="animate-spin" />
+              ) : (
+                <Power size={14} />
+              )}
+              {online ? "Online" : "Offline"}
+            </button>
+
+            {statusError && (
+              <span className="text-xs text-destructive">{statusError}</span>
+            )}
+          </div>
         </div>
 
         {/* Tabs */}

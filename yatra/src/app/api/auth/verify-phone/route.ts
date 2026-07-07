@@ -9,7 +9,9 @@ export async function POST(req: NextRequest) {
         await connectDb();
 
         const { userId, otp, role } = await req.json();
+
         if (!userId || !otp || !role) {
+            console.log("missing detail")
             return NextResponse.json(
                 {
                     message: "Missing details",
@@ -19,9 +21,9 @@ export async function POST(req: NextRequest) {
                 }
             );
         }
-
+        
         let account;
-
+        
         if (role === "user") {
             account = await User.findById(userId);
         } else if (role === "admin") {
@@ -29,7 +31,7 @@ export async function POST(req: NextRequest) {
         } else {
             account = await Partner.findById(userId);
         }
-
+        
         if (!account) {
             return NextResponse.json(
                 {
@@ -39,9 +41,9 @@ export async function POST(req: NextRequest) {
                 { status: 404 }
             );
         }
-
-        if (!account.mobileOtpExpiresAt || account.mobileOtpExpiresAt < new Date()
-        ) {
+        
+        if (!account.mobileOtpExpiresAt || account.mobileOtpExpiresAt < new Date()) {
+            // console.log("otp expred")
             return NextResponse.json(
                 {
                     success: false,
@@ -50,8 +52,9 @@ export async function POST(req: NextRequest) {
                 { status: 400 }
             );
         }
-
+        
         if (account.mobileOtp !== otp) {
+            // console.log("otp invalid")
             return NextResponse.json(
                 {
                     success: false,

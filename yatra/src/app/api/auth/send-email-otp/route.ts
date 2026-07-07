@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
             Date.now() + 10 * 60 * 1000
         );
 
-        account.otpExpiresAt = otpExpiresAt
+        account.emailOtpExpiresAt = otpExpiresAt
         account.emailOtp = otp
         await account.save();
 

@@ -8,13 +8,18 @@ import { Bike, Bus, Car, ChevronRight, LogOut, Menu, Truck, X } from "lucide-rea
 import { useEffect, useState } from "react";
 import AuthModal from "./AuthModal";
 import { signOut, useSession } from "next-auth/react";
-import router from "next/router";
+// import router from "next/router"
+// import Router from "next/navigation"
 import { setUserData } from "@/redux/userSlice";
 import { setAdminData } from "@/redux/adminSlice";
 import { setPartnerData } from "@/redux/partnerSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from '../redux/store';
+import axios from "axios";
+import { useRouter } from "next/router";
 
+// eslint-disable-next-line react-hooks/rules-of-hooks
+// const router = useRouter()  
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -36,6 +41,8 @@ export default function Navbar() {
   const [steps, setStep] = useState("")
   const [profileOpen, setProfileOpen] = useState(false)
   const [role, setRole] = useState("")
+  const [email,setEmail] = useState("")
+  const [password,setPassword] = useState("")
 
   const { userData } = useSelector(
     (state: RootState) => state.user
@@ -86,12 +93,18 @@ export default function Navbar() {
       console.log(error)
     }
   }
-  const handleLogin = () => {
+  const handleLogin = async () => {
     try {
       setStep("login")
       setAuthOpen(true);
-      // setProfileOpen(true)
-      console.log("Logged in successfully")
+      // await axios.post("api/auth/login",{
+      //   params:{
+      //     email,
+      //     password
+      //   }
+      // })
+      setProfileOpen(true)
+      // console.log("Logged in successfully")
 
     } catch (error) {
       console.log(error)
@@ -297,18 +310,29 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="lg:hidden text-foreground"
-            >
-              {menuOpen ? <X size={28} /> : <Menu size={28} />}
-            </button>
+            {/* Mobile Menu Button + Mobile Profile Avatar Trigger */}
+            <div className="flex items-center gap-3 lg:hidden">
+              {role !== "" && (
+                <button
+                  onClick={() => setProfileOpen(!profileOpen)}
+                  className="h-10 w-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-base border border-primary/30"
+                >
+                  {name.charAt(0)?.toUpperCase()}
+                </button>
+              )}
+
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="text-foreground"
+              >
+                {menuOpen ? <X size={28} /> : <Menu size={28} />}
+              </button>
+            </div>
           </div>
         </div>
       </motion.nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile Nav Menu (hamburger) — independent of profile drawer */}
       {menuOpen && (
         <motion.div
           initial={{ opacity: 0, y: -30 }}
@@ -327,7 +351,7 @@ export default function Navbar() {
             ))}
 
             {
-              (!profileOpen) && (
+              role === "" && (
                 <div className="mt-4 flex flex-col gap-3">
                   <button className="rounded-xl border border-border/10 py-3 text-foreground"
                     onClick={handleLogin}
@@ -344,129 +368,137 @@ export default function Navbar() {
                 </div>
               )
             }
-
-            <AnimatePresence>
-              {profileOpen && (userData || adminData || partnerData) && (
-                <>
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.4 }}
-                    exit={{ opacity: 0 }}
-                    onClick={() => setProfileOpen(false)}
-                    className="fixed inset-0 bg-black z-30 md:hidden"
-                  />
-
-                  <motion.div
-                    initial={{ y: 400 }}
-                    animate={{ y: 0 }}
-                    exit={{ y: 400 }}
-                    transition={{ type: "spring", damping: 25 }}
-                    className="fixed inset-x-0 bottom-0 bg-card rounded-t-3xl shadow-lg border-t border-border z-50 md:hidden"
-                  >
-                    <div className='p-5'>
-                      <p className="font-semibold text-lg">
-                        {name}
-                      </p>
-                      <p className='text-xs uppercase text-muted-foreground mb-4'>{role}</p>
-
-                      {
-                        role == "partner" &&
-                        (
-                          <div className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
-                            onClick={() => router.push("/partnerpage")}
-                          >
-
-                            <div className='flex space-x-2'>
-                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                                <Bike size={14} />
-                              </div>
-
-                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                                <Car size={14} />
-                              </div>
-
-                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                                <Truck size={14} />
-                              </div>
-
-                            </div>
-                            Partner Dashboard
-                            <ChevronRight size={60} className='ml-auto' />
-                          </div>
-
-                        )}
-
-                      {
-                        role == "user" &&
-                        (
-                          <div className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
-                            onClick={() => router.push("/partner/onboarding")}
-                          >
-
-                            <div className='flex space-x-2'>
-                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                                <Bike size={14} />
-                              </div>
-
-                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                                <Car size={14} />
-                              </div>
-
-                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                                <Truck size={14} />
-                              </div>
-
-                            </div>
-                            Become a Partner {role}
-                            <ChevronRight size={60} className='ml-auto' />
-                          </div>
-
-                        )}
-
-
-                      {
-                        role == "admin" &&
-                        (
-                          <div className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
-                            onClick={() => router.push("/admin")}
-                          >
-
-                            <div className='flex space-x-2'>
-                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                                <Bike size={14} />
-                              </div>
-
-                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                                <Car size={14} />
-                              </div>
-
-                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                                <Truck size={14} />
-                              </div>
-
-                            </div>
-                            Admin section
-                            <ChevronRight size={60} className='ml-auto' />
-                          </div>
-
-                        )}
-
-
-                      <button className="h-full rounded-xl flex items-center gap-3 py-3 hover:bg-secondary mt-2"
-                        onClick={handleLogOut}>
-                        <LogOut size={16} />
-                        Log out
-                      </button>
-                    </div>
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>
-
-
           </div>
         </motion.div>
       )}
+
+      {/* Mobile Profile Drawer — independent of hamburger menu, triggered only by the avatar button, works for user/partner/admin */}
+      <AnimatePresence>
+        {profileOpen && role !== "" && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.4 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setProfileOpen(false)}
+              className="fixed inset-0 bg-black z-40 lg:hidden"
+            />
+
+            <motion.div
+              initial={{ y: 400 }}
+              animate={{ y: 0 }}
+              exit={{ y: 400 }}
+              transition={{ type: "spring", damping: 25 }}
+              className="fixed inset-x-0 bottom-0 bg-card rounded-t-3xl shadow-lg border-t border-border z-50 lg:hidden"
+            >
+              <div className='p-5'>
+                <p className="font-semibold text-lg">
+                  {name}
+                </p>
+                <p className='text-xs uppercase text-muted-foreground mb-4'>{role}</p>
+
+                {
+                  role == "partner" &&
+                  (
+                    <Link className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
+                      onClick={() => {
+                        setProfileOpen(false)
+                      }}
+                      href = "/partnerpage"
+                    >
+
+                      <div className='flex space-x-2'>
+                        {/* <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
+                          <Bike size={14} />
+                        </div>
+
+                        <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
+                          <Car size={14} />
+                        </div>
+
+                        <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
+                          <Truck size={14} />
+                        </div> */}
+
+                      </div>
+                      Partner Dashboard
+                      <ChevronRight size={60} className='ml-auto' />
+                    </Link>
+
+                  )}
+
+                {
+                  role == "user" &&
+                  (
+                    <div className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
+                      onClick={() => {
+                        setProfileOpen(false)
+                        router.push("/partner/onboarding")
+                      }}
+                    >
+
+                      <div className='flex space-x-2'>
+                        {/* <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
+                          <Bike size={14} />
+                        </div>
+
+                        <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
+                          <Car size={14} />
+                        </div>
+
+                        <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
+                          <Truck size={14} />
+                        </div> */}
+
+                      </div>
+                      Become a Partner
+                      <ChevronRight size={60} className='ml-auto' />
+                    </div>
+
+                  )}
+
+
+                {
+                  role == "admin" &&
+                  (
+                    <div className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
+                      onClick={() => {
+                        setProfileOpen(false)
+                        router.push("/admin")
+                      }}
+                    >
+
+                      <div className='flex space-x-2'>
+                        <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
+                          <Bike size={14} />
+                        </div>
+
+                        <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
+                          <Car size={14} />
+                        </div>
+
+                        <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
+                          <Truck size={14} />
+                        </div>
+
+                      </div>
+                      Admin section
+                      <ChevronRight size={60} className='ml-auto' />
+                    </div>
+
+                  )}
+
+
+                <button className="h-full rounded-xl flex items-center gap-3 py-3 hover:bg-secondary mt-2 w-full"
+                  onClick={handleLogOut}>
+                  <LogOut size={16} />
+                  Log out
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       <AuthModal open={authOpen} steps={steps} onClose={() => setAuthOpen(false)} />
     </>

@@ -4,7 +4,7 @@ import Partner from "@/models/partner.models";
 import User from "@/models/user.models";
 import { NextRequest, NextResponse } from "next/server";
 
-async function POST(req: NextRequest) {
+export async function POST(req: NextRequest) {
     try {
         await connectDb()
 
@@ -39,7 +39,7 @@ async function POST(req: NextRequest) {
         }
 
 
-        if (!account.mobileOtpExpiresAt || account.otpExpiresAt < new Date()) {
+        if (!account.emailOtpExpiresAt || account.emailOtpExpiresAt < new Date()) {
             return NextResponse.json({
                 success: false,
                 message: "Otp expired",

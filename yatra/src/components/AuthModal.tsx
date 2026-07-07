@@ -524,7 +524,7 @@ useEffect(() => {
                                                 />
                                             </div>
 
-
+                                            {err && <p className='text-red-500'>*{err}</p>}
                                             <button className='w-full h-11 rounded-xl bg-foreground text-background font-semibold hover:bg-card hover:text-foreground'
                                                 onClick={handleLogIn}
                                             >

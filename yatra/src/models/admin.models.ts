@@ -21,10 +21,13 @@ export interface IAdmin extends Document {
   isEmailVerified: boolean;
   role: string
   otp: string
-  otpExpiresAt: Date
+  // otpExpiresAt: Date
 
   emailVerificationStatus: boolean;
   mobileVerificationStatus: boolean;
+
+  mobileOtpExpiresAt?: Date
+  emailOtpExpiresAt?: Date
 
   profilePhoto?: IFile;
 
@@ -125,7 +128,14 @@ const AdminSchema = new Schema({
     aadharBack: FileSchema,
     panCard: FileSchema,
   },
-
+  mobileOtpExpiresAt: {
+    type: Date
+    // default:null
+  },
+  emailOtpExpiresAt: {
+    type: Date
+    // default:null
+  },
 
   address: {
     type: String,

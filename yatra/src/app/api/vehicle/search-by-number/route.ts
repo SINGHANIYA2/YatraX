@@ -1,28 +1,23 @@
-// src/app/api/vehicle/search/route.ts
-
 import connectDb from "@/lib/db";
 import Vehicle from "@/models/vehicle.models";
-import mongoose from "mongoose";
+
+import "@/models/route.models";
+import "@/models/location.models";
+import "@/models/partner.models";
+
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(
-  req: NextRequest
-) {
+export async function GET(req: NextRequest) {
   try {
     await connectDb();
 
-    const { routeIds } = await req.json();
+    const vehicleNumber = req.nextUrl.searchParams.get("vehicleNumber");
 
-//     console.log("Received routeIds:", routeIds);
-// console.log("Is Array:", Array.isArray(routeIds));
-// console.log("Length:", routeIds?.length);
-
-    if (!Array.isArray(routeIds) || routeIds.length === 0
-    ) {
+    if (!vehicleNumber) {
       return NextResponse.json(
         {
           success: false,
-          message: "Route ids are required.",
+          message: "Vehicle number is required.",
         },
         {
           status: 400,
@@ -30,17 +25,8 @@ export async function POST(
       );
     }
 
-    
-
-    const objectRouteIds = routeIds.map(
-      (id: string) =>
-        new mongoose.Types.ObjectId(id)
-    );
-
     const vehicles = await Vehicle.find({
-      routeId: {
-        $in: objectRouteIds,
-      },
+      vehicleNumber: vehicleNumber.trim().toUpperCase(),
       status: "assigned",
       tripStatus: "running",
       isOnline: true,
@@ -53,8 +39,7 @@ export async function POST(
         path: "routeId",
         populate: {
           path: "locations",
-          select:
-            "name city latitude longitude",
+          select: "name city latitude longitude",
         },
       });
 
@@ -69,13 +54,12 @@ export async function POST(
       }
     );
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
     return NextResponse.json(
       {
         success: false,
-        message:
-          "Internal server error.",
+        message: "Internal server error.",
       },
       {
         status: 500,
@@ -83,7 +67,3 @@ export async function POST(
     );
   }
 }
-
-
-
-

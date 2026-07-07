@@ -1,9 +1,11 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useEffect, useState } from "react";
 import {
-  User, Mail, Phone, ShieldCheck, ShieldAlert, Camera, MapPin, Calendar, Clock, Ticket, X, CircleDashed, Bus, ChevronRight,
+  User, Mail, Phone, ShieldCheck, ShieldAlert, Camera, MapPin, Calendar, Clock, Ticket, X, CircleDashed, Bus, ChevronRight, Pencil, Lock, ArrowLeft, Eye, EyeOff,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import { ParamsOf } from '../../../.next/dev/types/routes';
 import { useSession } from "next-auth/react";
@@ -120,12 +122,12 @@ function OtpModal({ open, target, channel, onClose, onVerified, }: {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [id ,setUserId] = useState("")
+  const [id, setUserId] = useState("")
 
-  
-  const {data : session} = useSession()
+
+  const { data: session } = useSession()
   useEffect(() => {
-    if(!id){
+    if (!id) {
       const userId = session?.user?.id
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setUserId(userId)
@@ -142,27 +144,57 @@ function OtpModal({ open, target, channel, onClose, onVerified, }: {
     setError("");
     setLoading(true);
 
-    // TODO: replace with your real verify-otp API call
-    if (channel === "email") await axios.post("api/auth/verify-email", {
-      params: {
-        otp:otp,
-        id:id,
-        role:"user"
-        },
-    });
-    if (channel === "phone") await axios.post("api/auth/verify-phone", {
-      params: {
-        otp:otp,
-        id:id,
-        role:"user"
-        },
-    });
-
-    setLoading(false);
-    onVerified();
-    setOtp("");
+    try {
+      if (channel === "email") {
+        await axios.post("/api/auth/verify-email", {
+          userId: id,
+          otp,
+          role: "user",
+        });
+      }
+      if (channel === "phone") {
+        await axios.post("/api/auth/verify-phone", {
+          userId: id,
+          otp,
+          role: "user",
+        });
+      }
+      onVerified();
+      setOtp("");
+    } catch (err) {
+      console.log(err);
+      setError("Invalid or expired code");
+    } finally {
+      setLoading(false);
+    }
   };
 
+
+  const handleResendOtp = async (channel: "email" | "phone") => {
+    try {
+      setLoading(true);
+
+      const payload = {
+        userId: id,
+        mobileNumber: Phone,
+        Mail,
+        role: "user",
+      };
+
+      if (channel === "phone") {
+        await axios.post("/api/auth/send-phone-otp", payload);
+      }
+
+      if (channel === "email") {
+        await axios.post("/api/auth/send-email-otp", payload);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
       <div
@@ -210,7 +242,7 @@ function OtpModal({ open, target, channel, onClose, onVerified, }: {
           disabled={loading}
           className="w-full h-11 mt-5 rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary-hover transition-colors flex items-center justify-center cursor-pointer disabled:opacity-60"
         >
-          {loading ? (
+          { loading  ? (
             <CircleDashed size={18} className="animate-spin" />
           ) : (
             "Verify"
@@ -219,7 +251,7 @@ function OtpModal({ open, target, channel, onClose, onVerified, }: {
 
         <button
           onClick={() => {
-            /* TODO: call your resend-otp API */
+            handleResendOtp(channel)
           }}
           className="w-full text-sm text-muted-foreground hover:text-foreground mt-3 cursor-pointer"
         >
@@ -231,40 +263,260 @@ function OtpModal({ open, target, channel, onClose, onVerified, }: {
 }
 
 
+// Change password modal
+
+function ChangePasswordModal({ open, onClose, }: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [id, setUserId] = useState("");
+
+  const { data: session } = useSession();
+  useEffect(() => {
+    if (!id) {
+      const userId = session?.user?.id;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setUserId(userId);
+    }
+  });
+
+  if (!open) return null;
+
+  const resetAndClose = () => {
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setShowCurrent(false);
+    setShowNew(false);
+    setShowConfirm(false);
+    setError("");
+    setSuccess(false);
+    onClose();
+  };
+
+  const handleChangePassword = async () => {
+    setError("");
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setError("Please fill in all fields");
+      return;
+    }
+    if (newPassword.length < 8) {
+      setError("New password must be at least 8 characters");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setError("New password and confirm password do not match");
+      return;
+    }
+
+    setLoading(true);
+    try {
+
+      await axios.post("/api/update-password", {
+        id,
+        role: "user",
+        currentPassword,
+        newPassword,
+      });
+      setSuccess(true);
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err) {
+      console.log(err);
+      setError("Something went wrong. Please check your current password.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+      <div className="absolute inset-0 bg-black/50" onClick={resetAndClose} />
+
+      <div className="relative w-full max-w-sm rounded-2xl bg-card border border-border p-6">
+        <button
+          onClick={resetAndClose}
+          className="absolute right-4 top-4 text-muted-foreground hover:text-foreground cursor-pointer"
+        >
+          <X size={18} />
+        </button>
+
+        <div className="flex flex-col items-center text-center mb-5">
+          <div className="h-12 w-12 rounded-full bg-secondary flex items-center justify-center mb-3">
+            <Lock size={20} />
+          </div>
+          <h3 className="text-lg font-semibold text-foreground">
+            Change password
+          </h3>
+          <p className="text-sm text-muted-foreground mt-1">
+            Enter your current password and choose a new one
+          </p>
+        </div>
+
+        {success ? (
+          <div className="text-center py-2">
+            <p className="text-sm text-success font-medium mb-4">
+              Password updated successfully
+            </p>
+            <button
+              onClick={resetAndClose}
+              className="w-full h-11 rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary-hover transition-colors cursor-pointer"
+            >
+              Done
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm text-muted-foreground mb-1.5 block">
+                Current password
+              </label>
+              <div className="relative">
+                <input
+                  type={showCurrent ? "text" : "password"}
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full h-12 rounded-xl border border-border bg-background pl-4 pr-11 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowCurrent((v) => !v)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+                >
+                  {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm text-muted-foreground mb-1.5 block">
+                New password
+              </label>
+              <div className="relative">
+                <input
+                  type={showNew ? "text" : "password"}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full h-12 rounded-xl border border-border bg-background pl-4 pr-11 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNew((v) => !v)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+                >
+                  {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm text-muted-foreground mb-1.5 block">
+                Confirm new password
+              </label>
+              <div className="relative">
+                <input
+                  type={showConfirm ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full h-12 rounded-xl border border-border bg-background pl-4 pr-11 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm((v) => !v)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+                >
+                  {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            {error && <p className="text-xs text-destructive">{error}</p>}
+
+            <button
+              onClick={handleChangePassword}
+              disabled={loading}
+              className="w-full h-11 rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary-hover transition-colors flex items-center justify-center cursor-pointer disabled:opacity-60"
+            >
+              {loading ? (
+                <CircleDashed size={18} className="animate-spin" />
+              ) : (
+                "Update password"
+              )}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
 // Profile section
 
 function ProfileSection() {
   const dispath = useDispatch<AppDispatch>()
-  
-  const { userData } = useSelector(
-      (state: RootState) => state.user
-    );
+
+  const { userData } = useSelector((state: RootState) => state.user);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
 
-  const [emailVerified, setEmailVerified] = useState(true);
+  const [emailVerified, setEmailVerified] = useState(false);
   const [phoneVerified, setPhoneVerified] = useState(false);
 
   const [modal, setModal] = useState<null | "email" | "phone">(null);
   const [saving, setSaving] = useState(false);
   const [savedMsg, setSavedMsg] = useState(false);
+  const [id, setUserId] = useState("")
+  const [isEditing, setIsEditing] = useState(false);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [loading, setLoading] = useState(false)
-  const [id ,setUserId] = useState("")
+  const [error, setError] = useState("")
 
-  
-  const {data : session} = useSession()
+  const { data: session } = useSession()
+
+
+  const [initialized, setInitialized] = useState(false);
+
   useEffect(() => {
-    if(!id){
-      const userId = session?.user?.id
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUserId(userId)
+    if (!id) {
+      const userId = session?.user?.id;
+      setUserId(userId);
     }
-  })
+  }, [session, id]);
+
+  useEffect(() => {
+    if (userData && !initialized) {
+      setName(userData.name || "");
+      setEmail(userData.email || "");
+      setPhone(userData.mobileNumber || "");
+
+      // read the actual verification flags from the user schema
+      setEmailVerified(Boolean(userData.isEmailVerified));
+      setPhoneVerified(Boolean(userData.isMobileVerified));
+
+      setInitialized(true);
+    }
+  }, [userData, initialized]);
 
 
   const handleSendotp = async (channel: "email" | "phone") => {
     try {
+      setError("")
       setLoading(true);
 
       const payload = {
@@ -273,7 +525,7 @@ function ProfileSection() {
         email,
         role: "user",
       };
-
+      console.log("sending otp")
       if (channel === "phone") {
         await axios.post("/api/auth/send-phone-otp", payload);
         setModal("phone");
@@ -285,22 +537,62 @@ function ProfileSection() {
       }
 
       setLoading(false);
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      setError(error)
       setLoading(false);
     }
   };
 
   const handleSave = async () => {
-    setSaving(true);
-    // TODO: replace with your real update-profile API call
-    await new Promise((res) => setTimeout(res, 800));
-    setSaving(false);
-    setSavedMsg(true);
-    setTimeout(() => setSavedMsg(false), 2500);
+    try {
+        setError("");
+        setSaving(true);
+
+        if (!emailVerified) {
+            setError("Verify your email");
+            setSaving(false);
+            return;
+        }
+
+        if (!phoneVerified) {
+            setError("Verify your phone number");
+            setSaving(false);
+            return;
+        }
+
+        const payload = {
+          userId:id,
+          name: name || userData?.name,
+          email :email || userData?.email,
+          phone:phone || userData?.Phone,
+          role:"user"
+        }
+
+        await axios.post("/api/auth/save",payload);
+
+        setSaving(false);
+        setSavedMsg(true);
+        setIsEditing(false);
+        setError("");
+
+    } catch (error: any) {
+        setSaving(false);
+        setError(
+            error.response?.data?.message || "Failed to save profile"
+        );
+        console.error(error);
+    }
+};
+
+  const handleCancelEdit = () => {
+    setName("");
+    setEmail("");
+    setPhone("");
+    setIsEditing(false);
   };
 
-  
+
 
   return (
     <div className="space-y-6">
@@ -316,17 +608,28 @@ function ProfileSection() {
         </div>
         <div>
           <h2 className="text-xl font-semibold text-foreground">{userData ? userData.name : "Username"}</h2>
-          <p className="text-sm text-muted-foreground">
+          {/* <p className="text-sm text-muted-foreground">
             Member since Jan 2025
-          </p>
+          </p> */}
         </div>
       </div>
 
       {/* Editable fields */}
       <div className="rounded-2xl border border-border bg-card p-6">
-        <h3 className="text-base font-semibold text-foreground mb-5">
-          Personal details
-        </h3>
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="text-base font-semibold text-foreground">
+            Personal details
+          </h3>
+          {!isEditing && (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-hover cursor-pointer"
+            >
+              <Pencil size={14} />
+              Edit profile
+            </button>
+          )}
+        </div>
 
         <div className="space-y-5">
           {/* Name */}
@@ -334,13 +637,17 @@ function ProfileSection() {
             <label className="text-sm text-muted-foreground mb-1.5 block">
               Full name
             </label>
-            <div className="flex items-center gap-2 h-12 rounded-xl border border-border bg-background px-4">
+            <div
+              className={`flex items-center gap-2 h-12 rounded-xl border border-border px-4 ${isEditing ? "bg-background" : "bg-muted"
+                }`}
+            >
               <User size={16} className="text-muted-foreground shrink-0" />
               <input
                 value={name}
                 placeholder={userData?.name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full bg-transparent text-sm text-foreground focus:outline-none"
+                disabled={!isEditing}
+                className="w-full bg-transparent text-sm text-foreground focus:outline-none disabled:cursor-not-allowed disabled:text-muted-foreground"
               />
             </div>
           </div>
@@ -351,7 +658,10 @@ function ProfileSection() {
               <label className="text-sm text-muted-foreground">Email</label>
               <VerifyBadge verified={emailVerified} />
             </div>
-            <div className="flex items-center gap-2 h-12 rounded-xl border border-border bg-background px-4">
+            <div
+              className={`flex items-center gap-2 h-12 rounded-xl border border-border px-4 ${isEditing ? "bg-background" : "bg-muted"
+                }`}
+            >
               <Mail size={16} className="text-muted-foreground shrink-0" />
               <input
                 value={email}
@@ -360,17 +670,18 @@ function ProfileSection() {
                   setEmail(e.target.value);
                   setEmailVerified(false);
                 }}
-                className="w-full bg-transparent text-sm text-foreground focus:outline-none"
+                disabled={!isEditing}
+                className="w-full bg-transparent text-sm text-foreground focus:outline-none disabled:cursor-not-allowed disabled:text-muted-foreground"
               />
-              {!emailVerified && (
+              {isEditing && !emailVerified && (
                 <button
                   onClick={() => {
                     handleSendotp("email")
                   }}
                   className="text-xs font-medium text-primary hover:text-primary-hover shrink-0 cursor-pointer"
                 >
-                   {loading ? <CircleDashed size={16} className="animate-spin" /> : "Verify"}
-                
+                  {loading ? <CircleDashed size={16} className="animate-spin" /> : "Verify"}
+
                 </button>
               )}
             </div>
@@ -384,20 +695,24 @@ function ProfileSection() {
               </label>
               <VerifyBadge verified={phoneVerified} />
             </div>
-            <div className="flex items-center gap-2 h-12 rounded-xl border border-border bg-background px-4">
+            <div
+              className={`flex items-center gap-2 h-12 rounded-xl border border-border px-4 ${isEditing ? "bg-background" : "bg-muted"
+                }`}
+            >
               <Phone size={16} className="text-muted-foreground shrink-0" />
               <input
                 value={phone}
-                placeholder={userData?.mobileNumber}
+                placeholder={userData?.Phone}
                 onChange={(e) => {
                   setPhone(e.target.value);
                   setPhoneVerified(false);
                 }}
-                className="w-full bg-transparent text-sm text-foreground focus:outline-none"
+                disabled={!isEditing}
+                className="w-full bg-transparent text-sm text-foreground focus:outline-none disabled:cursor-not-allowed disabled:text-muted-foreground"
               />
-              {!phoneVerified && (
+              {isEditing && !phoneVerified && (
                 <button
-            
+
                   onClick={() => {
                     handleSendotp("phone")
                   }}
@@ -411,21 +726,69 @@ function ProfileSection() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 mt-6">
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="h-11 px-6 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary-hover transition-colors flex items-center justify-center cursor-pointer disabled:opacity-60"
-          >
-            {saving ? (
-              <CircleDashed size={16} className="animate-spin" />
-            ) : (
-              "Save changes"
+        {isEditing && (
+          <div className="flex items-center gap-3 mt-6">
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="h-11 px-6 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary-hover transition-colors flex items-center justify-center cursor-pointer disabled:opacity-60"
+            >
+
+              {error && <p className="text-xl text-red-500">*{error}</p>}
+              {saving ? (
+                <CircleDashed size={16} className="animate-spin" />
+              ) : (
+                "Save changes"
+              )}
+            </button>
+            <button
+              onClick={handleCancelEdit}
+              disabled={saving}
+              className="h-11 px-6 rounded-xl border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors cursor-pointer disabled:opacity-60"
+            >
+              Cancel
+            </button>
+            {savedMsg && (
+              <span className="text-sm text-success">Profile updated</span>
             )}
-          </button>
-          {savedMsg && (
+          </div>
+        )}
+        {!isEditing && savedMsg && (
+          <div className="mt-6">
             <span className="text-sm text-success">Profile updated</span>
-          )}
+          </div>
+        )}
+      </div>
+
+      {/* Security */}
+      <div className="rounded-2xl border border-border bg-card p-6">
+        <h3 className="text-base font-semibold text-foreground mb-1">
+          Security
+        </h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Manage your account password
+        </p>
+        <div className="flex items-center justify-between rounded-xl border border-border bg-muted px-4 py-3">
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-lg bg-secondary flex items-center justify-center">
+              <Lock size={15} className="text-foreground" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-foreground">Password</p>
+              <p className="text-xs text-muted-foreground">
+                Last changed a while ago
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              setPasswordModalOpen(true)
+
+            }}
+            className="text-sm font-medium text-primary hover:text-primary-hover cursor-pointer"
+          >
+            Change password
+          </button>
         </div>
       </div>
 
@@ -448,6 +811,10 @@ function ProfileSection() {
           setPhoneVerified(true);
           setModal(null);
         }}
+      />
+      <ChangePasswordModal
+        open={passwordModalOpen}
+        onClose={() => setPasswordModalOpen(false)}
       />
     </div>
   );
@@ -533,6 +900,7 @@ function BookingList({ items }: { items: BookingItem[] }) {
 // Page
 
 export default function UserDashboardProfilePage() {
+  const router = useRouter();
   const [tab, setTab] = useState<TabKey>("profile");
 
   const upcoming = MOCK_BOOKINGS.filter((b) => b.status === "upcoming");
@@ -548,6 +916,13 @@ export default function UserDashboardProfilePage() {
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
         <div className="mb-8">
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground mb-4 cursor-pointer"
+          >
+            <ArrowLeft size={16} />
+            Back
+          </button>
           <h1 className="text-2xl font-bold text-foreground">
             My account
           </h1>

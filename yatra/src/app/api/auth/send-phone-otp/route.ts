@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
         const { userId, mobileNumber, role } = await req.json();
 
         
-            if (!userId ||!mobileNumber ||!role) {
+            if (!userId || !mobileNumber || !role) {
                   return NextResponse.json(
                     {
                       message: "Missing details",
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
         ).toString();
 
         account.mobileOtp = otp;
-        account.otpExpiresAt = new Date(
+        account.mobileOtpExpiresAt = new Date(
             Date.now() + 10 * 60 * 1000
         );
 
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
             otp
         );
 
-        console.log(`Mobile OTP: ${otp}`);
+        // console.log(`Mobile OTP: ${otp}`);
 
         return NextResponse.json(
             {

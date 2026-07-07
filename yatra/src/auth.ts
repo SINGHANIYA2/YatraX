@@ -33,11 +33,9 @@ export const {
             },
 
             async authorize(credentials) {
-                const email =
-                    credentials?.email as string;
+                const email = credentials?.email as string;
 
-                const password =
-                    credentials?.password as string;
+                const password = credentials?.password as string;
 
                 if (!email || !password) {
                     throw Error(
@@ -48,8 +46,7 @@ export const {
                 await connectDb();
 
                 // ADMIN
-                let account =
-                    await Admin.findOne({
+                let account = await Admin.findOne({
                         email,
                     });
 
@@ -103,10 +100,8 @@ export const {
         }),
 
         Google({
-            clientId:
-                process.env.AUTH_GOOGLE_ID!,
-            clientSecret:
-                process.env.AUTH_GOOGLE_SECRET!,
+            clientId: process.env.AUTH_GOOGLE_ID!,
+            clientSecret: process.env.AUTH_GOOGLE_SECRET!,
         }),
     ],
 
