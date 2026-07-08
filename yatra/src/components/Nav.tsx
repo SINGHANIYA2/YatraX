@@ -2,24 +2,21 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { Bike, Bus, Car, ChevronRight, LogOut, Menu, Truck, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import AuthModal from "./AuthModal";
 import { signOut, useSession } from "next-auth/react";
-// import router from "next/router"
-// import Router from "next/navigation"
 import { setUserData } from "@/redux/userSlice";
 import { setAdminData } from "@/redux/adminSlice";
 import { setPartnerData } from "@/redux/partnerSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from '../redux/store';
 import axios from "axios";
-import { useRouter } from "next/router";
+
 
 // eslint-disable-next-line react-hooks/rules-of-hooks
-// const router = useRouter()  
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -33,16 +30,18 @@ const navItems = [
 ];
 
 export default function Navbar() {
+  const router = useRouter()
   const pathname = usePathname();
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const [name,setName] = useState("")
+  const [name, setName] = useState("")
   const [authOpen, setAuthOpen] = useState(false)
   const [steps, setStep] = useState("")
   const [profileOpen, setProfileOpen] = useState(false)
   const [role, setRole] = useState("")
-  const [email,setEmail] = useState("")
-  const [password,setPassword] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [partnerStatus, setPartnerStatus] = useState(false)
 
   const { userData } = useSelector(
     (state: RootState) => state.user
@@ -64,9 +63,19 @@ export default function Navbar() {
   const sessionRole = session?.user?.role;
 
 
+
+  useEffect(() => {
+    if (status == "authenticated") {
+      const partner = userData?.partnerApplication
+      console.log("status : ", partner)
+      if (partner) setPartnerStatus(true)
+    }
+  })
+
+
   useEffect(() => {
     if (status === "authenticated") {
-      if(!name || !role){
+      if (!name || !role) {
         setRole(session?.user?.role)
         setName(session?.user?.name)
         setProfileOpen(true)
@@ -97,14 +106,7 @@ export default function Navbar() {
     try {
       setStep("login")
       setAuthOpen(true);
-      // await axios.post("api/auth/login",{
-      //   params:{
-      //     email,
-      //     password
-      //   }
-      // })
       setProfileOpen(true)
-      // console.log("Logged in successfully")
 
     } catch (error) {
       console.log(error)
@@ -218,7 +220,7 @@ export default function Navbar() {
                     className="h-11 w-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg border border-primary/30"
                   >
                     {name.charAt(0)?.toUpperCase()}
-           
+
                   </button>
 
                   <AnimatePresence>
@@ -239,7 +241,7 @@ export default function Navbar() {
                             <div className="flex items-center gap-3">
                               <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-xl">
                                 {name.charAt(0)?.toUpperCase()}
-                               
+
                               </div>
 
                               <div>
@@ -249,7 +251,7 @@ export default function Navbar() {
 
                                 <p className="text-xs text-muted-foreground uppercase">
                                   {role.toLowerCase()}
-                                  
+
                                 </p>
                               </div>
                             </div>
@@ -266,12 +268,29 @@ export default function Navbar() {
                                   Dashboard
                                 </Link>
 
-                                <Link
-                                  href="/partner/onboarding"
-                                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
-                                >
-                                  Become Partner
-                                </Link>
+                                {
+                                  !partnerStatus && (
+                                    <Link
+                                      href="/partner/onboarding"
+                                      className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
+                                    >
+                                      Become Partner
+                                    </Link>
+
+                                  )
+                                }
+
+                                {
+                                  partnerStatus && (
+                                    <Link
+                                      href="/user/applicationstatus"
+                                      className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
+                                    >
+                                      Application status
+                                    </Link>
+                                  )
+                                }
+
                               </>
                             )}
 
@@ -404,23 +423,8 @@ export default function Navbar() {
                       onClick={() => {
                         setProfileOpen(false)
                       }}
-                      href = "/partnerpage"
+                      href="/partnerpage"
                     >
-
-                      <div className='flex space-x-2'>
-                        {/* <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                          <Bike size={14} />
-                        </div>
-
-                        <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                          <Car size={14} />
-                        </div>
-
-                        <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                          <Truck size={14} />
-                        </div> */}
-
-                      </div>
                       Partner Dashboard
                       <ChevronRight size={60} className='ml-auto' />
                     </Link>
@@ -430,31 +434,39 @@ export default function Navbar() {
                 {
                   role == "user" &&
                   (
-                    <div className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
-                      onClick={() => {
-                        setProfileOpen(false)
-                        router.push("/partner/onboarding")
-                      }}
-                    >
+                    <>
 
-                      <div className='flex space-x-2'>
-                        {/* <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                          <Bike size={14} />
-                        </div>
+                    {
+                      !partnerStatus && (
+                        <button className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
+                          onClick={() => {
+                            setProfileOpen(false)
+                            router.push("/partner/onboarding")
+                          }}
+                          >
+                          Become a Partner
+                          <ChevronRight size={60} className='ml-auto' />
+                        </button>
 
-                        <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                          <Car size={14} />
-                        </div>
+                      )
+                    }
 
-                        <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                          <Truck size={14} />
-                        </div> */}
+                      {
+                        partnerStatus && (
+                        <button className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
+                          onClick={() => {
+                            setProfileOpen(false)
+                            router.push("/user/applicationstatus")
+                          }}
+                          >
+                          Application Status
+                          <ChevronRight size={60} className='ml-auto' />
+                        </button>
 
-                      </div>
-                      Become a Partner
-                      <ChevronRight size={60} className='ml-auto' />
-                    </div>
+                        )
+                      }
 
+                      </>
                   )}
 
 

@@ -53,7 +53,7 @@ import { setVehicleData } from "@/redux/vehicleSlice"
 // Types
 
 
-type TabKey = "profile" | "vehicle" | "earnings";
+type TabKey = "profile" | "vehicle" | "trips" | "bookings" | "earnings";
 
 interface PayoutItem {
   id: string;
@@ -767,6 +767,246 @@ function VehicleTab() {
   );
 }
 
+// --- Add this component into page.tsx, alongside the other tabs ---
+
+function BookingHistoryTab() {
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        setLoading(true);
+        setError("");
+        const { data } = await axios.get("/api/booking/history");
+        setBookings(data.bookings ?? []);
+      } catch (err: any) {
+        setError(err?.response?.data?.message ?? "Failed to load booking history");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHistory();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <CircleDashed size={22} className="animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {error && (
+        <div className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {error}
+        </div>
+      )}
+
+      <div className="rounded-2xl border border-border bg-card p-6">
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="text-base font-semibold text-foreground">
+            Booking history
+          </h3>
+          <span className="text-xs text-muted-foreground bg-secondary/60 px-2.5 py-1 rounded-full">
+            Read-only — tickets are issued by YatraX admin
+          </span>
+        </div>
+
+        {bookings.length === 0 && (
+          <p className="text-sm text-muted-foreground py-6 text-center">
+            No bookings yet.
+          </p>
+        )}
+
+        <div className="space-y-3">
+          {bookings.map((b) => (
+            <div
+              key={b.id}
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-border px-4 py-3"
+            >
+              <div>
+                <p className="text-sm font-medium text-foreground">
+                  {b.boardStopName} → {b.alightStopName}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {b.seatsBooked} passenger{b.seatsBooked !== 1 ? "s" : ""} ·{" "}
+                  {b.departureDateTime
+                    ? new Date(b.departureDateTime).toLocaleString("en-IN")
+                    : new Date(b.createdAt).toLocaleDateString("en-IN")}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <p className="text-sm font-semibold text-foreground">
+                  ₹{b.totalFare?.toLocaleString()}
+                </p>
+
+                <span
+                  className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${
+                    b.paymentStatus === "paid"
+                      ? "bg-success/10 text-success"
+                      : b.paymentStatus === "pending"
+                      ? "bg-warning/10 text-warning"
+                      : "bg-destructive/10 text-destructive"
+                  }`}
+                >
+                  {b.paymentStatus}
+                </span>
+
+                {b.bookingStatus === "cancelled" && (
+                  <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-secondary text-muted-foreground">
+                    Cancelled
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+function TripsTab() {
+  const [trips, setTrips] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [actingOn, setActingOn] = useState<string | null>(null); // tripId currently being started/completed
+
+  const fetchTrips = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const { data } = await axios.get("/api/trip/mine");
+      setTrips(data.trips ?? []);
+    } catch (err: any) {
+      setError(err?.response?.data?.message ?? "Failed to load today's trips");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTrips();
+  }, []);
+
+  const handleAction = async (tripId: string, action: "start" | "complete") => {
+    try {
+      setActingOn(tripId);
+      const endpoint =
+        action === "complete"
+          ? `/api/trip/${tripId}/complete-and-reverse` // marks completed AND spins up the return leg
+          : `/api/trip/${tripId}/start`;
+      await axios.post(endpoint);
+      await fetchTrips(); // refresh statuses after the action — the new return trip will now show up too
+    } catch (err: any) {
+      setError(err?.response?.data?.message ?? `Failed to ${action} trip`);
+    } finally {
+      setActingOn(null);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <CircleDashed size={22} className="animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {error && (
+        <div className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {error}
+        </div>
+      )}
+
+      <div className="rounded-2xl border border-border bg-card p-6">
+        <h3 className="text-base font-semibold text-foreground mb-5">
+          Today&apos;s trips
+        </h3>
+
+        {trips.length === 0 && (
+          <p className="text-sm text-muted-foreground py-6 text-center">
+            No trips scheduled for today.
+          </p>
+        )}
+
+        <div className="space-y-3">
+          {trips.map((trip) => (
+            <div
+              key={trip.tripId}
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-border px-4 py-3"
+            >
+              <div>
+                <p className="text-sm font-medium text-foreground">
+                  {trip.stops[0]} → {trip.stops[trip.stops.length - 1]}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Departs{" "}
+                  {new Date(trip.departureDateTime).toLocaleTimeString("en-IN", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}{" "}
+                  · {trip.seatsBooked}/{trip.seatingCapacity} seats booked
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <span
+                  className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${
+                    trip.status === "running"
+                      ? "bg-success/10 text-success"
+                      : "bg-secondary text-muted-foreground"
+                  }`}
+                >
+                  {trip.status}
+                </span>
+
+                {trip.status === "scheduled" && (
+                  <button
+                    onClick={() => handleAction(trip.tripId, "start")}
+                    disabled={actingOn === trip.tripId}
+                    className="h-9 px-4 rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover transition-colors text-sm font-medium cursor-pointer disabled:opacity-60"
+                  >
+                    {actingOn === trip.tripId ? (
+                      <CircleDashed size={14} className="animate-spin" />
+                    ) : (
+                      "Start trip"
+                    )}
+                  </button>
+                )}
+
+                {trip.status === "running" && (
+                  <button
+                    onClick={() => handleAction(trip.tripId, "complete")}
+                    disabled={actingOn === trip.tripId}
+                    className="h-9 px-4 rounded-xl border border-border text-foreground hover:bg-hover transition-colors text-sm font-medium cursor-pointer disabled:opacity-60"
+                    title="Marks this trip complete and immediately starts the return trip on the reversed route"
+                  >
+                    {actingOn === trip.tripId ? (
+                      <CircleDashed size={14} className="animate-spin" />
+                    ) : (
+                      "Complete & start return"
+                    )}
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ---------------------------------------------------------------
 // Earnings tab
 // ---------------------------------------------------------------
@@ -833,10 +1073,13 @@ export default function page() {
   const [statusError, setStatusError] = useState("");
 
   const tabs: { key: TabKey; label: string }[] = [
-    { key: "profile", label: "Profile" },
-    { key: "vehicle", label: "Vehicle" },
-    { key: "earnings", label: "Earnings" },
-  ];
+       { key: "profile", label: "Profile" },
+       { key: "vehicle", label: "Vehicle" },
+       { key: "trips", label: "Trips" },
+       { key: "bookings", label: "Bookings" },
+       { key: "earnings", label: "Earnings" },
+     ];
+
 
   const handleOnline = async (nextStatus: boolean) => {
     const partnerId = session?.user?.id;
@@ -937,9 +1180,12 @@ export default function page() {
           ))}
         </div>
 
-        {tab === "profile" && <ProfileTab />}
-        {tab === "vehicle" && <VehicleTab />}
-        {tab === "earnings" && <EarningsTab />}
+      {tab === "profile" && <ProfileTab />}
+      {tab === "vehicle" && <VehicleTab />}
+      {tab === "trips" && <TripsTab />}
+      {tab === "bookings" && <BookingHistoryTab />}
+      {tab === "earnings" && <EarningsTab />}
+
       </div>
     </div>
   );

@@ -131,7 +131,7 @@ export default function DocumentsPage() {
             );
 
             console.log("document : ",data)
-
+            setLoading(false)
             router.push("/partner/onboarding/bank-details");
         } catch (error: any) {
             console.log(error);
@@ -140,6 +140,7 @@ export default function DocumentsPage() {
                 error?.response?.data?.message ||
                 "Failed to upload documents"
             );
+            setLoading(false)
         } finally {
             setLoading(false);
         }

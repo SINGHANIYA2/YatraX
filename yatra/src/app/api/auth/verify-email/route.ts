@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
 
         const { userId, otp, role } = await req.json();
        
-        if (!userId || !otp || !role) {
+        if (!userId || !otp || !role){
             return NextResponse.json(
                 {
                     message: "Missing details",

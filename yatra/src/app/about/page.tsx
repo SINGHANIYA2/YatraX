@@ -11,10 +11,11 @@ import {
   Target,
   Rocket,
   ArrowRight,
+  ChevronLeft,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function AboutPage(){
+export default function AboutPage() {
   const stats = [
     {
       title: "10K+",
@@ -64,6 +65,13 @@ export default function AboutPage(){
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,var(--border),transparent_60%)]" />
 
       <div className="relative z-10">
+      <button
+        onClick={() => router.back()}
+        aria-label="Go back"
+        className="h-10 w-10 shrink-0 cursor-pointer mt-4 ml-3.5 absolute rounded-full border border-border flex items-center justify-center hover:bg-hover transition-colors cursor-pointer"
+      >
+        <ChevronLeft size={18} className="text-foreground" />
+      </button>
 
         {/* Hero */}
         <section className="max-w-7xl mx-auto px-6 py-24">

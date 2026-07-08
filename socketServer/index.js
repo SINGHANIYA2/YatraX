@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import { Server } from "socket.io";
 import Vehicle from "./models/vehicle.js";
+import Trip from "./models/trip.js";
 
 dotenv.config();
 
@@ -222,4 +223,67 @@ server.listen(port, async () => {
   console.log(
     `🚀 Socket server running on port ${port}`
   );
+});
+
+ 
+
+const activeTripByVehicle = new Map();
+
+io.on("connection", (socket) => {
+  socket.on("identity", async ({ vehicleId }) => {
+    try {
+      if (!vehicleId || activeTripByVehicle.has(vehicleId)) return;
+
+      const runningTrip = await Trip.findOne({
+        vehicleId,
+        status: "running",
+      }).select("_id");
+
+      if (runningTrip) {
+        activeTripByVehicle.set(vehicleId, runningTrip._id.toString());
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+
+  socket.on("partner:location", (data) => {
+    const { vehicleId } = data;
+    const tripId = activeTripByVehicle.get(vehicleId) ?? null;
+
+    io.to(`vehicle:${vehicleId}`).emit("location:update:trip", {
+      ...data,
+      tripId,
+    });
+  });
+});
+
+
+app.post("/internal/trip-status", async (req, res) => {
+  try {
+    const secret = req.headers["x-internal-secret"];
+    if (secret !== process.env.INTERNAL_SECRET) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    const { vehicleId, tripId, status } = req.body;
+
+    if (!vehicleId || !status) {
+      return res.status(400).json({ success: false, message: "vehicleId and status required" });
+    }
+
+    if (status === "running") {
+      activeTripByVehicle.set(vehicleId, tripId);
+    } else if (status === "completed" || status === "cancelled") {
+      activeTripByVehicle.delete(vehicleId);
+    }
+
+    io.to(`vehicle:${vehicleId}`).emit("trip:status", { vehicleId, tripId, status });
+
+    return res.status(200).json({ success: true });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ success: false, message: "Failed to relay trip status" });
+  }
 });

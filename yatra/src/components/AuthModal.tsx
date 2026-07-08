@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useEffectEvent, useState } from 'react'
 import { AnimatePresence, motion } from "motion/react"
-import { CircleDashed, Lock, Mail, Phone, User, X } from 'lucide-react'
+import { CircleDashed, Eye, EyeOff, Lock, Mail, Phone, User, X } from 'lucide-react'
 import Image from 'next/image'
 import { signIn, useSession } from 'next-auth/react'
 import axios from 'axios'
@@ -15,7 +15,7 @@ type propType = {
     steps: string
 }
 
-type stepType = "login" | "otp" | "signup" | "" | "adminDetail"
+type stepType = "login" | "otp" | "signup" | "" | "adminDetail" | "forgetPassword" | "sendOtp" | "changepassword" | "Verify"
 
 function AuthModal({ open, steps, onClose }: propType) {
     const [step, setStep] = useState<stepType>("")
@@ -31,6 +31,15 @@ function AuthModal({ open, steps, onClose }: propType) {
     const [resendTimer, setResendTimer] = useState(60)
     const [resending, setResending] = useState(false)
     const { data: session, status } = useSession();
+
+    const [newPassword, setNewPassword] = useState("")
+    const [confirmPassword, setConfirmPassword] = useState("")
+
+    const [showPassword, setShowPassword] = useState(false)
+    const [showSignupPassword, setShowSignupPassword] = useState(false)
+    const [showNewPassword, setShowNewPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
 
     useEffect(() => {
         if (status === "authenticated") {
@@ -74,7 +83,7 @@ function AuthModal({ open, steps, onClose }: propType) {
 
     const canSubmit = !!(adminData.accountHolderName && adminData.registrationNumber && adminData.accountNumber && adminData.address && adminData.alternatePhone && adminData.bankName &&
         adminData.city && adminData.gstNumber && adminData.ifscCode && adminData.organizationName && adminData.organizationType &&
-        adminData.panNumber && adminData.pincode && adminData.state && adminData.upiId && adminData.address 
+        adminData.panNumber && adminData.pincode && adminData.state && adminData.upiId && adminData.address
     )
 
     React.useEffect(() => {
@@ -101,8 +110,110 @@ function AuthModal({ open, steps, onClose }: propType) {
         }
     }, [step]);
 
+
+    const handleSendOtp = async () => {
+        try {
+            setLoading(true)
+            console.log(steps)
+            if (!email) {
+                setErr("Enter email id to reset password")
+                setLoading(false) // was setLoading(true) — bug, leaves it stuck loading
+                return
+            }
+
+            const { data } = await axios.post("/api/auth/send-forget-otp", {
+                email
+            })
+
+            if (!data?.success) {
+                setErr("Try again")
+                return null
+            }
+            console.log(steps)
+            setStep("Verify")
+            console.log(steps)
+            setLoading(false)
+        } catch (error) {
+            setLoading(false)
+            console.log(error)
+        }
+    }
+
+    const handleVerifyForgetOtp = async () => {
+        try {
+            setLoading(true)
+            const otpValue = emailOtp.join("")
+            if (otpValue.length < 6) {
+                setErr("Invalid otp")
+                setLoading(false)
+                return
+            }
+
+            const { data } = await axios.post("/api/auth/verify-forget-otp", {
+                email,
+                otp: otpValue   // send joined string, not the array
+            })
+
+            if (!data?.success) {
+                setErr("Verification failed")
+                return
+            }
+            setStep("changepassword")
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleChangePassword = async () => {
+        try {
+            setErr("")
+
+            if (!newPassword || !confirmPassword) {
+                setErr("Enter and confirm your new password")
+                return
+            }
+
+            if (newPassword.length < 8) {
+                setErr("Password must be at least 6 characters")
+                return
+            }
+
+            if (newPassword !== confirmPassword) {
+                setErr("Passwords do not match")
+                return
+            }
+
+            setLoading(true)
+
+            const { data } = await axios.post("/api/auth/set-password", {
+                email,
+                password: newPassword
+            })
+
+            if (!data?.success) {
+                setErr(data?.message ?? "Failed to change password")
+                return
+            }
+
+            setNewPassword("")
+            setConfirmPassword("")
+            setStep("login")
+        } catch (error: any) {
+            setErr(error?.response?.data?.message ?? error?.message ?? "Something went wrong")
+        } finally {
+            setLoading(false)
+        }
+    }
+
+
     const handleSignUp = async () => {
         setLoading(true)
+        if (password.length < 8) {
+            setErr("Password must have minimum 8 character")
+            return
+        }
         try {
             const { data } = await axios.post("/api/auth/register", {
                 name, email, mobileNumber, password, role
@@ -188,8 +299,8 @@ function AuthModal({ open, steps, onClose }: propType) {
         // Move to previous box if current is already empty
         if (index > 0) {
             const prevId = type === "email"
-                    ? `emailOtp-${index - 1}`
-                    : `mobileOtp-${index - 1}`;
+                ? `emailOtp-${index - 1}`
+                : `mobileOtp-${index - 1}`;
 
             (
                 document.getElementById(prevId) as HTMLInputElement
@@ -222,7 +333,7 @@ function AuthModal({ open, steps, onClose }: propType) {
                 return setErr("PAN number is required");
             }
 
-            if (!panRegex.test(adminData.panNumber.trim().toUpperCase())){
+            if (!panRegex.test(adminData.panNumber.trim().toUpperCase())) {
                 return setErr("Invalid PAN number");
             }
 
@@ -365,33 +476,33 @@ function AuthModal({ open, steps, onClose }: propType) {
         }
     }
 
-useEffect(() => {
-    if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(adminData.ifscCode)) return;
+    useEffect(() => {
+        if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(adminData.ifscCode)) return;
 
-    let cancelled = false;
+        let cancelled = false;
 
-    const fetchBankDetails = async () => {
-        try {
-            const { data } = await axios.get(`https://ifsc.razorpay.com/${adminData.ifscCode}`);
-            if (cancelled) return;
+        const fetchBankDetails = async () => {
+            try {
+                const { data } = await axios.get(`https://ifsc.razorpay.com/${adminData.ifscCode}`);
+                if (cancelled) return;
 
-            setAdminData((prev) => ({
-                ...prev,
-                bankName: data.BANK,
-                city: prev.city || data.CITY,
-                state: prev.state || data.STATE,
-            }));
-        } catch {
-            if (!cancelled) setErr("Invalid IFSC code");
-        }
-    };
+                setAdminData((prev) => ({
+                    ...prev,
+                    bankName: data.BANK,
+                    city: prev.city || data.CITY,
+                    state: prev.state || data.STATE,
+                }));
+            } catch {
+                if (!cancelled) setErr("Invalid IFSC code");
+            }
+        };
 
-    fetchBankDetails();
+        fetchBankDetails();
 
-    return () => {
-        cancelled = true;
-    };
-}, [adminData.ifscCode])
+        return () => {
+            cancelled = true;
+        };
+    }, [adminData.ifscCode])
 
     const handleVerification = async () => {
         setLoading(true);
@@ -414,7 +525,7 @@ useEffect(() => {
 
             setEmailOtp(["", "", "", "", "", ""]);
             setMobileOtp(["", "", "", "", "", ""]);
-            setStep("adminDetail");
+            role === "admin" ? setStep("adminDetail") : setStep("");
             // setAdminDetail(true)
         } catch (error: any) {
             console.error(error);
@@ -428,6 +539,10 @@ useEffect(() => {
             setLoading(false);
         }
     };
+
+
+
+
     return (
         <AnimatePresence>
             {open && step != null && (
@@ -456,6 +571,7 @@ useEffect(() => {
                                 if (!(role === "admin" && !canSubmit)) {
                                     onClose();
                                 }
+                                setStep("")
                             }} >
                             <X size={20} />
                         </div>
@@ -519,10 +635,24 @@ useEffect(() => {
                                             </div>
                                             <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
                                                 <Lock size={18} className='text-muted-foreground' />
-                                                <input type="password" placeholder='Password' className='flex-1 outline-none bg-transparent text-sm'
+                                                <input type={showPassword ? "text" : "password"} placeholder='Password' className='flex-1 outline-none bg-transparent text-sm'
                                                     onChange={(e) => { setPassword(e.target.value) }} value={password}
                                                 />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowPassword((s) => !s)}
+                                                    className='text-muted-foreground hover:text-foreground transition'
+                                                    tabIndex={-1}
+                                                >
+                                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                </button>
+
                                             </div>
+                                            <button className='flex items-center gap-3 border border-border/10 bg-accent text-xs rounded-xl px-4 py-3 ml-1'
+                                                onClick={() => setStep("forgetPassword")}
+                                            >
+                                                Forget Password
+                                            </button>
 
                                             {err && <p className='text-red-500'>*{err}</p>}
                                             <button className='w-full h-11 rounded-xl bg-foreground text-background font-semibold hover:bg-card hover:text-foreground'
@@ -532,6 +662,8 @@ useEffect(() => {
                                                     <CircleDashed size={18} className='animate-spin ml-45 text-background' />}
 
                                             </button>
+
+
 
 
                                         </div>
@@ -547,6 +679,118 @@ useEffect(() => {
                                                 Sign up
                                             </span>
                                         </p>
+                                    </motion.div>
+                                )
+                            }
+
+                            {
+                                (step === "forgetPassword" || step === "Verify") && (
+                                    <motion.div
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                    >
+                                        <div className='mt-5 space-y-4'>
+
+                                            <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
+                                                <Mail size={18} className='text-muted-foreground' />
+                                                <input type="email" placeholder='Email' className='flex-1 outline-none bg-transparent text-sm'
+                                                    onChange={(e) => { setEmail(e.target.value) }} value={email}
+                                                />
+                                            </div>
+
+                                            {
+                                                step == "Verify" && (
+                                                    <div className="mt-2 flex justify-center gap-2">
+                                                        {emailOtp.map((digit, i) => (
+                                                            <input
+                                                                key={i}
+                                                                id={`emailOtp-${i}`}
+                                                                value={digit}
+                                                                onKeyDown={(e) => handleOtpKeyDown(e, i, "email")}
+                                                                onChange={(e) => handleChangeEmailOtp(i, e.target.value)}
+                                                                className="w-12 h-12 rounded-xl text-center bg-accent border border-border/10 text-foreground outline-none focus:border-primary"
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                )
+                                            }
+
+                                            {err && <p className='text-destructive'>*{err}</p>}
+
+                                            <button
+                                                className='w-full h-11 rounded-xl bg-primary text-primary-foreground font-semibold transition flex justify-center items-center cursor-pointer hover:bg-primary-hover'
+                                                onClick={step === "Verify" ? handleVerifyForgetOtp : handleSendOtp}
+                                                disabled={loading}
+                                            >
+                                                {loading ? (
+                                                    <CircleDashed size={18} className='animate-spin' />
+                                                ) : step === "Verify" ? "Verify" : "Send Otp"}
+                                            </button>
+
+                                        </div>
+                                    </motion.div>
+                                )
+                            }
+
+                            {
+                                step === "changepassword" && (
+                                    <motion.div
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                    >
+                                        <h1 className='text-xl font-semibold'>Set new password</h1>
+
+                                        <div className='mt-5 space-y-4'>
+                                            <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
+                                                <Lock size={18} className='text-muted-foreground' />
+                                                <input
+                                                    type={showNewPassword ? "text" : "password"}
+                                                    placeholder='New Password'
+                                                    className='flex-1 outline-none bg-transparent text-sm'
+                                                    onChange={(e) => setNewPassword(e.target.value)}
+                                                    value={newPassword}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowNewPassword((s) => !s)}
+                                                    className='text-muted-foreground hover:text-foreground transition'
+                                                    tabIndex={-1}
+                                                >
+                                                    {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                </button>
+                                            </div>
+
+                                            <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
+                                                <Lock size={18} className='text-muted-foreground' />
+                                                <input
+                                                    type={showConfirmPassword ? "text" : "password"}
+                                                    placeholder='Confirm Password'
+                                                    className='flex-1 outline-none bg-transparent text-sm'
+                                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                                    value={confirmPassword}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowConfirmPassword((s) => !s)}
+                                                    className='text-muted-foreground hover:text-foreground transition'
+                                                    tabIndex={-1}
+                                                >
+                                                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                </button>
+                                            </div>
+
+                                            {err && <p className='text-destructive'>*{err}</p>}
+
+                                            <button
+                                                className='w-full h-11 rounded-xl bg-primary text-primary-foreground font-semibold
+                                    transition flex justify-center items-center cursor-pointer hover:bg-primary-hover'
+                                                onClick={handleChangePassword}
+                                                disabled={loading}
+                                            >
+                                                {!loading ? "Change Password" :
+                                                    <CircleDashed size={18} className='animate-spin' />}
+                                            </button>
+                                        </div>
                                     </motion.div>
                                 )
                             }
@@ -585,9 +829,17 @@ useEffect(() => {
 
                                             <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
                                                 <Lock size={18} className='text-muted-foreground' />
-                                                <input type="password" placeholder='Password' className='flex-1 outline-none bg-transparent text-sm'
+                                                <input type={showSignupPassword ? "text" : "password"} placeholder='Password' className='flex-1 outline-none bg-transparent text-sm'
                                                     onChange={(e) => { setPassword(e.target.value) }} value={password}
                                                 />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowSignupPassword((s) => !s)}
+                                                    className='text-muted-foreground hover:text-foreground transition'
+                                                    tabIndex={-1}
+                                                >
+                                                    {showSignupPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                </button>
                                             </div>
                                             <div className='flex items-center gap-3 border border-border/10 bg-accent rounded-xl px-4 py-3'>
                                                 <GrUserAdmin size={18} className='text-muted-foreground' />

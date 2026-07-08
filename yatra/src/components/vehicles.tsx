@@ -1,4 +1,8 @@
-import {Bus,Car,Truck} from "lucide-react";
+import {
+    Bus,
+    Car,
+    Truck,
+} from "lucide-react";
 
 const vehicles = [
     {
@@ -13,7 +17,6 @@ const vehicles = [
         arrivalTime: "5:30 PM",
         availableSeats: 24,
         price: 180,
-        distanceKm: 132,
     },
     {
         id: 2,
@@ -27,7 +30,6 @@ const vehicles = [
         arrivalTime: "5:00 PM",
         availableSeats: 4,
         price: 120,
-        distanceKm: 132,
     },
     {
         id: 3,
@@ -41,7 +43,6 @@ const vehicles = [
         arrivalTime: "5:45 PM",
         availableSeats: 8,
         price: 250,
-        distanceKm: 132,
     },
     {
         id: 4,
@@ -55,7 +56,6 @@ const vehicles = [
         arrivalTime: "4:45 PM",
         availableSeats: 3,
         price: 80,
-        distanceKm: 132,
     },
 ];
 

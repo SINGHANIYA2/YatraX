@@ -565,7 +565,7 @@ function ProfileSection() {
           userId:id,
           name: name || userData?.name,
           email :email || userData?.email,
-          phone:phone || userData?.Phone,
+          phone:phone || userData?.phone,
           role:"user"
         }
 
@@ -702,7 +702,7 @@ function ProfileSection() {
               <Phone size={16} className="text-muted-foreground shrink-0" />
               <input
                 value={phone}
-                placeholder={userData?.Phone}
+                placeholder={userData?.phone}
                 onChange={(e) => {
                   setPhone(e.target.value);
                   setPhoneVerified(false);

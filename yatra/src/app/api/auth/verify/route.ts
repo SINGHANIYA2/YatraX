@@ -22,7 +22,7 @@ export async function POST(req: Request) {
 
     const user = await User.findOne({
       email,
-      mobileNumber,
+      phone:mobileNumber,
     });
 
     if (!user) {
@@ -117,9 +117,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        message:
-          error.message ||
-          "Something went wrong",
+        message: error.message || "Something went wrong",
       },
       {
         status: 500,

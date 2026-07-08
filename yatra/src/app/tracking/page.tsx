@@ -46,6 +46,10 @@ export default function page() {
     availableSeats?: number;
     seatingCapacity?: number;
 
+    endPoints: [
+      [number, number], // Source [lat, lng]
+      [number, number]  // Destination [lat, lng]
+    ];
     assignedPartnerId?: {
       _id: string;
       name: string;
@@ -86,7 +90,7 @@ export default function page() {
   const [coordinates, setCoordinates] = useState<[number, number][]>([])
   const [hasSearched, setHasSearched] = useState(false);
   const router = useRouter();
-  const [searchedBynumber, setSearchedByNumber] = useState(false)
+  const [searchedByNumber, setSearchedByNumber] = useState(false)
 
   const canSearch = !!((source && destination && srcLat !== null && srcLong !== null && destLat !== null && destLong !== null)
     || (vehicleNumber.length >= 9 && vehicleNumber.length <= 12));
@@ -168,19 +172,31 @@ export default function page() {
       console.log(data)
 
       if (data.vehicles.length > 0) {
-        const coords = data.vehicles[0].routeId.locations.map((loc: any) => [
+        const vehicle = data.vehicles[0];
+
+        const coords = vehicle.routeId.locations.map((loc: any) => [
           loc.latitude,
           loc.longitude,
-        ]
-        );
+        ]);
 
         setCoordinates(coords);
 
-        setVehicleId(data.vehicles[0]._id);
+        setVehicleId(vehicle._id);
+        setVehicleNumber(vehicle.vehicleNumber);
 
-        setVehicleNumber(data.vehicles[0].vehicleNumber);
+        // Source & Destination from endPoints
+        if (
+          vehicle.endPoints &&
+          vehicle.endPoints.length === 2
+        ) {
+          setSrcLat(vehicle.endPoints[0][0]);
+          setSrcLong(vehicle.endPoints[0][1]);
 
-        setLoading(false)
+          setDestLat(vehicle.endPoints[1][0]);
+          setDestLong(vehicle.endPoints[1][1]);
+        }
+
+        setLoading(false);
       }
 
     } catch (error) {
@@ -612,8 +628,10 @@ export default function page() {
             </h2>
 
             <div className="h-[650px] rounded-2xl overflow-hidden bg-secondary">
-              {vehicleId ? (
+              {vehicleId && !searchedByNumber ? (
+
                 <SearchMap
+                
                   source={source}
                   destination={destination}
                   coordinates={coordinates}
@@ -623,6 +641,7 @@ export default function page() {
                   destLat={destLat}
                   destLong={destLong}
                   vehicleId={vehicleId}
+                
                 />
               ) : (
                 <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
@@ -632,7 +651,13 @@ export default function page() {
 
                   <p>Select a vehicle to start tracking.</p>
                 </div>
-              )}
+              )
+              }
+              {/* {
+                vehicleId && searchedByNumber && (
+
+                )
+              } */}
             </div>
           </div>
         </div>

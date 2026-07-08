@@ -42,7 +42,12 @@ export interface IVehicle extends Document {
   speed: number;
 
   heading: number;
-  endPoints : [[number]]
+
+  // Fixed pickup/drop points for this vehicle's route, e.g.
+  // [[srcLat, srcLng], [destLat, destLng]]
+  // NOTE: was `[[number]]` (tuple-of-1-tuples) — that's a different,
+  // incorrect type. This is what you actually want.
+  endPoints: [number, number][];
 
   lastLocationUpdate: Date | null;
 
@@ -134,9 +139,9 @@ const VehicleSchema = new Schema({
     index: true,
   },
   endPoints: {
-  type: [[Number]],
-  default: [],
-},
+    type: [[Number]],
+    default: [],
+  },
   currentLatitude: {
     type: Number,
     default: null,
@@ -193,6 +198,6 @@ const VehicleSchema = new Schema({
   }
 );
 
-const Vehicle = mongoose.models.Vehicle || mongoose.model("Vehicle", VehicleSchema);
+const Vehicle = mongoose.models.Vehicle || mongoose.model<IVehicle>("Vehicle", VehicleSchema);
 
 export default Vehicle;
