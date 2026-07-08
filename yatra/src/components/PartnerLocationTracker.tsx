@@ -9,16 +9,10 @@ import { getSocket } from '@/lib/socket';
 export default function PartnerLocationTracker() {
     const { data: session, status } = useSession();
 
-    const { partnerData } = useSelector(
-        (state: RootState) => state.partner
-    );
+    const { partnerData } = useSelector((state: RootState) => state.partner);
 
     useEffect(() => {
-        if (
-            status !== 'authenticated' ||
-            session?.user?.role !== 'partner' ||
-            !partnerData?.assignedVehicleId
-        ) {
+        if (status !== 'authenticated' ||session?.user?.role !== 'partner' || !partnerData?.assignedVehicleId) {
             return;
         }
 
@@ -44,7 +38,9 @@ export default function PartnerLocationTracker() {
                 });
             },
             (error) => {
-                console.error(error);
+                // console.error("Code:", error.code);
+                // console.error("Message:", error.message);
+                
             },
             {
                 enableHighAccuracy: true,

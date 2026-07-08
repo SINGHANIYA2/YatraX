@@ -1,9 +1,6 @@
-import mongoose, {
-    Schema,
-} from "mongoose";
+import mongoose, { Schema,} from "mongoose";
 
-const RouteSchema =
-    new Schema(
+const RouteSchema = new Schema(
         {
             geometry: [
                 {
@@ -57,9 +54,5 @@ const RouteSchema =
         }
     );
 
-export default
-    mongoose.models.Route ||
-    mongoose.model(
-        "Route",
-        RouteSchema
-    );
+const Route =  mongoose.models.Route || mongoose.model("Route",RouteSchema);
+export default Route

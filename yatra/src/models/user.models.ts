@@ -1,6 +1,7 @@
 import mongoose, { Mongoose } from "mongoose"
 import partnerApplicationModels from '@/models/partnerApplication.models';
 import PartnerApplication from './partnerApplication.models';
+import { Phone } from 'lucide-react';
 
 
 export interface IUser extends Document {
@@ -19,11 +20,14 @@ export interface IUser extends Document {
     emailOtp: string
     mobileOtp: string
     otpExpiresAt?: Date
+    mobileOtpExpiresAt?: Date
+    emailOtpExpiresAt?: Date
     mobilfied?: boolean;
     partnereNumber?: string
     isVeriApplication?: mongoose.Types.ObjectId;
     partnerStatus?: string
     mobileNumber: string
+    phone: string
     isVerified: boolean
     partnerApplication: mongoose.Types.ObjectId | null
 }
@@ -65,6 +69,14 @@ const userSchema = new mongoose.Schema<IUser>({
         type: Date
         // default:null
     },
+    mobileOtpExpiresAt: {
+        type: Date
+        // default:null
+    },
+    emailOtpExpiresAt: {
+        type: Date
+        // default:null
+    },
 
     emailVerificationStatus: {
         type: Boolean,
@@ -76,7 +88,12 @@ const userSchema = new mongoose.Schema<IUser>({
     },
     mobileNumber: {
         type: String
-    }, partnerApplication: {
+    }, 
+    phone: {
+        type: String
+        
+    }, 
+    partnerApplication: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "PartnerApplication",
         default: null,

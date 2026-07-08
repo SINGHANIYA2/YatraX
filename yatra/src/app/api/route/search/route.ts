@@ -11,12 +11,12 @@ export async function GET(req: NextRequest) {
 
         const destination = req.nextUrl.searchParams.get("destination");
 
+        
         if (!source || !destination) {
             return NextResponse.json(
                 {
                     success: false,
-                    message:
-                        "Source and destination are required.",
+                    message: "Source and destination are required.",
                 },
                 {
                     status: 400,
@@ -24,25 +24,29 @@ export async function GET(req: NextRequest) {
             );
         }
 
+       
         const sourceLocation = await Location.findOne({
-                name: source,
-                isActive: true,
-            });
+            name: source,
+            isActive: true,
+        });
 
         const destinationLocation = await Location.findOne({
-                name: destination,
-                isActive: true,
-            });
+            name: destination,
+            isActive: true,
+        });
 
-        if (!sourceLocation ||!destinationLocation) {
+        console.log("Source Location =", sourceLocation);
+        console.log("Destination Location =", destinationLocation);
+
+        if (!sourceLocation || !destinationLocation) {
+            console.log("loaction error")
             return NextResponse.json(
                 {
                     success: false,
-                    message:
-                        "Source or destination not found.",
+                    message: "Source or destination not found.",
                 },
                 {
-                    status: 404,
+                    status: 400,
                 }
             );
         }

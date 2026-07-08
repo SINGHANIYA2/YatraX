@@ -1,5 +1,5 @@
 import React from 'react'
-import Booking from '@/components/BookingSection'
+import Booking from '@/components/booking/Booking'
 
 function page() {
   return (

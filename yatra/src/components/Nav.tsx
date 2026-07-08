@@ -1,21 +1,22 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { Bike, Bus, Car, ChevronRight, LogOut, Menu, Truck, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import AuthModal from "./AuthModal";
 import { signOut, useSession } from "next-auth/react";
-import router from "next/router";
 import { setUserData } from "@/redux/userSlice";
 import { setAdminData } from "@/redux/adminSlice";
 import { setPartnerData } from "@/redux/partnerSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from '../redux/store';
+import axios from "axios";
 
+
+// eslint-disable-next-line react-hooks/rules-of-hooks
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -29,13 +30,18 @@ const navItems = [
 ];
 
 export default function Navbar() {
+  const router = useRouter()
   const pathname = usePathname();
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [name, setName] = useState("")
   const [authOpen, setAuthOpen] = useState(false)
   const [steps, setStep] = useState("")
   const [profileOpen, setProfileOpen] = useState(false)
   const [role, setRole] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [partnerStatus, setPartnerStatus] = useState(false)
 
   const { userData } = useSelector(
     (state: RootState) => state.user
@@ -57,33 +63,31 @@ export default function Navbar() {
   const sessionRole = session?.user?.role;
 
 
+
+useEffect(() => {
+    if (status === "authenticated") {
+      const partner = userData?.partnerApplication
+      if (partner) setPartnerStatus(true)
+    }
+}, [status, userData])
+
+
   useEffect(() => {
     if (status === "authenticated") {
-      // console.log("User:", session?.user);
-      // console.log("Role:", session?.user?.role);
-
-      if (session?.user?.role === "admin") {
-        setRole("admin")
+      if (!name || !role) {
+        setRole(session?.user?.role)
+        setName(session?.user?.name)
         setProfileOpen(true)
-      } else if (session?.user?.role === "partner") {
-        // do partner stuff
-        setRole("partner")
-        setProfileOpen(true)
-      } else {
-        // Regular user — no auto-opened popup, just switch the
-        // navbar over to the profile icon instead of Login/Sign Up.
-        setRole("user")
       }
-      // console.log("role : ", role)
     }
   }, [session, status]);
 
 
   const handleLogOut = async () => {
     await signOut({ redirect: false })
-    if(role == "user")dispatch(setUserData(null))
-    if(role == "partner")dispatch(setPartnerData(null))
-    if(role == "admin")dispatch(setAdminData(null))
+    if (role == "user") dispatch(setUserData(null))
+    if (role == "partner") dispatch(setPartnerData(null))
+    if (role == "admin") dispatch(setAdminData(null))
     setProfileOpen(false)
     setRole("")
   }
@@ -102,7 +106,7 @@ export default function Navbar() {
       setStep("login")
       setAuthOpen(true);
       setProfileOpen(true)
-      console.log("Logged in successfully")
+
     } catch (error) {
       console.log(error)
     }
@@ -128,7 +132,7 @@ export default function Navbar() {
               flex items-center justify-between
               rounded-2xl
               border border-border/10
-            bg-background
+              bg-background
               px-6 py-4
               shadow-sm
               
@@ -214,9 +218,8 @@ export default function Navbar() {
                     onClick={() => setProfileOpen(!profileOpen)}
                     className="h-11 w-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg border border-primary/30"
                   >
-                    {userData?.name?.charAt(0)?.toUpperCase()}
-                    {adminData?.name?.charAt(0)?.toUpperCase()}
-                    {partnerData?.name?.charAt(0)?.toUpperCase()}
+                    {name.charAt(0)?.toUpperCase()}
+
                   </button>
 
                   <AnimatePresence>
@@ -236,29 +239,25 @@ export default function Navbar() {
                           <div className="p-5 border-b border-border/10">
                             <div className="flex items-center gap-3">
                               <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-xl">
-                                {userData?.name?.charAt(0)?.toUpperCase()}
-                                {adminData?.name?.charAt(0)?.toUpperCase()}
-                                {partnerData?.name?.charAt(0)?.toUpperCase()}
+                                {name.charAt(0)?.toUpperCase()}
+
                               </div>
 
                               <div>
                                 <h3 className="text-foreground font-semibold">
-                                  {userData?.name?.toUpperCase()}
-                                  {adminData?.name?.toUpperCase()}
-                                  {partnerData?.name?.toUpperCase()}
+                                  {name.toUpperCase()}
                                 </h3>
 
                                 <p className="text-xs text-muted-foreground uppercase">
-                                  {userData?.role?.toLowerCase()}
-                                  {partnerData?.role?.toLowerCase()}
-                                  {adminData?.role?.toLowerCase()}
+                                  {role.toLowerCase()}
+
                                 </p>
                               </div>
                             </div>
                           </div>
 
                           <div className="p-3">
-                            {/* Regular user: Dashboard + Become Partner */}
+                            {/* Regular user: Dashboard  +  Become Partner */}
                             {sessionRole === "user" && (
                               <>
                                 <Link
@@ -268,12 +267,29 @@ export default function Navbar() {
                                   Dashboard
                                 </Link>
 
-                                <Link
-                                  href="/partner/onboarding"
-                                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
-                                >
-                                  Become Partner
-                                </Link>
+                                {
+                                  !partnerStatus && (
+                                    <Link
+                                      href="/partner/onboarding"
+                                      className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
+                                    >
+                                      Become Partner
+                                    </Link>
+
+                                  )
+                                }
+
+                                {
+                                  partnerStatus && (
+                                    <Link
+                                      href="/user/applicationstatus"
+                                      className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
+                                    >
+                                      Application status
+                                    </Link>
+                                  )
+                                }
+
                               </>
                             )}
 
@@ -289,7 +305,7 @@ export default function Navbar() {
 
                             {sessionRole === "partner" && (
                               <Link
-                                href="/partner/dashboard"
+                                href="/partnerpage"
                                 className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
                               >
                                 Dashboard
@@ -312,18 +328,29 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="lg:hidden text-foreground"
-            >
-              {menuOpen ? <X size={28} /> : <Menu size={28} />}
-            </button>
+            {/* Mobile Menu Button + Mobile Profile Avatar Trigger */}
+            <div className="flex items-center gap-3 lg:hidden">
+              {role !== "" && (
+                <button
+                  onClick={() => setProfileOpen(!profileOpen)}
+                  className="h-10 w-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-base border border-primary/30"
+                >
+                  {name.charAt(0)?.toUpperCase()}
+                </button>
+              )}
+
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="text-foreground"
+              >
+                {menuOpen ? <X size={28} /> : <Menu size={28} />}
+              </button>
+            </div>
           </div>
         </div>
       </motion.nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile Nav Menu (hamburger) — independent of profile drawer */}
       {menuOpen && (
         <motion.div
           initial={{ opacity: 0, y: -30 }}
@@ -337,14 +364,12 @@ export default function Navbar() {
                 href={item.href}
                 onClick={() => setMenuOpen(false)}
                 className="rounded-xl px-4 py-3 text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary">
-
                 {item.name}
-
               </Link>
             ))}
 
             {
-              !profileOpen && (
+              role === "" && (
                 <div className="mt-4 flex flex-col gap-3">
                   <button className="rounded-xl border border-border/10 py-3 text-foreground"
                     onClick={handleLogin}
@@ -361,104 +386,130 @@ export default function Navbar() {
                 </div>
               )
             }
-
-            <AnimatePresence>
-              {profileOpen && (userData || adminData || partnerData) && (
-                <>
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.4 }}
-                    exit={{ opacity: 0 }}
-                    onClick={() => setProfileOpen(false)}
-                    className="fixed inset-0 bg-black z-30 md:hidden"
-                  />
-
-                  <motion.div
-                    initial={{ y: 400 }}
-                    animate={{ y: 0 }}
-                    exit={{ y: 400 }}
-                    transition={{ type: "spring", damping: 25 }}
-                    className="fixed inset-x-0 bottom-0 bg-card rounded-t-3xl shadow-lg border-t border-border z-50 md:hidden"
-                  >
-                    <div className='p-5'>
-                      <p className="font-semibold text-lg">
-                        {userData?.name}
-                        {adminData?.name} 
-                        {partnerData?.name}
-                        </p>
-                      <p className='text-xs uppercase text-muted-foreground mb-4'>{role}</p>
-                      
-                      {
-                          role == "user" &&
-                        (
-                          <div className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
-                            onClick={() => router.push("/partner/onboarding/vehicle")}
-                          >
-
-                            <div className='flex space-x-2'>
-                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                                <Bike size={14} />
-                              </div>
-
-                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                                <Car size={14} />
-                              </div>
-
-                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                                <Truck size={14} />
-                              </div>
-
-                            </div>
-                            Become a Partner {role}
-                            <ChevronRight size={60} className='ml-auto' />
-                          </div>
-
-                        )}
-
-
-                      {
-                          role == "admin" &&
-                        (
-                          <div className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
-                            onClick={() => router.push("/partner/onboarding/vehicle")}
-                          >
-
-                            <div className='flex space-x-2'>
-                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                                <Bike size={14} />
-                              </div>
-
-                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                                <Car size={14} />
-                              </div>
-
-                              <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
-                                <Truck size={14} />
-                              </div>
-
-                            </div>
-                            Admin section
-                            <ChevronRight size={60} className='ml-auto' />
-                          </div>
-
-                        )}
-
-                        
-                      <button className="h-full rounded-xl flex items-center gap-3 py-3 hover:bg-secondary mt-2"
-                        onClick={handleLogOut}>
-                        <LogOut size={16} />
-                        Log out
-                      </button>
-                    </div>
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>
-
-
           </div>
         </motion.div>
       )}
+
+      {/* Mobile Profile Drawer — independent of hamburger menu, triggered only by the avatar button, works for user/partner/admin */}
+      <AnimatePresence>
+        {profileOpen && role !== "" && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.4 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setProfileOpen(false)}
+              className="fixed inset-0 bg-black z-40 lg:hidden"
+            />
+
+            <motion.div
+              initial={{ y: 400 }}
+              animate={{ y: 0 }}
+              exit={{ y: 400 }}
+              transition={{ type: "spring", damping: 25 }}
+              className="fixed inset-x-0 bottom-0 bg-card rounded-t-3xl shadow-lg border-t border-border z-50 lg:hidden"
+            >
+              <div className='p-5'>
+                <p className="font-semibold text-lg">
+                  {name}
+                </p>
+                <p className='text-xs uppercase text-muted-foreground mb-4'>{role}</p>
+
+                {
+                  role == "partner" &&
+                  (
+                    <Link className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
+                      onClick={() => {
+                        setProfileOpen(false)
+                      }}
+                      href="/partnerpage"
+                    >
+                      Partner Dashboard
+                      <ChevronRight size={60} className='ml-auto' />
+                    </Link>
+
+                  )}
+
+                {
+                  role == "user" &&
+                  (
+                    <>
+
+                    {
+                      !partnerStatus && (
+                        <button className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
+                          onClick={() => {
+                            setProfileOpen(false)
+                            router.push("/partner/onboarding")
+                          }}
+                          >
+                          Become a Partner
+                          <ChevronRight size={60} className='ml-auto' />
+                        </button>
+
+                      )
+                    }
+
+                      {
+                        partnerStatus && (
+                        <button className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
+                          onClick={() => {
+                            setProfileOpen(false)
+                            router.push("/user/applicationstatus")
+                          }}
+                          >
+                          Application Status
+                          <ChevronRight size={60} className='ml-auto' />
+                        </button>
+
+                        )
+                      }
+
+                      </>
+                  )}
+
+
+                {
+                  role == "admin" &&
+                  (
+                    <div className='w-full flex items-center gap-3 py-3 hover:bg-secondary rounded-xl'
+                      onClick={() => {
+                        setProfileOpen(false)
+                        router.push("/admin")
+                      }}
+                    >
+
+                      <div className='flex space-x-2'>
+                        <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
+                          <Bike size={14} />
+                        </div>
+
+                        <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
+                          <Car size={14} />
+                        </div>
+
+                        <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center">
+                          <Truck size={14} />
+                        </div>
+
+                      </div>
+                      Admin section
+                      <ChevronRight size={60} className='ml-auto' />
+                    </div>
+
+                  )}
+
+
+                <button className="h-full rounded-xl flex items-center gap-3 py-3 hover:bg-secondary mt-2 w-full"
+                  onClick={handleLogOut}>
+                  <LogOut size={16} />
+                  Log out
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       <AuthModal open={authOpen} steps={steps} onClose={() => setAuthOpen(false)} />
     </>

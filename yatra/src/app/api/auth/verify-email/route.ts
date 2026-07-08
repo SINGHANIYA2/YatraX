@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
 
         const { userId, otp, role } = await req.json();
        
-        if (!userId || !otp || !role) {
+        if (!userId || !otp || !role){
             return NextResponse.json(
                 {
                     message: "Missing details",
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
         }
 
 
-        if (!account.otpExpiresAt || account.otpExpiresAt < new Date()) {
+        if (!account.emailOtpExpiresAt || account.emailOtpExpiresAt < new Date()) {
             return NextResponse.json({
                 success: false,
                 message: "Otp expired",

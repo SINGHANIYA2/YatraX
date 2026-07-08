@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
                 }
             );
         }
+        
 
         if (password.length < 6) {
             return NextResponse.json(
@@ -70,7 +71,7 @@ export async function POST(req: NextRequest) {
             email,
             password: hashedPassword,
 
-            mobileNumber,
+            phone:mobileNumber,
 
             emailOtp,
             mobileOtp,

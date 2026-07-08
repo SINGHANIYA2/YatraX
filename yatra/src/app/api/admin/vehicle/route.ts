@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Vehicle from "@/models/vehicle.models";
 import Route from "@/models/route.models";
 
+
 const VEHICLE_TYPES = ["bike", "auto", "cab", "bus"] as const;
 
 console.log(Route)

@@ -13,9 +13,11 @@ export async function POST(
 
     const { routeIds } = await req.json();
 
-    if (
-      !Array.isArray(routeIds) ||
-      routeIds.length === 0
+//     console.log("Received routeIds:", routeIds);
+// console.log("Is Array:", Array.isArray(routeIds));
+// console.log("Length:", routeIds?.length);
+
+    if (!Array.isArray(routeIds) || routeIds.length === 0
     ) {
       return NextResponse.json(
         {
@@ -27,6 +29,8 @@ export async function POST(
         }
       );
     }
+
+    
 
     const objectRouteIds = routeIds.map(
       (id: string) =>
