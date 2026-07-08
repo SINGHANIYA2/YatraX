@@ -10,6 +10,8 @@ import ApplicationFilters from "@/components/admin/applications/ApplicationFilte
 import ApplicationTable from "@/components/admin/applications/ApplicationTable";
 import ApplicationDetailsModal from "@/components/admin/applications/ApplicationDetailsModal"
 import RejectModal from "@/components/admin/applications/RejectModal"
+import ConfirmDialog from "@/components/admin/applications/ConfirmDialog"
+import SuccessOverlay from "@/components/admin/applications/SuccessOverlay"
 import LoadingState from "@/components/ui/LoadingState"
 import { error } from "console";
 
@@ -67,26 +69,34 @@ export default function ApplicationsPage() {
 
     const [showDetails, setShowDetails] = useState(false)
     const [showReject, setShowReject] = useState(false)
+    const [showApproveConfirm, setShowApproveConfirm] = useState(false)
     const [actionLoading, setActionLoading] = useState(false)
+    const [approvedName, setApprovedName] = useState<string | null>(null)
 
     function handleView(application: any) {
         setSelectedApplication(application)
         setShowDetails(true)
     }
 
-    async function handleApprove(application: any) {
-        if (actionLoading) return
+    function handleApproveClick(application: any) {
+        setSelectedApplication(application)
+        setShowDetails(false)
+        setShowApproveConfirm(true)
+    }
+
+    async function confirmApprove() {
+        if (actionLoading || !selectedApplication) return
         setActionLoading(true)
         try {
             await axios.patch(
-                `/api/admin/applications/${application._id}`,
+                `/api/admin/applications/${selectedApplication._id}`,
                 { status: "approved" }
             );
 
-            // Close modal and refresh
-            setShowDetails(false)
+            // Close confirm dialog and show success animation
+            setShowApproveConfirm(false)
+            setApprovedName(selectedApplication.name || "Partner")
             setSelectedApplication(null)
-            await fetchApplications();
 
         } catch (error: any) {
             const msg = error?.response?.data?.message || "Failed to approve application"
@@ -109,6 +119,12 @@ export default function ApplicationsPage() {
                 `/api/admin/applications/${selectedApplication._id}`,
                 { status: "rejected", reason }
             );
+
+            // Close modal and refresh only on success
+            setShowReject(false)
+            setSelectedApplication(null)
+            await fetchApplications();
+
         } catch (error: any) {
             const msg = error?.response?.data?.message || "Failed to reject application"
             alert(msg)
@@ -170,8 +186,6 @@ export default function ApplicationsPage() {
                         <ApplicationTable
                             data={filteredApplications}
                             onView={handleView}
-                            onApprove={handleApprove}
-                            onReject={handleReject}
                         />
                     </>
                 )}
@@ -185,22 +199,51 @@ export default function ApplicationsPage() {
                         setShowDetails(false)
                         setSelectedApplication(null)
                     }}
-                    onApprove={handleApprove}
+                    onApprove={handleApproveClick}
                     onReject={handleReject}
                 />
             )}
 
             {showReject && (
                 <RejectModal
-                    onClose={() => setShowReject(false)}
-                    onSubmit={async (reason) => {
-                        await confirmReject(reason);
-                        await fetchApplications();
-                        setShowReject(false);
-                        setSelectedApplication(null);
+                    loading={actionLoading}
+                    onClose={() => {
+                        setShowReject(false)
+                        setSelectedApplication(null)
                     }}
+                    onSubmit={confirmReject}
                 />
             )}
+
+            <ConfirmDialog
+                show={showApproveConfirm}
+                tone="success"
+                title="Approve this partner?"
+                description={
+                    selectedApplication
+                        ? `${selectedApplication.name} will be onboarded as an active partner and gain access to the partner dashboard.`
+                        : undefined
+                }
+                confirmLabel="Yes, Approve"
+                cancelLabel="Cancel"
+                loading={actionLoading}
+                onConfirm={confirmApprove}
+                onCancel={() => {
+                    if (actionLoading) return
+                    setShowApproveConfirm(false)
+                    setShowDetails(true)
+                }}
+            />
+
+            <SuccessOverlay
+                show={!!approvedName}
+                title="Partner Approved Successfully"
+                subtitle={approvedName ? `${approvedName} is now an active partner` : undefined}
+                onDone={async () => {
+                    setApprovedName(null)
+                    await fetchApplications()
+                }}
+            />
 
         </div>
     );

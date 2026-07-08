@@ -49,16 +49,31 @@ export async function GET(req: NextRequest) {
 
         const page = Number(searchParams.get("page") ?? 1);
 
-        const limit = Number(searchParams.get("limit") ?? 10);
+        // No limit by default -> return every matching driver.
+        // Callers that explicitly want pagination can still pass ?limit=NN.
+        const limitParam = searchParams.get("limit");
+
+        const limit = limitParam ? Number(limitParam) : 0;
 
         const search = searchParams.get("search") ?? "";
 
         const available = searchParams.get("available");
 
+        // Only the Assign Driver modal should ask for unassigned/available
+        // drivers specifically. The main Drivers Management page wants
+        // every driver regardless of assignment status.
+        const availableOnly =
+            searchParams.get("availableOnly") === "true";
+
         const filter: any = {
             adminId: admin._id,
             applicationStatus: "approved",
         };
+
+        if (availableOnly) {
+            filter.assignedVehicleId = null;
+            filter.isAvailable = true;
+        }
 
         if (available === "true") {
             filter.isAvailable = true;
@@ -88,7 +103,7 @@ export async function GET(req: NextRequest) {
         const totalPartners =
             await Partner.countDocuments(filter);
 
-        const partners = await Partner.find(filter)
+        let partnersQuery = Partner.find(filter)
             .populate({
                 path: "assignedVehicleId",
                 select: `
@@ -101,10 +116,16 @@ export async function GET(req: NextRequest) {
             })
             .sort({
                 createdAt: -1,
-            })
-            .skip((page - 1) * limit)
-            .limit(limit)
-            .lean();
+            });
+
+        // Only paginate when a limit was explicitly requested.
+        if (limit > 0) {
+            partnersQuery = partnersQuery
+                .skip((page - 1) * limit)
+                .limit(limit);
+        }
+
+        const partners = await partnersQuery.lean();
 
         return NextResponse.json(
             {
@@ -114,9 +135,9 @@ export async function GET(req: NextRequest) {
 
                 currentPage: page,
 
-                totalPages: Math.ceil(
+                totalPages: limit > 0 ? Math.ceil(
                     totalPartners / limit
-                ),
+                ) : 1,
 
                 partners,
             },

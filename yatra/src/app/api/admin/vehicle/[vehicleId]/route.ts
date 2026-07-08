@@ -441,6 +441,8 @@ export async function GET(
                 select: `
                     distanceInKm
                     estimatedDurationInMinutes
+                    estimatedFare
+                    farePerKm
                     geometry
                     locations
                 `,

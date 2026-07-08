@@ -68,53 +68,91 @@ export async function PATCH(
 
         if (status === "approved") {
             const existingPartner = await Partner.findOne({
-                applicationId: application._id,
+                $or: [
+                    { applicationId: application._id },
+                    { userId: application.userId },
+                    { phone: application.phone },
+                    { dlNumber: application.dlNumber },
+                ],
             });
 
             if (existingPartner) {
+                // Same application already turned into a partner — just clean up
+                if (existingPartner.applicationId?.toString() === application._id.toString()) {
+                    return Response.json(
+                        { message: "Partner already exists" },
+                        { status: 400 }
+                    );
+                }
+
+                // A different partner record is blocking this one (duplicate phone/userId/dlNumber)
+                const conflictField =
+                    existingPartner.phone === application.phone
+                        ? "phone number"
+                        : existingPartner.dlNumber === application.dlNumber
+                        ? "driving license number"
+                        : "user account";
+
                 return Response.json(
-                    { message: "Partner already exists" },
-                    { status: 400 }
+                    {
+                        message: `A partner with this ${conflictField} already exists. Please resolve the conflicting partner record before approving this application.`,
+                    },
+                    { status: 409 }
                 );
             }
 
-            const partner = await Partner.create({
-                userId: application.userId,
-                applicationId: application._id,
-                adminId: application.adminId,
-                locationId: application.locationId,
+            let partner;
+            try {
+                partner = await Partner.create({
+                    userId: application.userId,
+                    applicationId: application._id,
+                    adminId: application.adminId,
+                    locationId: application.locationId,
 
-                name: application.name,
-                phone: application.phone,
-                email: application.email,
+                    name: application.name,
+                    phone: application.phone,
+                    email: application.email,
 
-                dob: application.dob,
-                gender: application.gender,
+                    dob: application.dob,
+                    gender: application.gender,
 
-                profilePhoto: application.profilePhoto,
+                    profilePhoto: application.profilePhoto,
 
-                emergencyContact: application.emergencyContact,
+                    emergencyContact: application.emergencyContact,
 
-                address: application.address,
-                city: application.city,
-                state: application.state,
-                pincode: application.pincode,
+                    address: application.address,
+                    city: application.city,
+                    state: application.state,
+                    pincode: application.pincode,
 
-                dlNumber: application.dlNumber,
-                experience: application.experience,
+                    dlNumber: application.dlNumber,
+                    experience: application.experience,
 
-                aadharNumber: application.aadharNumber,
+                    aadharNumber: application.aadharNumber,
 
-                documents: application.documents,
+                    documents: application.documents,
 
-                bankDetails: application.bankDetails,
+                    bankDetails: application.bankDetails,
 
-                applicationStatus: "approved",
+                    applicationStatus: "approved",
 
-                approvedAt: new Date(),
+                    approvedAt: new Date(),
 
-                joinedAt: new Date(),
-            });
+                    joinedAt: new Date(),
+                });
+            } catch (err: any) {
+                // Handle race-condition duplicate key errors gracefully
+                if (err?.code === 11000) {
+                    const dupField = Object.keys(err.keyPattern || {})[0] || "field";
+                    return Response.json(
+                        {
+                            message: `A partner with this ${dupField} already exists.`,
+                        },
+                        { status: 409 }
+                    );
+                }
+                throw err;
+            }
 
             await Admin.findByIdAndUpdate(application.adminId, {
                 $pull: { pendingPartnerRequests: application._id },

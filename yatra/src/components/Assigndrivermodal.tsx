@@ -25,6 +25,19 @@ interface RouteOption {
     estimatedDurationInMinutes?: number;
 }
 
+// Per-km fare rates by vehicle type (kept in sync with src/lib/fare.ts)
+const FARE_RATE_PER_KM: Record<string, number> = {
+    bike: 8,
+    auto: 12,
+    cab: 16,
+    bus: 20,
+};
+
+function estimateFare(distanceInKm: number | undefined, vehicleType?: string | null) {
+    const rate = (vehicleType && FARE_RATE_PER_KM[vehicleType]) || 12;
+    return Math.round((distanceInKm ?? 0) * rate);
+}
+
 export default function AssignDriverModal({
     vehicleId,
     open,
@@ -38,6 +51,7 @@ export default function AssignDriverModal({
 }) {
     const [partners, setPartners] = useState<Partner[]>([]);
     const [routes, setRoutes] = useState<RouteOption[]>([]);
+    const [vehicleType, setVehicleType] = useState<string | null>(null);
     const [loadingOptions, setLoadingOptions] = useState(true);
     const [partnerId, setPartnerId] = useState("");
     const [routeId, setRouteId] = useState("");
@@ -53,13 +67,15 @@ export default function AssignDriverModal({
             setLoadingOptions(true);
             setError(null);
             try {
-                const [partnersRes, routesRes] = await Promise.all([
+                const [partnersRes, routesRes, vehicleRes] = await Promise.all([
                     fetch("/api/admin/partner?availableOnly=true"),
                     fetch("/api/admin/routes?activeOnly=true"),
+                    fetch(`/api/admin/vehicle/${vehicleId}`),
                 ]);
 
                 const partnersData = await partnersRes.json();
                 const routesData = await routesRes.json();
+                const vehicleData = await vehicleRes.json().catch(() => null);
 
                 if (!partnersRes.ok || !partnersData.success) {
                     throw new Error(partnersData?.message || "Could not load drivers");
@@ -71,6 +87,7 @@ export default function AssignDriverModal({
                 if (!cancelled) {
                     setPartners(partnersData.partners);
                     setRoutes(routesData.routes);
+                    setVehicleType(vehicleData?.vehicle?.vehicleType ?? null);
                 }
             } catch (err: any) {
                 if (!cancelled) setError(err?.message || "Something went wrong");
@@ -209,7 +226,10 @@ export default function AssignDriverModal({
                                                 </p>
                                                 <p className="text-xs text-gray-500">
                                                     {r.distanceInKm ?? 0} km &middot;{" "}
-                                                    {r.estimatedDurationInMinutes ?? 0} min
+                                                    {r.estimatedDurationInMinutes ?? 0} min &middot;{" "}
+                                                    <span className="text-emerald-400">
+                                                        ₹{estimateFare(r.distanceInKm, vehicleType)}
+                                                    </span>
                                                 </p>
                                             </div>
                                         </button>

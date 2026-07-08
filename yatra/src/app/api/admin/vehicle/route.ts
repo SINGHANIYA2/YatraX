@@ -188,7 +188,10 @@ export async function GET(req: NextRequest) {
 
         const page = Number(searchParams.get("page") ?? 1);
 
-        const limit = Number(searchParams.get("limit") ?? 10);
+        // No limit by default -> return every matching vehicle.
+        const limitParam = searchParams.get("limit");
+
+        const limit = limitParam ? Number(limitParam) : 0;
 
         const search = searchParams.get("search") ?? "";
 
@@ -245,7 +248,7 @@ export async function GET(req: NextRequest) {
 
         const totalVehicles = await Vehicle.countDocuments(filter);
 
-        const vehicles = await Vehicle.find(filter)
+        let vehiclesQuery = Vehicle.find(filter)
             .populate({
                 path: "assignedPartnerId",
                 select: `
@@ -260,14 +263,20 @@ export async function GET(req: NextRequest) {
                 select: `
                     distanceInKm
                     estimatedDurationInMinutes
+                    estimatedFare
                 `,
             })
             .sort({
                 createdAt: -1,
-            })
-            .skip((page - 1) * limit)
-            .limit(limit)
-            .lean();
+            });
+
+        if (limit > 0) {
+            vehiclesQuery = vehiclesQuery
+                .skip((page - 1) * limit)
+                .limit(limit);
+        }
+
+        const vehicles = await vehiclesQuery.lean();
 
         return NextResponse.json(
             {
@@ -277,7 +286,7 @@ export async function GET(req: NextRequest) {
 
                 currentPage: page,
 
-                totalPages: Math.ceil(totalVehicles / limit),
+                totalPages: limit > 0 ? Math.ceil(totalVehicles / limit) : 1,
 
                 vehicles,
             },

@@ -36,9 +36,6 @@ export async function GET(
 
         const { partnerId } = await params;
 
-        console.log("Fetching details for partnerId:", partnerId);
-
-
         const partner = await Partner.findOne({
             _id: partnerId,
             adminId: admin._id,
