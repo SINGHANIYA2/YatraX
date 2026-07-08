@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        if (!account.mobileOtpExpiresAt || account.mobileOtpExpiresAt < new Date()
+        if (!account.otpExpiresAt || account.otpExpiresAt < new Date()
         ) {
             return NextResponse.json(
                 {
@@ -64,6 +64,9 @@ export async function POST(req: NextRequest) {
         account.mobileOtp = undefined;
         account.mobileOtpExpiresAt = undefined;
         account.mobileVerificationStatus = true;
+        if (role === "admin") {
+            account.isPhoneVerified = true;
+        }
 
         await account.save();
 

@@ -28,7 +28,6 @@ import {
 } from "lucide-react";
 import AdminTopbar from "./SettingsTopbar";
 
-/* ─── types ─────────────────────────────────────────────── */
 interface AdminProfile {
     _id: string;
     name: string;
@@ -63,7 +62,6 @@ interface AdminProfile {
 
 type Tab = "profile" | "organization" | "bank" | "security";
 
-/* ─── helpers ────────────────────────────────────────────── */
 function Avatar({ src, name, size = 20 }: { src?: string; name: string; size?: number }) {
     const initials = name
         .split(" ")
@@ -149,7 +147,7 @@ const TABS: { id: Tab; label: string; icon: typeof User }[] = [
     { id: "security", label: "Security", icon: Shield },
 ];
 
-/* ─── main component ─────────────────────────────────────── */
+
 export default function AdminSettingsPage() {
     const [admin, setAdmin] = useState<AdminProfile | null>(null);
     const [loading, setLoading] = useState(true);
@@ -161,7 +159,11 @@ export default function AdminSettingsPage() {
     const [photoUploading, setPhotoUploading] = useState(false);
     const fileRef = useRef<HTMLInputElement>(null);
 
-    /* fetch admin */
+    const [otpModal, setOtpModal] = useState<{ type: "email" | "phone" } | null>(null);
+    const [otpValue, setOtpValue] = useState("");
+    const [otpStage, setOtpStage] = useState<"sending" | "enter" | "verifying">("sending");
+    const [otpError, setOtpError] = useState<string | null>(null);
+
     useEffect(() => {
         (async () => {
             try {
@@ -250,6 +252,61 @@ export default function AdminSettingsPage() {
         }
     }
 
+    async function openOtpModal(type: "email" | "phone") {
+        if (!admin) return;
+        setOtpModal({ type });
+        setOtpValue("");
+        setOtpError(null);
+        setOtpStage("sending");
+        try {
+            if (type === "email") {
+                await axios.post("/api/auth/send-email-otp", {
+                    userId: admin._id,
+                    email: admin.email,
+                    role: "admin",
+                });
+            } else {
+                await axios.post("/api/auth/send-phone-otp", {
+                    userId: admin._id,
+                    mobileNumber: admin.phone,
+                    role: "admin",
+                });
+            }
+            setOtpStage("enter");
+        } catch (err: any) {
+            setOtpError(err?.response?.data?.message || "Failed to send OTP");
+            setOtpStage("enter");
+        }
+    }
+
+    async function submitOtp() {
+        if (!admin || !otpModal) return;
+        setOtpStage("verifying");
+        setOtpError(null);
+        try {
+            const endpoint = otpModal.type === "email" ? "/api/auth/verify-email" : "/api/auth/verify-phone";
+            await axios.post(endpoint, {
+                userId: admin._id,
+                otp: otpValue,
+                role: "admin",
+            });
+            setAdmin((prev) =>
+                prev
+                    ? {
+                          ...prev,
+                          isEmailVerified: otpModal.type === "email" ? true : prev.isEmailVerified,
+                          isPhoneVerified: otpModal.type === "phone" ? true : prev.isPhoneVerified,
+                      }
+                    : prev
+            );
+            showToast("success", otpModal.type === "email" ? "Email verified successfully" : "Phone verified successfully");
+            setOtpModal(null);
+        } catch (err: any) {
+            setOtpError(err?.response?.data?.message || "Invalid OTP, please try again");
+            setOtpStage("enter");
+        }
+    }
+
     if (loading) {
         return <LoadingState label="Loading profile..." fullScreen />;
     }
@@ -286,6 +343,93 @@ export default function AdminSettingsPage() {
                             : <AlertCircle className="h-4 w-4" />
                         }
                         {toast.msg}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* OTP verification modal */}
+            <AnimatePresence>
+                {otpModal && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+                        onClick={() => otpStage !== "verifying" && setOtpModal(null)}
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-2xl"
+                        >
+                            <div className="flex items-center gap-3 mb-1">
+                                {otpModal.type === "email" ? (
+                                    <Mail className="h-5 w-5 text-primary" />
+                                ) : (
+                                    <Phone className="h-5 w-5 text-primary" />
+                                )}
+                                <h3 className="text-base font-semibold text-foreground">
+                                    Verify {otpModal.type === "email" ? "Email" : "Phone"}
+                                </h3>
+                            </div>
+                            <p className="text-xs text-muted-foreground mb-4">
+                                {otpStage === "sending"
+                                    ? `Sending a verification code to ${otpModal.type === "email" ? admin.email : admin.phone}…`
+                                    : `Enter the 6-digit code sent to ${otpModal.type === "email" ? admin.email : admin.phone}.`}
+                            </p>
+
+                            {otpStage === "sending" ? (
+                                <div className="flex items-center justify-center py-6">
+                                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                                </div>
+                            ) : (
+                                <>
+                                    <input
+                                        type="text"
+                                        inputMode="numeric"
+                                        maxLength={6}
+                                        value={otpValue}
+                                        onChange={(e) => setOtpValue(e.target.value.replace(/\D/g, ""))}
+                                        placeholder="••••••"
+                                        className="w-full text-center tracking-[0.5em] text-lg rounded-xl border border-border bg-secondary/40 px-4 py-3 text-foreground outline-none focus:border-primary/50 focus:bg-secondary/60 transition-colors"
+                                        autoFocus
+                                    />
+                                    {otpError && (
+                                        <p className="mt-2 flex items-center gap-1.5 text-xs text-destructive">
+                                            <AlertCircle className="h-3 w-3" /> {otpError}
+                                        </p>
+                                    )}
+                                    <div className="mt-4 flex items-center gap-2">
+                                        <button
+                                            onClick={() => setOtpModal(null)}
+                                            className="flex-1 rounded-xl border border-border bg-secondary/40 px-4 py-2.5 text-sm text-muted-foreground hover:bg-secondary/60 transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={submitOtp}
+                                            disabled={otpValue.length !== 6 || otpStage === "verifying"}
+                                            className="flex-1 flex items-center justify-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary-hover transition-colors disabled:opacity-50"
+                                        >
+                                            {otpStage === "verifying" ? (
+                                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                            ) : (
+                                                <CheckCircle2 className="h-3.5 w-3.5" />
+                                            )}
+                                            Verify
+                                        </button>
+                                    </div>
+                                    <button
+                                        onClick={() => openOtpModal(otpModal.type)}
+                                        className="mt-3 w-full text-center text-xs text-primary hover:underline"
+                                    >
+                                        Resend code
+                                    </button>
+                                </>
+                            )}
+                        </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -484,22 +628,32 @@ export default function AdminSettingsPage() {
                                             <h3 className="mb-5 text-sm font-semibold text-muted-foreground uppercase tracking-widest">Verification Status</h3>
                                             <div className="space-y-3">
                                                 {[
-                                                    { label: "Email Verified", verified: admin.isEmailVerified, icon: Mail },
-                                                    { label: "Phone Verified", verified: admin.isPhoneVerified, icon: Phone },
-                                                ].map(({ label, verified, icon: Icon }) => (
+                                                    { label: "Email Verified", type: "email" as const, verified: admin.isEmailVerified, icon: Mail },
+                                                    { label: "Phone Verified", type: "phone" as const, verified: admin.isPhoneVerified, icon: Phone },
+                                                ].map(({ label, type, verified, icon: Icon }) => (
                                                     <div key={label} className="flex items-center justify-between rounded-xl border border-border/60 bg-secondary/10 px-4 py-3">
                                                         <div className="flex items-center gap-3">
                                                             <Icon className="h-4 w-4 text-muted-foreground" />
                                                             <span className="text-sm text-foreground/90">{label}</span>
                                                         </div>
-                                                        <span className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium
-                                                            ${verified
-                                                                ? "bg-success/10 text-success border border-success/20"
-                                                                : "bg-warning/10 text-warning border border-warning/20"
-                                                            }`}>
-                                                            {verified ? <CheckCircle2 className="h-3 w-3" /> : <AlertCircle className="h-3 w-3" />}
-                                                            {verified ? "Verified" : "Not verified"}
-                                                        </span>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium
+                                                                ${verified
+                                                                    ? "bg-success/10 text-success border border-success/20"
+                                                                    : "bg-warning/10 text-warning border border-warning/20"
+                                                                }`}>
+                                                                {verified ? <CheckCircle2 className="h-3 w-3" /> : <AlertCircle className="h-3 w-3" />}
+                                                                {verified ? "Verified" : "Not verified"}
+                                                            </span>
+                                                            {!verified && (
+                                                                <button
+                                                                    onClick={() => openOtpModal(type)}
+                                                                    className="rounded-lg border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary hover:bg-primary/20 transition-colors"
+                                                                >
+                                                                    Verify
+                                                                </button>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 ))}
                                             </div>

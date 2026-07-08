@@ -1,17 +1,19 @@
 'use client'
 
 import { useState } from 'react'
-import { X } from 'lucide-react'
+import { X, Loader2 } from 'lucide-react'
 import { motion } from 'motion/react'
 
 interface Props {
     onClose: () => void
     onSubmit: (reason: string) => void
+    loading?: boolean
 }
 
 export default function RejectModal({
     onClose,
-    onSubmit
+    onSubmit,
+    loading = false
 }: Props) {
 
     const [reason, setReason] = useState('')
@@ -51,7 +53,8 @@ export default function RejectModal({
 
                     <button
                         onClick={onClose}
-                        className="p-2 rounded-lg hover:bg-secondary text-muted-foreground"
+                        disabled={loading}
+                        className="p-2 rounded-lg hover:bg-secondary text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <X size={18} />
                     </button>
@@ -61,6 +64,7 @@ export default function RejectModal({
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
                     placeholder="Example: Driving license image is unclear"
+                    disabled={loading}
                     className="
                     mt-5
                     h-32
@@ -74,12 +78,15 @@ export default function RejectModal({
                     text-foreground
                     outline-none
                     text-sm
+                    disabled:opacity-60
+                    disabled:cursor-not-allowed
                     "
                 />
 
                 <div className="mt-4 flex flex-col-reverse sm:flex-row justify-end gap-3">
                     <button
                         onClick={onClose}
+                        disabled={loading}
                         className="
                         w-full sm:w-auto
                         px-4 py-2.5
@@ -87,6 +94,8 @@ export default function RejectModal({
                         bg-secondary
                         text-foreground
                         font-medium
+                        disabled:opacity-50
+                        disabled:cursor-not-allowed
                         "
                     >
                         Cancel
@@ -94,7 +103,7 @@ export default function RejectModal({
 
                     <button
                         onClick={() => onSubmit(reason)}
-                        disabled={!reason.trim()}
+                        disabled={!reason.trim() || loading}
                         className="
                         w-full sm:w-auto
                         px-4 py-2.5
@@ -104,9 +113,11 @@ export default function RejectModal({
                         font-medium
                         disabled:opacity-50
                         disabled:cursor-not-allowed
+                        flex items-center justify-center gap-2
                         "
                     >
-                        Reject Application
+                        {loading && <Loader2 size={16} className="animate-spin" />}
+                        {loading ? 'Rejecting…' : 'Reject Application'}
                     </button>
                 </div>
 

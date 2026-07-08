@@ -48,16 +48,14 @@ export default function AdminPage() {
 
                 <div className='mt-7'>
                     {loading ? (
-                        <LoadingState  label="Loading Dashboard..."/>
+                        <LoadingState label="Loading Dashboard..." />
                     ) : (
                         <>
-                            <DashboardStats loading={loading} setLoading={setLoading}/>
+                            <DashboardStats loading={loading} setLoading={setLoading} />
                             <div className='px-6 mt-6' >
                                 <FleetTable
                                     vehicles={vehicles}
                                     setVehicles={setVehicles}
-                                    loading={loading}
-                                    setLoading={setLoading}
                                 />
                             </div>
 

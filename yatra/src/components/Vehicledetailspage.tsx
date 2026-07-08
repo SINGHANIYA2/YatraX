@@ -208,10 +208,10 @@ export default function VehicleDetailsPage({ vehicleId }: { vehicleId: string })
     if (error || !data) {
         return (
             <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3 text-center">
-                <p className="text-sm text-red-400">{error || "Vehicle not found"}</p>
+                <p className="text-sm text-destructive">{error || "Vehicle not found"}</p>
                 <button
                     onClick={() => router.back()}
-                    className="text-sm text-gray-400 hover:text-white"
+                    className="text-sm text-muted-foreground hover:text-foreground"
                 >
                     &larr; Go back
                 </button>
@@ -223,13 +223,13 @@ export default function VehicleDetailsPage({ vehicleId }: { vehicleId: string })
     const TypeIcon = TYPE_ICON[vehicle.vehicleType];
 
     return (
-        <div className="min-h-screen bg-[#070a12] px-6 py-6 text-white">
+        <div className="min-h-screen bg-background px-6 py-6 text-foreground">
             {/* header */}
             <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => router.back()}
-                        className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-gray-400 hover:text-white hover:border-white/20 transition-colors"
+                        className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-secondary text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
                     >
                         <ArrowLeft className="h-4 w-4" />
                     </button>
@@ -241,7 +241,7 @@ export default function VehicleDetailsPage({ vehicleId }: { vehicleId: string })
                             <h1 className="font-mono text-lg tracking-wide">
                                 {vehicle.vehicleNumber}
                             </h1>
-                            <p className="text-sm text-gray-400 capitalize">
+                            <p className="text-sm text-muted-foreground capitalize">
                                 {vehicle.brand} {vehicle.model} &middot; {vehicle.vehicleType}
                             </p>
                         </div>
@@ -274,14 +274,14 @@ export default function VehicleDetailsPage({ vehicleId }: { vehicleId: string })
 
                 {/* assignment */}
                 <Card title="Assignment & Trip" delay={0.05}>
-                    <div className="flex items-center gap-3 rounded-lg bg-white/[0.03] px-3 py-2.5">
-                        <User className="h-4 w-4 text-gray-500" />
+                    <div className="flex items-center gap-3 rounded-lg bg-secondary px-3 py-2.5">
+                        <User className="h-4 w-4 text-muted-foreground" />
                         <div className="flex-1">
-                            <p className="text-sm text-white">
+                            <p className="text-sm text-foreground">
                                 {assignment.partner?.name || "Not Assigned"}
                             </p>
                             {assignment.partner ? (
-                                <p className="text-xs text-gray-500">
+                                <p className="text-xs text-muted-foreground">
                                     {assignment.partner.phone} &middot; ★{" "}
                                     {assignment.partner.averageRating?.toFixed(1) ?? "—"}
                                     {assignment.partner.completedRides != null &&
@@ -301,7 +301,7 @@ export default function VehicleDetailsPage({ vehicleId }: { vehicleId: string })
                                 <span
                                     className={`h-2 w-2 rounded-full ${assignment.partner.isOnline
                                         ? "bg-emerald-400"
-                                        : "bg-gray-600"
+                                        : "bg-muted-foreground/40"
                                         }`}
                                 />
                                 <button
@@ -310,7 +310,7 @@ export default function VehicleDetailsPage({ vehicleId }: { vehicleId: string })
                                         setShowUnassignConfirm(true);
                                     }}
                                     title="Unassign driver"
-                                    className="flex items-center gap-1 rounded-md border border-red-500/30 bg-red-500/10 px-2 py-1 text-xs font-medium text-red-400 hover:bg-red-500/20 hover:border-red-500/50 transition-colors"
+                                    className="flex items-center gap-1 rounded-md border border-destructive/30 bg-destructive/10 px-2 py-1 text-xs font-medium text-destructive hover:bg-destructive/20 hover:border-destructive/50 transition-colors"
                                 >
                                     <UserX className="h-3 w-3" />
                                     Unassign
@@ -356,11 +356,11 @@ export default function VehicleDetailsPage({ vehicleId }: { vehicleId: string })
 
                 {/* live status */}
                 <Card title="Live Status" delay={0.1}>
-                    <div className="flex items-center gap-3 rounded-lg bg-white/[0.03] px-3 py-2.5">
+                    <div className="flex items-center gap-3 rounded-lg bg-secondary px-3 py-2.5">
                         {tracking.isOnline ? (
                             <Wifi className="h-4 w-4 text-emerald-400" />
                         ) : (
-                            <WifiOff className="h-4 w-4 text-gray-500" />
+                            <WifiOff className="h-4 w-4 text-muted-foreground" />
                         )}
                         <p className="text-sm">
                             {tracking.isOnline ? "Online" : "Offline"}
@@ -406,9 +406,9 @@ export default function VehicleDetailsPage({ vehicleId }: { vehicleId: string })
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15, duration: 0.3 }}
-                className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-5"
+                className="mt-4 rounded-xl border border-border bg-card p-5"
             >
-                <h2 className="mb-4 text-sm font-medium text-gray-300">Documents</h2>
+                <h2 className="mb-4 text-sm font-medium text-muted-foreground">Documents</h2>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                     {DOC_LABELS.map(({ key, label }) => {
                         const doc = documents?.[key];
@@ -418,13 +418,13 @@ export default function VehicleDetailsPage({ vehicleId }: { vehicleId: string })
                                 href={doc?.url || undefined}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={`group flex flex-col overflow-hidden rounded-lg border border-white/10 bg-white/[0.03] transition-colors ${doc ? "hover:border-blue-500/40" : "cursor-default opacity-50"
+                                className={`group flex flex-col overflow-hidden rounded-lg border border-border bg-secondary transition-colors ${doc ? "hover:border-blue-500/40" : "cursor-default opacity-50"
                                     }`}
                                 onClick={(e) => {
                                     if (!doc) e.preventDefault();
                                 }}
                             >
-                                <div className="flex h-28 items-center justify-center bg-black/20">
+                                <div className="flex h-28 items-center justify-center bg-muted">
                                     {doc ? (
                                         // eslint-disable-next-line @next/next/no-img-element
                                         <img
@@ -437,20 +437,20 @@ export default function VehicleDetailsPage({ vehicleId }: { vehicleId: string })
                                             }}
                                         />
                                     ) : (
-                                        <FileText className="h-6 w-6 text-gray-600" />
+                                        <FileText className="h-6 w-6 text-muted-foreground" />
                                     )}
                                 </div>
                                 <div className="flex items-center justify-between px-3 py-2.5">
                                     <div>
-                                        <p className="text-xs font-medium text-gray-200">
+                                        <p className="text-xs font-medium text-foreground">
                                             {label}
                                         </p>
-                                        <p className="text-[11px] text-gray-500">
+                                        <p className="text-[11px] text-muted-foreground">
                                             {doc ? "Uploaded" : "Not uploaded"}
                                         </p>
                                     </div>
                                     {doc && (
-                                        <ExternalLink className="h-3.5 w-3.5 text-gray-500 group-hover:text-blue-400" />
+                                        <ExternalLink className="h-3.5 w-3.5 text-muted-foreground group-hover:text-blue-400" />
                                     )}
                                 </div>
                             </a>
@@ -466,18 +466,18 @@ export default function VehicleDetailsPage({ vehicleId }: { vehicleId: string })
                         initial={{ opacity: 0, scale: 0.95, y: 12 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="w-full max-w-sm rounded-2xl border border-white/10 bg-[#0d1117] p-6 shadow-2xl"
+                        className="w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-2xl"
                     >
-                        <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-red-500/10">
-                            <UserX className="h-5 w-5 text-red-400" />
+                        <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-destructive/10">
+                            <UserX className="h-5 w-5 text-destructive" />
                         </div>
-                        <h3 className="text-base font-semibold text-white">Unassign Driver?</h3>
-                        <p className="mt-1.5 text-sm text-gray-400">
-                            <span className="font-medium text-gray-200">{assignment.partner?.name}</span> will be removed from this vehicle. This cannot be undone while a trip is active.
+                        <h3 className="text-base font-semibold text-foreground">Unassign Driver?</h3>
+                        <p className="mt-1.5 text-sm text-muted-foreground">
+                            <span className="font-medium text-foreground">{assignment.partner?.name}</span> will be removed from this vehicle. This cannot be undone while a trip is active.
                         </p>
 
                         {unassignError && (
-                            <p className="mt-3 rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-xs text-red-400">
+                            <p className="mt-3 rounded-lg bg-destructive/10 border border-destructive/20 px-3 py-2 text-xs text-destructive">
                                 {unassignError}
                             </p>
                         )}
@@ -489,17 +489,17 @@ export default function VehicleDetailsPage({ vehicleId }: { vehicleId: string })
                                     setUnassignError(null);
                                 }}
                                 disabled={unassigning}
-                                className="flex-1 rounded-xl border border-white/10 bg-white/[0.04] py-2.5 text-sm font-medium text-gray-300 hover:bg-white/[0.08] transition-colors disabled:opacity-50"
+                                className="flex-1 rounded-xl border border-border bg-secondary py-2.5 text-sm font-medium text-muted-foreground hover:bg-hover transition-colors disabled:opacity-50"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleUnassign}
                                 disabled={unassigning}
-                                className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-red-500/90 py-2.5 text-sm font-semibold text-white hover:bg-red-500 transition-colors disabled:opacity-60"
+                                className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-destructive py-2.5 text-sm font-semibold text-destructive-foreground hover:bg-destructive/90 transition-colors disabled:opacity-60"
                             >
                                 {unassigning ? (
-                                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-destructive-foreground border-t-transparent" />
                                 ) : (
                                     <>
                                         <UserX className="h-4 w-4" />
@@ -539,9 +539,9 @@ function Card({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay, duration: 0.3 }}
-            className="rounded-xl border border-white/10 bg-white/[0.02] p-5"
+            className="rounded-xl border border-border bg-card p-5"
         >
-            <h2 className="mb-4 text-sm font-medium text-gray-300">{title}</h2>
+            <h2 className="mb-4 text-sm font-medium text-muted-foreground">{title}</h2>
             <div className="space-y-2.5">{children}</div>
         </motion.div>
     );
@@ -559,12 +559,12 @@ function InfoRow({
     icon?: typeof MapPin;
 }) {
     return (
-        <div className="flex items-center justify-between border-b border-white/5 py-1.5 last:border-0">
-            <span className="flex items-center gap-1.5 text-xs text-gray-500">
+        <div className="flex items-center justify-between border-b border-border/60 py-1.5 last:border-0">
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 {Icon && <Icon className="h-3.5 w-3.5" />}
                 {label}
             </span>
-            <span className={`text-sm text-gray-200 ${capitalize ? "capitalize" : ""}`}>
+            <span className={`text-sm text-foreground ${capitalize ? "capitalize" : ""}`}>
                 {value}
             </span>
         </div>

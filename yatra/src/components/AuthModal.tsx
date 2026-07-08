@@ -414,7 +414,9 @@ useEffect(() => {
 
             setEmailOtp(["", "", "", "", "", ""]);
             setMobileOtp(["", "", "", "", "", ""]);
-            setStep("adminDetail");
+
+            if(role === 'admin')
+                setStep("adminDetail");
             // setAdminDetail(true)
         } catch (error: any) {
             console.error(error);

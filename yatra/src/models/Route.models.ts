@@ -22,6 +22,18 @@ const RouteSchema =
                 default: 0,
             },
 
+            // Fare estimate for this route, computed at assignment time
+            // based on distance (km) and the assigned vehicle's per-km rate.
+            estimatedFare: {
+                type: Number,
+                default: 0,
+            },
+
+            farePerKm: {
+                type: Number,
+                default: 0,
+            },
+
             isActive: {
                 type: Boolean,
                 default: true,

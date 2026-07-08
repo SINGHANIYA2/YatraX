@@ -6,6 +6,7 @@ import Admin from "@/models/admin.models";
 import vehicleModels from "@/models/vehicle.models";
 import { NextRequest } from "next/server";
 import Location from "@/models/location.models";
+import { calculateFare, getFarePerKm } from "@/lib/fare";
 
 console.log(Location)
 
@@ -134,6 +135,15 @@ export async function PATCH(
             );
         }
 
+        // Calculate the fare for this route based on distance (km) and the
+        // per-km rate for this vehicle's type.
+        const farePerKm = getFarePerKm(vehicle.vehicleType);
+        const estimatedFare = calculateFare(route.distanceInKm, vehicle.vehicleType);
+
+        route.farePerKm = farePerKm;
+        route.estimatedFare = estimatedFare;
+        await route.save();
+
         vehicle.assignedAt = new Date();
         vehicle.assignedPartnerId = partner._id;
         vehicle.routeId = route._id;
@@ -159,7 +169,9 @@ export async function PATCH(
                 message: "Vehicle assigned successfully",
                 vehicleId: vehicle._id,
                 partnerId: partner._id,
-                routeId: route._id
+                routeId: route._id,
+                estimatedFare,
+                farePerKm
             },
             {
                 status: 200,
