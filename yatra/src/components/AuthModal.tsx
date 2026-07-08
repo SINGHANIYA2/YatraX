@@ -86,10 +86,11 @@ function AuthModal({ open, steps, onClose }: propType) {
         adminData.panNumber && adminData.pincode && adminData.state && adminData.upiId && adminData.address
     )
 
-    React.useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setStep(steps as stepType)
-    }, [steps])
+   React.useEffect(() => {
+        if (open) {
+            setStep(steps as stepType)
+        }
+    }, [open, steps])
 
     const { data } = useSession()
 

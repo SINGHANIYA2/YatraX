@@ -64,13 +64,12 @@ export default function Navbar() {
 
 
 
-  useEffect(() => {
-    if (status == "authenticated") {
+useEffect(() => {
+    if (status === "authenticated") {
       const partner = userData?.partnerApplication
-      console.log("status : ", partner)
       if (partner) setPartnerStatus(true)
     }
-  })
+}, [status, userData])
 
 
   useEffect(() => {
@@ -102,7 +101,7 @@ export default function Navbar() {
       console.log(error)
     }
   }
-  const handleLogin = async () => {
+  const handleLogin = () => {
     try {
       setStep("login")
       setAuthOpen(true);
