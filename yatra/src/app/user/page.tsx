@@ -7,7 +7,6 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { ParamsOf } from '../../../.next/dev/types/routes';
 import { useSession } from "next-auth/react";
 import { AppDispatch, RootState } from '../../redux/store';
 import { useDispatch, useSelector } from "react-redux";
