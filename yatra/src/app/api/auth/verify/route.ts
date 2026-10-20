@@ -1,5 +1,5 @@
-import connectDb from "@/lib/db";
-import User from "@/models/user.models";
+import connectDb from "../../../../../src/lib/db";
+import User from "../../../../../src/models/user.models";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -36,8 +36,7 @@ export async function POST(req: Request) {
       );
     }
 
-    if (user.isEmailVerified && user.isMobileVerified
-    ) {
+    if (user.isEmailVerified && user.isMobileVerified) {
       return NextResponse.json(
         {
           message: "User already verified",
@@ -56,8 +55,7 @@ export async function POST(req: Request) {
 
       return NextResponse.json(
         {
-          message:
-            "OTP expired. Please register again.",
+          message: "OTP expired. Please register again.",
         },
         {
           status: 400,
@@ -105,8 +103,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         success: true,
-        message:
-          "Email and Mobile verified successfully",
+        message: "Email and Mobile verified successfully",
       },
       {
         status: 200,

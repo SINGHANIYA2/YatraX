@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 
 import AssignDriverModal from './Assigndrivermodal';
-import LoadingState from '@/components/ui/LoadingState';
+import LoadingState from '../../src/components/ui/LoadingState';
 import {
     ArrowLeft,
     Bike,

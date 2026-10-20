@@ -1,6 +1,7 @@
 import {Bus,Car,Truck} from "lucide-react";
 
 const vehicles = [
+    
     {
         id: 1,
         name: "Bus",
@@ -15,6 +16,7 @@ const vehicles = [
         price: 180,
         distanceKm: 132,
     },
+
     {
         id: 2,
         name: "Taxi",
@@ -29,6 +31,7 @@ const vehicles = [
         price: 120,
         distanceKm: 132,
     },
+
     {
         id: 3,
         name: "Van",
@@ -43,6 +46,7 @@ const vehicles = [
         price: 250,
         distanceKm: 132,
     },
+
     {
         id: 4,
         name: "Auto",
@@ -57,6 +61,7 @@ const vehicles = [
         price: 80,
         distanceKm: 132,
     },
+    
 ];
 
 export default vehicles;

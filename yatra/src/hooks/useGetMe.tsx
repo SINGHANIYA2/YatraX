@@ -1,5 +1,5 @@
 
-import { setUserData } from "@/redux/userSlice"
+import { setUserData } from "../../src/redux/userSlice"
 import axios from "axios"
 import { useEffect } from "react"
 import React from 'react'

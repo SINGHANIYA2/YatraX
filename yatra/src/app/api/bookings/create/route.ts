@@ -1,10 +1,10 @@
 // app/api/booking/create/route.ts
 
-import connectDb from "@/lib/db";
-import Trip from "@/models/Trip.models";
-import Booking from "@/models/booking.models";
-import { auth } from "@/auth";
-import { haversineKm, calcFarePerPassenger } from "@/lib/fare";
+import connectDb from "../../../../../src/lib/db";
+import Trip from "../../../../../src/models/Trip.models";
+import Booking from "../../../../../src/models/booking.models";
+import { auth } from "../../../../../src/auth";
+import { haversineKm, calcFarePerPassenger } from "../../../../../src/lib/fare";
 import { NextRequest, NextResponse } from "next/server";
 
 interface PassengerInput {

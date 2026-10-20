@@ -27,6 +27,10 @@ export default function SummarySection({ trip, passengers, onBook, booking }: Pr
     { label: 'Net Banking', value: 'netbanking' },
   ]
 
+  // Actual Razorpay checkout happens on the /payment page after the booking
+  // is created (see ConfirmBookingModal -> Booking.handleConfirm), so this
+  // component only needs to collect the chosen method and hand off via onBook.
+
   return (
     <div
       className="

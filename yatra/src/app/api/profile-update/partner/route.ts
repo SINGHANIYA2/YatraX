@@ -1,6 +1,6 @@
-import { auth } from '@/auth'
-import connectDb from "@/lib/db";
-import Partner from '@/models/partner.models'
+import { auth } from '../../../../../src/auth'
+import connectDb from "../../../../../src/lib/db";
+import Partner from '../../../../../src/models/partner.models'
 import { NextRequest, NextResponse } from "next/server";
 
 const editableFields = [

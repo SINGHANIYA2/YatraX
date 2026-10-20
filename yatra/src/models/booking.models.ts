@@ -27,6 +27,11 @@ export interface IBooking extends Document {
   paymentMethod: "upi" | "card" | "wallet" | "netbanking";
   paymentStatus: "pending" | "paid" | "failed" | "refunded";
 
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
+  razorpaySignature?: string;
+  paidAt?: Date;
+
   bookingStatus: "confirmed" | "cancelled";
   cancelledAt?: Date;
   cancellationReason?: string;
@@ -92,6 +97,11 @@ const BookingSchema = new Schema<IBooking>(
       default: "pending",
       index: true,
     },
+
+    razorpayOrderId: { type: String },
+    razorpayPaymentId: { type: String },
+    razorpaySignature: { type: String },
+    paidAt: { type: Date },
 
     bookingStatus: {
       type: String,

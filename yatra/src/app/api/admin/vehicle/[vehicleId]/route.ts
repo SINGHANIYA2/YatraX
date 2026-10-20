@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
-import connectDb from "@/lib/db";
-import { auth } from "@/auth";
+import connectDb from "../../../../../../src/lib/db";
+import { auth } from "../../../../../../src/auth";
 
-import Admin from "@/models/admin.models";
-import Booking from "@/models/booking.models";
+import Admin from "../../../../../../src/models/admin.models";
+import Booking from "../../../../../../src/models/booking.models";
 
 import { NextRequest, NextResponse } from "next/server";
-import Vehicle from "@/models/vehicle.models";
-import Location from "@/models/location.models";
+import Vehicle from "../../../../../../src/models/vehicle.models";
+import Location from "../../../../../../src/models/location.models";
 
 console.log(Location);
 
@@ -468,58 +468,65 @@ export async function GET(
             );
         }
 
+        const vehicleData = vehicle as any;
+
         return NextResponse.json(
             {
                 success: true,
 
-                vehicle,
+                vehicle: vehicleData,
+
+                // assignment: {
+                //     isAssigned: !!vehicleData.assignedPartnerId,
+                //     assignedAt: vehicleData.assignedAt,
+                //     partner: vehicleData.assignedPartnerId,
+                // },
 
                 assignment: {
-                    isAssigned: !!vehicle.assignedPartnerId,
-                    assignedAt: vehicle.assignedAt,
-                    partner: vehicle.assignedPartnerId,
+                    isAssigned: !!vehicleData.assignedPartnerId,
+                    assignedAt: vehicleData.assignedAt,
+                    partner: vehicleData.assignedPartnerId,
                 },
-
                 trip: {
-                    status: vehicle.tripStatus,
+                    status: vehicleData.tripStatus,
                     scheduledStartAt:
-                        vehicle.scheduledStartAt,
+                        vehicleData.scheduledStartAt,
                     scheduledEndAt:
-                        vehicle.scheduledEndAt,
+                        vehicleData.scheduledEndAt,
                 },
 
                 tracking: {
-                    isOnline: vehicle.isOnline,
+                    isOnline: vehicleData.isOnline,
                     latitude:
-                        vehicle.currentLatitude,
+                        vehicleData.currentLatitude,
                     longitude:
-                        vehicle.currentLongitude,
-                    speed: vehicle.speed,
-                    heading: vehicle.heading,
+                        vehicleData.currentLongitude,
+                    speed: vehicleData.speed,
+                    heading: vehicleData.heading,
                     lastLocationUpdate:
-                        vehicle.lastLocationUpdate,
+                        vehicleData.lastLocationUpdate,
                 },
 
                 capacity: {
                     availableSeats:
-                        vehicle.availableSeats,
+                        vehicleData.availableSeats,
                 },
 
-                routeSummary: vehicle.routeId
+                routeSummary: vehicleData.routeId
                     ? {
                           totalStops:
-                              vehicle.routeId.locations
+                              vehicleData.routeId.locations
                                   ?.length ?? 0,
                           distance:
-                              vehicle.routeId
+                              vehicleData.routeId
                                   .distanceInKm,
                           estimatedDuration:
-                              vehicle.routeId
+                              vehicleData.routeId
                                   .estimatedDurationInMinutes,
                       }
                     : null,
 
-                documents: vehicle.documents,
+                documents: vehicleData.documents,
             },
             {
                 status: 200,

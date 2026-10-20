@@ -1,7 +1,7 @@
 // src/app/api/vehicle/search/route.ts
 
-import connectDb from "@/lib/db";
-import Vehicle from "@/models/vehicle.models";
+import connectDb from "../../../../../src/lib/db";
+import Vehicle from "../../../../../src/models/vehicle.models";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,9 +13,9 @@ export async function POST(
 
     const { routeIds } = await req.json();
 
-//     console.log("Received routeIds:", routeIds);
-// console.log("Is Array:", Array.isArray(routeIds));
-// console.log("Length:", routeIds?.length);
+    //     console.log("Received routeIds:", routeIds);
+    // console.log("Is Array:", Array.isArray(routeIds));
+    // console.log("Length:", routeIds?.length);
 
     if (!Array.isArray(routeIds) || routeIds.length === 0
     ) {
@@ -30,10 +30,9 @@ export async function POST(
       );
     }
 
-    
 
-    const objectRouteIds = routeIds.map(
-      (id: string) =>
+
+    const objectRouteIds = routeIds.map( (id: string) =>
         new mongoose.Types.ObjectId(id)
     );
 
@@ -53,10 +52,11 @@ export async function POST(
         path: "routeId",
         populate: {
           path: "locations",
-          select:
-            "name city latitude longitude",
+          select: "name city latitude longitude",
         },
       });
+      
+    console.log("Vehicles =", vehicles);
 
     return NextResponse.json(
       {
@@ -68,14 +68,14 @@ export async function POST(
         status: 200,
       }
     );
-  } catch (error) {
-    console.log(error);
 
+  }catch(error){
+    console.log(error);
+    
     return NextResponse.json(
       {
         success: false,
-        message:
-          "Internal server error.",
+        message: "Internal server error.",
       },
       {
         status: 500,

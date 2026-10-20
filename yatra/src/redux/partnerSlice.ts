@@ -1,4 +1,4 @@
-import { IPartner } from "@/models/partner.models"
+import { IPartner } from "../../src/models/partner.models"
 import {createSlice} from "@reduxjs/toolkit"
 
 

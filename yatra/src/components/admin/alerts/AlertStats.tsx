@@ -8,22 +8,21 @@ import {
 } from 'lucide-react'
 
 import AlertStatCard from './AlertStatCard'
-import { alertStats } from './demo'
+import type { AlertStatsData } from '../../../../src/app/admin/alerts/page'
 
-export default function AlertStats() {
+export default function AlertStats({
+    stats,
+    loading,
+}: {
+    stats: AlertStatsData
+    loading: boolean
+}) {
 
-    const icons = [
-        <Bell size={22} />,
-        <ShieldAlert size={22} />,
-        <AlertTriangle size={22} />,
-        <CheckCircle2 size={22} />,
-    ]
-
-    const colors = [
-        'text-primary',
-        'text-destructive',
-        'text-warning',
-        'text-success',
+    const cards = [
+        { title: 'Total Alerts', value: stats.total, icon: <Bell size={22} />, color: 'text-primary' },
+        { title: 'Critical', value: stats.critical, icon: <ShieldAlert size={22} />, color: 'text-destructive' },
+        { title: 'Warning', value: stats.warning, icon: <AlertTriangle size={22} />, color: 'text-warning' },
+        { title: 'Resolved', value: stats.resolved, icon: <CheckCircle2 size={22} />, color: 'text-success' },
     ]
 
     return (
@@ -37,13 +36,13 @@ export default function AlertStats() {
             mb-8
             "
         >
-            {alertStats.map((item, index) => (
+            {cards.map((item) => (
                 <AlertStatCard
                     key={item.title}
                     title={item.title}
-                    value={item.value}
-                    icon={icons[index]}
-                    iconColor={colors[index]}
+                    value={loading ? 0 : item.value}
+                    icon={item.icon}
+                    iconColor={item.color}
                 />
             ))}
         </div>

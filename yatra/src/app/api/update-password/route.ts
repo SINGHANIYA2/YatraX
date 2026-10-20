@@ -1,7 +1,7 @@
-import connectDb from "@/lib/db";
-import Admin from "@/models/admin.models";
-import Partner from "@/models/partner.models";
-import User from "@/models/user.models";
+import connectDb from "../../../../src/lib/db";
+import Admin from "../../../../src/models/admin.models";
+import Partner from "../../../../src/models/partner.models";
+import User from "../../../../src/models/user.models";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 

@@ -1,7 +1,7 @@
-import { auth } from "@/auth";
-import connectDb from "@/lib/db";
-import Admin from "@/models/admin.models";
-import PartnerApplication from "@/models/partnerApplication.models";
+import { auth } from "../../../../../src/auth";
+import connectDb from "../../../../../src/lib/db";
+import Admin from "../../../../../src/models/admin.models";
+import PartnerApplication from "../../../../../src/models/partnerApplication.models";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {

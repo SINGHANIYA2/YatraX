@@ -4,13 +4,13 @@ import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { motion } from "motion/react";
 
-import ApplicationTopBar from "@/components/admin/applications/ApplicationTopBar";
-import ApplicationStats from "@/components/admin/applications/ApplicationStats";
-import ApplicationFilters from "@/components/admin/applications/ApplicationFilters";
-import ApplicationTable from "@/components/admin/applications/ApplicationTable";
-import ApplicationDetailsModal from "@/components/admin/applications/ApplicationDetailsModal"
-import RejectModal from "@/components/admin/applications/RejectModal"
-import LoadingState from "@/components/ui/LoadingState"
+import ApplicationTopBar from "../../../../src/components/admin/applications/ApplicationTopBar";
+import ApplicationStats from "../../../../src/components/admin/applications/ApplicationStats";
+import ApplicationFilters from "../../../../src/components/admin/applications/ApplicationFilters";
+import ApplicationTable from "../../../../src/components/admin/applications/ApplicationTable";
+import ApplicationDetailsModal from "../../../../src/components/admin/applications/ApplicationDetailsModal"
+import RejectModal from "../../../../src/components/admin/applications/RejectModal"
+import LoadingState from "../../../../src/components/ui/LoadingState"
 import { error } from "console";
 
 export default function ApplicationsPage() {

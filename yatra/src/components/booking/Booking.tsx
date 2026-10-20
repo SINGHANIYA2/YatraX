@@ -10,9 +10,9 @@ import PassengerDetails from './PassengerDetails'
 import SummarySection from './SummarySection'
 import ConfirmBookingModal from './ConfirmBookingModal'
 import type { Passenger, TripSearchResult } from './types'
-import { MOCK_TRIPS, mockCreateBooking } from './mockData' // TEMPORARY — remove once backend is live
 import BookingEmptyState from './BookingEmptyState'
 import { ChevronLeft } from 'lucide-react'
+import GoHomeButton from '../GoHomeButton'
 
 type PaymentMethod = 'upi' | 'card' | 'wallet' | 'netbanking'
 
@@ -41,49 +41,42 @@ function Booking() {
       setSearchError('Please enter both a source and destination')
       return
     }
-
     setHasSearched(true)
     setSearching(true)
     setSearchError('')
     setSelectedTrip(null)
     setPassengers([])
-
+    
+    console.log("searching....")
     try {
       const { data } = await axios.get('/api/trip/search', {
         params: { source: from.trim(), destination: to.trim(), date: date || undefined },
       })
 
-      const trips = data.trips ?? []
-
-      if (trips.length === 0) {
-        
-        console.log('Real search returned 0 trips, falling back to mock data')
-        setResults(MOCK_TRIPS)
-      } else {
-        setResults(trips)
-      }
+      setResults(data.trips ?? [])
+      console.log("trip data : ", data.trips)
     } catch (err: any) {
-     
-      console.log('Trip search failed, falling back to mock data:', err)
-      setResults(MOCK_TRIPS)
-      setSearchError('')
+      console.log('Trip search failed:', err)
+      setResults([])
+      setSearchError(
+        err?.response?.data?.message || 'Could not search trips right now. Please try again.'
+      )
     } finally {
       setSearching(false)
     }
   }
 
   const handleSelectTrip = (trip: TripSearchResult) => {
+    console.log("trip data : ", trip)
     setSelectedTrip(trip)
     setPassengers([])
     setBookingError('')
   }
 
   const handleAddPassenger = (p: Passenger) => setPassengers((prev) => [...prev, p])
-  const handleRemovePassenger = (id: string) =>
-    setPassengers((prev) => prev.filter((p) => p.id !== id))
+  const handleRemovePassenger = (id: string) => setPassengers((prev) => prev.filter((p) => p.id !== id))
 
-  const fare = useMemo(
-    () => (selectedTrip ? selectedTrip.farePerPassenger * Math.max(passengers.length, 1) : 0),
+  const fare = useMemo(() => (selectedTrip ? selectedTrip.farePerPassenger * Math.max(passengers.length, 1) : 0),
     [selectedTrip, passengers.length]
   )
 
@@ -101,7 +94,7 @@ function Booking() {
     setBookingError('')
 
     try {
-      const { data } = await axios.post('/api/booking/create', {
+      const { data } = await axios.post('/api/bookings/create', {
         tripId: selectedTrip.tripId,
         boardStopId: selectedTrip.boardStopId,
         alightStopId: selectedTrip.alightStopId,
@@ -115,18 +108,21 @@ function Booking() {
 
       router.push(`/payment?bookingId=${data.booking.id}`)
     } catch (err: any) {
-     
-      console.log('Booking create failed, using mock booking:', err)
-      const mock = mockCreateBooking()
-      router.push(`/payment?bookingId=${mock.booking.id}`)
-    } finally {
+      console.log('Booking create failed:', err)
+      setBookingError(
+        err?.response?.data?.message || 'Could not create your booking. Please try again.'
+      )
       setSubmitting(false)
-      setShowConfirm(false)
+      return
     }
+
+    setSubmitting(false)
+    setShowConfirm(false)
   }
 
   return (
-    <div className="bg-background">
+    <div className="bg-background relative">
+      <GoHomeButton />
       <motion.div
         initial={{ y: 40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}

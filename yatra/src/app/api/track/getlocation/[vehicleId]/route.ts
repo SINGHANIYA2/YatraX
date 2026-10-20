@@ -1,5 +1,5 @@
-import connectDb from "@/lib/db";
-import Vehicle from "@/models/vehicle.models";
+import connectDb from "../../../../../../src/lib/db";
+import Vehicle from "../../../../../../src/models/vehicle.models";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 

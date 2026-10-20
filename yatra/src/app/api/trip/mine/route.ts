@@ -1,8 +1,8 @@
-import connectDb from "@/lib/db";
-import Partner from "@/models/partner.models";
-import { auth } from "@/auth";
+import connectDb from "../../../../../src/lib/db";
+import Partner from "../../../../../src/models/partner.models";
+import { auth } from "../../../../../src/auth";
 import { NextRequest, NextResponse } from "next/server";
-import Trip from "@/models/Trip.models";
+import Trip from "../../../../../src/models/Trip.models";
 
 function startOfDay(date: Date): Date {
   const d = new Date(date);

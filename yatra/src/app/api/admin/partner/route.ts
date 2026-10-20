@@ -1,9 +1,9 @@
-import { auth } from "@/auth";
-import connectDb from "@/lib/db";
+import { auth } from "../../../../../src/auth";
+import connectDb from "../../../../../src/lib/db";
 
-import Admin from "@/models/admin.models";
-import Partner from "@/models/partner.models";
-import Vehicle from "@/models/vehicle.models";
+import Admin from "../../../../../src/models/admin.models";
+import Partner from "../../../../../src/models/partner.models";
+import Vehicle from "../../../../../src/models/vehicle.models";
 
 import { NextRequest, NextResponse } from "next/server";
 console.log(Partner)
@@ -85,8 +85,7 @@ export async function GET(req: NextRequest) {
             ];
         }
 
-        const totalPartners =
-            await Partner.countDocuments(filter);
+        const totalPartners = await Partner.countDocuments(filter);
 
         const partners = await Partner.find(filter)
             .populate({

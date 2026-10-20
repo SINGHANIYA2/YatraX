@@ -14,10 +14,10 @@
  * up your real API / redux actions.
  */
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { RootState } from "../../../src/redux/store";
 import {
   User,
   Mail,
@@ -46,8 +46,9 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 
 import { useDispatch } from "react-redux"
-import { AppDispatch } from "@/redux/store"
-import { setVehicleData } from "@/redux/vehicleSlice"
+import { AppDispatch } from "../../../src/redux/store"
+import { setVehicleData } from "../../../src/redux/vehicleSlice"
+import GoHomeButton from "../../components/GoHomeButton";
 
 
 // Types
@@ -55,13 +56,10 @@ import { setVehicleData } from "@/redux/vehicleSlice"
 
 type TabKey = "profile" | "vehicle" | "trips" | "bookings" | "earnings";
 
-interface PayoutItem {
-  id: string;
-  date: string;
-  trips: number;
-  amount: number;
-  status: "paid" | "pending";
-}
+// PayoutItem interface removed — earnings are now computed live from
+// /api/bookings/history + /api/partner/me (see EarningsTab) instead of a
+// static payout ledger that doesn't exist in the schema.
+
 
 interface VehicleDetail {
   vehicleType: keyof typeof VEHICLE_ICONS;
@@ -78,12 +76,6 @@ interface VehicleDetail {
 // ---------------------------------------------------------------
 // Mock data — replace with your real API data
 // ---------------------------------------------------------------
-
-const MOCK_PAYOUTS: PayoutItem[] = [
-  { id: "PO-3391", date: "01 Jul 2026", trips: 42, amount: 18400, status: "paid" },
-  { id: "PO-3312", date: "24 Jun 2026", trips: 37, amount: 15650, status: "paid" },
-  { id: "PO-3288", date: "17 Jun 2026", trips: 29, amount: 12100, status: "pending" },
-];
 
 const VEHICLE_ICONS = { bike: Bike, car: Car, truck: Truck, bus: Truck } as const;
 
@@ -184,14 +176,11 @@ const [loading, setLoading] = useState(false)
 
   const {data : session} = useSession()
   useEffect(() => {
-    if(!Id){
-      // console.log(partnerData)
-
-      const userId = session?.user?.id
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUserId(userId)
+    const userId = session?.user?.id;
+    if (userId && !Id) {
+      setUserId(userId);
     }
-  })
+  }, [session?.user?.id, Id]);
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -623,39 +612,41 @@ function VehicleTab() {
     );
   }
 
-  // Fallback mock data — only used until a real vehicle has been fetched
+  if (!vehicleData) {
+    return (
+      <div className="rounded-2xl border border-border bg-card p-10 text-center">
+        <Car size={28} className="mx-auto text-muted-foreground mb-3" />
+        <p className="text-sm font-medium text-foreground">No vehicle assigned yet</p>
+        <p className="text-xs text-muted-foreground mt-1">
+          Your admin hasn't assigned a vehicle to your account. Check back once they do.
+        </p>
+      </div>
+    );
+  }
+
   // TODO: your Vehicle schema (vehicle.models.ts) doesn't currently store
   // insuranceExpiry / rcVerified / insuranceVerified as booleans/dates —
   // it only stores documents.rc / documents.insurance as IFile. Adjust the
   // backend schema (or this mapping) once those fields exist for real.
-  const vehicle: VehicleDetail = vehicleData
-    ? {
-        vehicleType: (vehicleData.vehicleType as VehicleDetail["vehicleType"]) ?? "car",
-        vehicleNumber: vehicleData.vehicleNumber ?? "—",
-        model: vehicleData.model ?? vehicleData.brand ?? "—",
-        capacity: vehicleData.seatingCapacity
-          ? `${vehicleData.seatingCapacity} seats`
+  const vehicle: VehicleDetail = {
+    vehicleType: (vehicleData.vehicleType as VehicleDetail["vehicleType"]) ?? "car",
+    vehicleNumber: vehicleData.vehicleNumber ?? "—",
+    model: typeof vehicleData.model === "string"
+      ? String(vehicleData.model)
+        : typeof vehicleData.brand === "string"
+          ? vehicleData.brand
           : "—",
-        insuranceExpiry: vehicleData.scheduledEndAt
-          ? String(vehicleData.scheduledEndAt)
-          : new Date().toISOString(),
-        rcVerified: !!vehicleData.documents?.rc?.url,
-        insuranceVerified: !!vehicleData.documents?.insurance?.url,
-        rcDocumentUrl: vehicleData.documents?.rc?.url ?? "",
-        insuranceDocumentUrl: vehicleData.documents?.insurance?.url ?? "",
-      }
-    : {
-        vehicleType: "car",
-        vehicleNumber: "JH14 AB 4521",
-        model: "Maruti Suzuki Dzire",
-        capacity: "4 seats",
-        insuranceExpiry: "2027-02-14",
-        rcVerified: true,
-        insuranceVerified: false,
-        rcDocumentUrl: "https://res.cloudinary.com/your-cloud-name/image/upload/v1/rc-doc.pdf",
-        insuranceDocumentUrl:
-          "https://res.cloudinary.com/your-cloud-name/image/upload/v1/insurance-doc.pdf",
-      };
+    capacity: vehicleData.seatingCapacity
+      ? `${vehicleData.seatingCapacity} seats`
+      : "—",
+    insuranceExpiry: vehicleData.scheduledEndAt
+      ? String(vehicleData.scheduledEndAt)
+      : new Date().toISOString(),
+    rcVerified: !!vehicleData.documents?.rc?.url,
+    insuranceVerified: !!vehicleData.documents?.insurance?.url,
+    rcDocumentUrl: vehicleData.documents?.rc?.url ?? "",
+    insuranceDocumentUrl: vehicleData.documents?.insurance?.url ?? "",
+  };
 
   const Icon = VEHICLE_ICONS[vehicle.vehicleType] ?? Car;
 
@@ -779,7 +770,7 @@ function BookingHistoryTab() {
       try {
         setLoading(true);
         setError("");
-        const { data } = await axios.get("/api/booking/history");
+        const { data } = await axios.get("/api/bookings/history");
         setBookings(data.bookings ?? []);
       } catch (err: any) {
         setError(err?.response?.data?.message ?? "Failed to load booking history");
@@ -841,9 +832,9 @@ function BookingHistoryTab() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <p className="text-sm font-semibold text-foreground">
-                  ₹{b.totalFare?.toLocaleString()}
+                  ₹{b.totalFare?.toLocaleString("en-IN")}
                 </p>
 
                 <span
@@ -863,6 +854,21 @@ function BookingHistoryTab() {
                     Cancelled
                   </span>
                 )}
+
+                <button
+                  type="button"
+                  disabled={b.paymentStatus !== "paid" || b.bookingStatus === "cancelled"}
+                  onClick={() => {
+                    window.open(
+                      `/api/bookings/${b.id}/ticket`,
+                      "_blank",
+                      "noopener,noreferrer"
+                    );
+                  }}
+                  className="rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  View Ticket
+                </button>
               </div>
             </div>
           ))}
@@ -1012,30 +1018,132 @@ function TripsTab() {
 // ---------------------------------------------------------------
 
 function EarningsTab() {
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [partnerStats, setPartnerStats] = useState<{ averageRating: number; totalRatings: number } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const [historyRes, meRes] = await Promise.all([
+          axios.get("/api/bookings/history"),
+          axios.get("/api/partner/me"),
+        ]);
+
+        setBookings(historyRes.data.bookings ?? []);
+        setPartnerStats({
+          averageRating: meRes.data.averageRating ?? 0,
+          totalRatings: meRes.data.totalRatings ?? 0,
+        });
+      } catch (err: any) {
+        setError(err?.response?.data?.message ?? "Failed to load earnings");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <CircleDashed size={22} className="animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  const paidBookings = bookings.filter((b) => b.paymentStatus === "paid");
+
+  const totalEarnings = paidBookings.reduce((sum, b) => sum + (b.totalFare ?? 0), 0);
+
+  const now = new Date();
+  const thisMonthEarnings = paidBookings
+    .filter((b) => {
+      const d = new Date(b.createdAt);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    })
+    .reduce((sum, b) => sum + (b.totalFare ?? 0), 0);
+
+  const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const lastMonthEarnings = paidBookings
+    .filter((b) => {
+      const d = new Date(b.createdAt);
+      return d.getMonth() === lastMonth.getMonth() && d.getFullYear() === lastMonth.getFullYear();
+    })
+    .reduce((sum, b) => sum + (b.totalFare ?? 0), 0);
+
+  const monthChangePct = lastMonthEarnings > 0
+    ? Math.round(((thisMonthEarnings - lastMonthEarnings) / lastMonthEarnings) * 100)
+    : null;
+
+  // Group paid bookings by calendar day so this reads like a settlement
+  // list, without pretending there's a real bank-payout ledger behind it.
+  const byDay = new Map<string, { date: string; trips: number; amount: number; allPaid: boolean }>();
+  for (const b of bookings) {
+    const dateKey = new Date(b.createdAt).toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+    const entry = byDay.get(dateKey) ?? { date: dateKey, trips: 0, amount: 0, allPaid: true };
+    entry.trips += 1;
+    if (b.paymentStatus === "paid") entry.amount += b.totalFare ?? 0;
+    if (b.paymentStatus !== "paid") entry.allPaid = false;
+    byDay.set(dateKey, entry);
+  }
+  const dailyEntries = Array.from(byDay.values()).slice(0, 10);
+
   return (
     <div className="space-y-6">
+      {error && (
+        <div className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {error}
+        </div>
+      )}
+
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard icon={Wallet} label="Total earnings" value="₹1,26,400" />
-        <StatCard icon={TrendingUp} label="This month" value="₹18,400" sub="+12% vs last month" />
-        <StatCard icon={Calendar} label="Total trips" value="284" />
-        <StatCard icon={Star} label="Rating" value="4.8" sub="from 210 reviews" />
+        <StatCard icon={Wallet} label="Total earnings" value={`₹${totalEarnings.toLocaleString()}`} />
+        <StatCard
+          icon={TrendingUp}
+          label="This month"
+          value={`₹${thisMonthEarnings.toLocaleString()}`}
+          sub={monthChangePct !== null ? `${monthChangePct >= 0 ? "+" : ""}${monthChangePct}% vs last month` : undefined}
+        />
+        <StatCard icon={Calendar} label="Total trips" value={`${bookings.length}`} />
+        <StatCard
+          icon={Star}
+          label="Rating"
+          value={partnerStats && partnerStats.totalRatings > 0 ? partnerStats.averageRating.toFixed(1) : "—"}
+          sub={partnerStats && partnerStats.totalRatings > 0 ? `from ${partnerStats.totalRatings} reviews` : "No reviews yet"}
+        />
       </div>
 
       <div className="rounded-2xl border border-border bg-card p-6">
         <h3 className="text-base font-semibold text-foreground mb-5">
-          Recent payouts
+          Earnings by day
         </h3>
 
+        {dailyEntries.length === 0 && (
+          <p className="text-sm text-muted-foreground py-6 text-center">
+            No earnings yet.
+          </p>
+        )}
+
         <div className="space-y-3">
-          {MOCK_PAYOUTS.map((p) => (
+          {dailyEntries.map((p) => (
             <div
-              key={p.id}
+              key={p.date}
               className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-xl border border-border px-4 py-3"
             >
               <div>
-                <p className="text-sm font-medium text-foreground">{p.id}</p>
+                <p className="text-sm font-medium text-foreground">{p.date}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  {p.date} · {p.trips} trips
+                  {p.trips} trip{p.trips !== 1 ? "s" : ""}
                 </p>
               </div>
 
@@ -1045,12 +1153,12 @@ function EarningsTab() {
                 </p>
                 <span
                   className={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                    p.status === "paid"
+                    p.allPaid
                       ? "bg-success/10 text-success"
                       : "bg-warning/10 text-warning"
                   }`}
                 >
-                  {p.status === "paid" ? "Paid" : "Pending"}
+                  {p.allPaid ? "Paid" : "Pending"}
                 </span>
                 <ChevronRight size={14} className="text-muted-foreground" />
               </div>
@@ -1063,11 +1171,18 @@ function EarningsTab() {
 }
 
 
-export default function page() {
+function PartnerPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: session } = useSession();
 
-  const [tab, setTab] = useState<TabKey>("profile");
+  const [tab, setTab] = useState<TabKey>(() => {
+    const requestedTab = searchParams.get("tab");
+    const validTabs: TabKey[] = ["profile", "vehicle", "trips", "bookings", "earnings"];
+    return validTabs.includes(requestedTab as TabKey)
+      ? (requestedTab as TabKey)
+      : "profile";
+  });
   const [online, setOnline] = useState(true);
   const [statusLoading, setStatusLoading] = useState(false);
   const [statusError, setStatusError] = useState("");
@@ -1115,13 +1230,8 @@ export default function page() {
         {/* Header */}
         <div className="flex items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => router.back()}
-              aria-label="Go back"
-              className="h-10 w-10 shrink-0 rounded-full border border-border flex items-center justify-center hover:bg-hover transition-colors cursor-pointer"
-            >
-              <ChevronLeft size={18} className="text-foreground" />
-            </button>
+            <GoHomeButton />
+             
             <div>
               <h1 className="text-2xl font-bold text-foreground">
                 Partner dashboard
@@ -1188,5 +1298,24 @@ export default function page() {
 
       </div>
     </div>
+  );
+}
+
+// useSearchParams() can trigger a client-side rendering bailout during
+// production prerendering. Keep the Suspense boundary in the parent page.
+export default function PartnerPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="flex items-center gap-3 text-muted-foreground">
+            <CircleDashed size={20} className="animate-spin" />
+            <span>Loading partner dashboard...</span>
+          </div>
+        </div>
+      }
+    >
+      <PartnerPageContent />
+    </Suspense>
   );
 }

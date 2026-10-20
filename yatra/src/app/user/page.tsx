@@ -11,6 +11,7 @@ import { ParamsOf } from '../../../.next/dev/types/routes';
 import { useSession } from "next-auth/react";
 import { AppDispatch, RootState } from '../../redux/store';
 import { useDispatch, useSelector } from "react-redux";
+import GoHomeButton from "../../components/GoHomeButton";
 
 
 type TabKey = "profile" | "upcoming" | "history";
@@ -26,54 +27,6 @@ interface BookingItem {
   fare: number;
   status: "upcoming" | "completed" | "cancelled";
 }
-
-
-const MOCK_BOOKINGS: BookingItem[] = [
-  {
-    id: "YTX-90231",
-    vehicleName: "YatraX Express Bus",
-    from: "Ranchi",
-    to: "Patna",
-    date: "12 Jul 2026",
-    time: "08:30 AM",
-    seat: "A4",
-    fare: 650,
-    status: "upcoming",
-  },
-  {
-    id: "YTX-90188",
-    vehicleName: "YatraX City Cab",
-    from: "Ranchi",
-    to: "Jamshedpur",
-    date: "20 Jul 2026",
-    time: "06:00 PM",
-    seat: "-",
-    fare: 1200,
-    status: "upcoming",
-  },
-  {
-    id: "YTX-88450",
-    vehicleName: "YatraX Express Bus",
-    from: "Ranchi",
-    to: "Kolkata",
-    date: "02 Jun 2026",
-    time: "09:00 AM",
-    seat: "B2",
-    fare: 950,
-    status: "completed",
-  },
-  {
-    id: "YTX-87310",
-    vehicleName: "YatraX Sleeper Bus",
-    from: "Ranchi",
-    to: "Delhi",
-    date: "18 May 2026",
-    time: "10:15 PM",
-    seat: "S12",
-    fare: 1800,
-    status: "cancelled",
-  },
-];
 
 
 function StatusBadge({ status }: { status: BookingItem["status"] }) {
@@ -866,10 +819,15 @@ function BookingCard({ booking }: { booking: BookingItem }) {
 
       <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 sm:gap-1 sm:text-right shrink-0">
         <p className="font-semibold text-foreground">₹{booking.fare}</p>
-        <button className="text-xs font-medium text-primary hover:text-primary-hover flex items-center gap-0.5 cursor-pointer">
+        <a
+          href={`/api/bookings/${booking.id}/ticket`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs font-medium text-primary hover:text-primary-hover flex items-center gap-0.5 cursor-pointer"
+        >
           {booking.status === "upcoming" ? "View ticket" : "View details"}
           <ChevronRight size={13} />
-        </button>
+        </a>
       </div>
     </div>
   );
@@ -902,9 +860,61 @@ function BookingList({ items }: { items: BookingItem[] }) {
 export default function UserDashboardProfilePage() {
   const router = useRouter();
   const [tab, setTab] = useState<TabKey>("profile");
+  const [bookings, setBookings] = useState<BookingItem[]>([]);
+  const [bookingsLoading, setBookingsLoading] = useState(true);
 
-  const upcoming = MOCK_BOOKINGS.filter((b) => b.status === "upcoming");
-  const history = MOCK_BOOKINGS.filter((b) => b.status !== "upcoming");
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const { data } = await axios.get("/api/bookings/my");
+        if (data.success) {
+          const mapped: BookingItem[] = data.bookings.map((b: any) => {
+            const departure = b.tripId?.departureDateTime
+              ? new Date(b.tripId.departureDateTime)
+              : null;
+
+            const vehicle = b.tripId?.vehicleId;
+            const vehicleName = vehicle
+              ? `${vehicle.brand ?? ""} ${vehicle.model ?? vehicle.vehicleType ?? ""}`.trim()
+              : "YatraX Vehicle";
+
+            const status: BookingItem["status"] =
+              b.bookingStatus === "cancelled"
+                ? "cancelled"
+                : departure && departure.getTime() < Date.now()
+                ? "completed"
+                : "upcoming";
+
+            return {
+              id: b._id,
+              vehicleName: vehicleName || "YatraX Vehicle",
+              from: b.boardStopId?.name ?? b.boardStopId?.city ?? "-",
+              to: b.alightStopId?.name ?? b.alightStopId?.city ?? "-",
+              date: departure
+                ? departure.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
+                : "-",
+              time: departure
+                ? departure.toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" })
+                : "-",
+              seat: `${b.seatsBooked}`,
+              fare: b.totalFare,
+              status,
+            };
+          });
+          setBookings(mapped);
+        }
+      } catch (error) {
+        console.log("Failed to load bookings:", error);
+      } finally {
+        setBookingsLoading(false);
+      }
+    };
+
+    fetchBookings();
+  }, []);
+
+  const upcoming = bookings.filter((b) => b.status === "upcoming");
+  const history = bookings.filter((b) => b.status !== "upcoming");
 
   const tabs: { key: TabKey; label: string; count?: number }[] = [
     { key: "profile", label: "Profile" },
@@ -913,7 +923,8 @@ export default function UserDashboardProfilePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      <GoHomeButton />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
         <div className="mb-8">
           <button
@@ -956,8 +967,20 @@ export default function UserDashboardProfilePage() {
         </div>
 
         {tab === "profile" && <ProfileSection />}
-        {tab === "upcoming" && <BookingList items={upcoming} />}
-        {tab === "history" && <BookingList items={history} />}
+        {tab === "upcoming" && (
+          bookingsLoading ? (
+            <div className="text-center py-16 text-sm text-muted-foreground">Loading your bookings…</div>
+          ) : (
+            <BookingList items={upcoming} />
+          )
+        )}
+        {tab === "history" && (
+          bookingsLoading ? (
+            <div className="text-center py-16 text-sm text-muted-foreground">Loading your bookings…</div>
+          ) : (
+            <BookingList items={history} />
+          )
+        )}
       </div>
     </div>
   );

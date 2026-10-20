@@ -11,6 +11,7 @@ import { AnimatePresence, motion, MotionConfig, number } from 'motion/react';
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+import GoHomeButton from "../../components/GoHomeButton";
 
 const SearchMap = dynamic(() => import("./SearchMap"), { ssr: false, });
 
@@ -110,6 +111,8 @@ export default function page() {
 
       const { data } = await axios.post("/api/vehicle/search", { routeIds: routeData.routeIds, });
       setVehicles(data.vehicles);
+
+      console.log("vehicle data" , data);
 
       if (data.vehicles.length > 0) {
         const vehicle = data.vehicles[0];
@@ -253,7 +256,8 @@ export default function page() {
   };
 
   return (
-    <div className="min-h-screen bg-secondary p-4 md:p-6">
+    <div className="min-h-screen bg-secondary p-4 md:p-6 relative">
+      <GoHomeButton />
       <button
         onClick={() => router.back()}
         aria-label="Go back"
@@ -265,12 +269,12 @@ export default function page() {
         {/* Search Section */}
         <div className="bg-card rounded-3xl shadow-sm p-5 md:p-6">
           <h1 className="text-2xl font-bold mb-5">
-            Track Your Vehicle
+            Track Vehicle
           </h1>
 
-          <div className="grid md:grid-cols-4 gap-2">
+          <div className="grid md:grid-cols-3 gap-2">
 
-            <input
+            {/* <input
               type="text"
               placeholder="vehicleNumber"
               className="w-full h-12 pl-11 pr-4 rounded-xl border border-border outline-none focus:border-border"
@@ -281,7 +285,7 @@ export default function page() {
               }
               }
               value={vehicleNumber}
-            />
+            /> */}
             <div className="relative">
               <MapPin
                 size={18}
@@ -628,7 +632,9 @@ export default function page() {
             </h2>
 
             <div className="h-[650px] rounded-2xl overflow-hidden bg-secondary">
-              {vehicleId && !searchedByNumber ? (
+              {vehicleId && !searchedByNumber &&
+              srcLat !== null && srcLong !== null &&
+              destLat !== null && destLong !== null ? (
 
                 <SearchMap
                 

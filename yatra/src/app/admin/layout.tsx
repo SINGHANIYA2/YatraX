@@ -1,5 +1,5 @@
-import AdminLayout from '@/components/admin/layout/AdminLayout'
-import AdminTopbar from '@/components/admin/dashboard/DashboardTopbar'
+import AdminLayout from '../../../src/components/admin/layout/AdminLayout'
+import AdminTopbar from '../../../src/components/admin/dashboard/DashboardTopbar'
 
 export default function Layout({
     children,

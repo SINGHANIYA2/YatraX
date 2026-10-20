@@ -1,9 +1,9 @@
-import connectDb from "@/lib/db";
-import Vehicle from "@/models/vehicle.models";
+import connectDb from "../../../../../src/lib/db";
+import Vehicle from "../../../../../src/models/vehicle.models";
 
-import "@/models/route.models";
-import "@/models/location.models";
-import "@/models/partner.models";
+import "../../../../../src/models/route.models";
+import "../../../../../src/models/location.models";
+import "../../../../../src/models/partner.models";
 
 import { NextRequest, NextResponse } from "next/server";
 

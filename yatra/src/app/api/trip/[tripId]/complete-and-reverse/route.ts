@@ -6,11 +6,11 @@
 // Reversing just means flipping the `stops` array — Trip.stops is already
 // a snapshot (see trip.models.ts), so no Route lookup/edit is needed.
 
-import connectDb from "@/lib/db";
-import Trip from "@/models/trip.models";
-import Vehicle from "@/models/vehicle.models";
-import Partner from "@/models/partner.models";
-import { auth } from "@/auth";
+import connectDb from "../../../../../../src/lib/db";
+import Trip from "../../../../../../src/models/Trip.models";
+import Vehicle from "../../../../../../src/models/vehicle.models";
+import Partner from "../../../../../../src/models/partner.models";
+import { auth } from "../../../../../../src/auth";
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 

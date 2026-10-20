@@ -1,8 +1,8 @@
-import { auth } from "@/auth";
-import connectDb from "@/lib/db";
-import Admin from "@/models/admin.models";
-import Location from "@/models/location.models";
-import Route from "@/models/route.models";
+import { auth } from "../../../../../src/auth";
+import connectDb from "../../../../../src/lib/db";
+import Admin from "../../../../../src/models/admin.models";
+import Location from "../../../../../src/models/location.models";
+import Route from "../../../../../src/models/route.models";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {

@@ -1,8 +1,8 @@
 import { NextRequest } from "next/server";
-import uploadOnCloudinary from "@/lib/cloudinary";
-import { auth } from "@/auth";
-import connectDb from "@/lib/db";
-import Admin from "@/models/admin.models";
+import uploadOnCloudinary from "../../../../../src/lib/cloudinary";
+import { auth } from "../../../../../src/auth";
+import connectDb from "../../../../../src/lib/db";
+import Admin from "../../../../../src/models/admin.models";
 
 const DOC_FIELDS = ["rc", "insurance", "pollution"] as const;
 

@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import GoHomeButton from "../../../../components/GoHomeButton";
 
 
 function Section({
@@ -145,6 +146,8 @@ export default function ReviewPage() {
         <div className="min-h-screen bg-secondary relative overflow-auto">
 
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,var(--border),transparent_55%)]" />
+
+            <GoHomeButton />
 
             <div className="relative z-10 px-4 py-10">
 

@@ -1,10 +1,16 @@
-import { auth } from "@/auth";
-import connectDb from "@/lib/db";
-import Admin from "@/models/admin.models";
-import Partner from "@/models/partner.models";
-import PartnerApplication from "@/models/partnerApplication.models";
-import User from "@/models/user.models";
+import { auth } from "../../../../../../src/auth";
+import connectDb from "../../../../../../src/lib/db";
+import Admin from "../../../../../../src/models/admin.models";
+import Partner from "../../../../../../src/models/partner.models";
+import PartnerApplication from "../../../../../../src/models/partnerApplication.models";
+import User from "../../../../../../src/models/user.models";
 import { NextRequest } from "next/server";
+import { createNotification } from "../../../../../../src/lib/notify";
+import { sendCustomMail } from "../../../../../../src/lib/sendMail";
+import {
+    Partner_Approved_Email_Template,
+    Partner_Rejected_Email_Template,
+} from "../../../../../../src/models/PartnerStatusEmailTemplate";
 
 export async function PATCH(
     req: NextRequest,
@@ -132,6 +138,20 @@ export async function PATCH(
             // Delete the application after approval
             await PartnerApplication.findByIdAndDelete(application._id);
 
+            await createNotification({
+                recipientId: application.userId,
+                recipientRole: "user",
+                title: "Partner application approved",
+                message: "Congratulations! Your driving partner application has been approved.",
+                link: "/partnerpage",
+            });
+
+            sendCustomMail(
+                application.email,
+                "Your YatraX partner application has been approved",
+                Partner_Approved_Email_Template(application.name)
+            ).catch((err) => console.error("Approval email failed:", err));
+
             return Response.json({
                 success: true,
                 message: "Partner Approved",
@@ -162,6 +182,20 @@ export async function PATCH(
                 $pull: { pendingPartnerRequests: application._id },
                 $addToSet: { rejectedPartners: application._id },
             });
+
+            await createNotification({
+                recipientId: application.userId,
+                recipientRole: "user",
+                title: "Partner application rejected",
+                message: reason,
+                link: "/user/applicationstatus",
+            });
+
+            sendCustomMail(
+                application.email,
+                "Update on your YatraX partner application",
+                Partner_Rejected_Email_Template(application.name, reason)
+            ).catch((err) => console.error("Rejection email failed:", err));
 
             return Response.json({
                 success: true,

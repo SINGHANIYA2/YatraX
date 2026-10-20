@@ -11,11 +11,11 @@
 //   "crons": [{ "path": "/api/cron/generate-trips", "schedule": "0 0 * * *" }]
 // }
 
-import connectDb from "@/lib/db";
-import TripSchedule from "@/models/Tripschedule.models";
-import Trip from "@/models/Trip.models";
-import Route from "@/models/route.models";
-import Vehicle from "@/models/vehicle.models";
+import connectDb from "../../../../../src/lib/db";
+import TripSchedule from "../../../../../src/models/Tripschedule.models";
+import Trip from "../../../../../src/models/Trip.models";
+import Route from "../../../../../src/models/route.models";
+import Vehicle from "../../../../../src/models/vehicle.models";
 import { NextRequest, NextResponse } from "next/server";
 
 // How many days ahead to generate trips for a single run.

@@ -9,6 +9,7 @@ import {
   FileCheck,
   Shield,
 } from "lucide-react";
+import GoHomeButton from "../../../components/GoHomeButton";
 
 export default function PartnerOnboardingPage() {
   const router = useRouter();
@@ -18,6 +19,7 @@ export default function PartnerOnboardingPage() {
 
       {/* Blue Glow */}
     <div className="min-h-screen bg-secondary relative overflow-auto">
+       <GoHomeButton/>
         <div className="absolute inset-0 bg-secondary" />
 
         <div className="relative z-10 px-4 -mt-13">

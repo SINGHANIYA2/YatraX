@@ -43,6 +43,3 @@ export const FileSchema = new Schema(
   }
 );
 
-
-// Or, instead of the interface above, you can use:
-// export type IFile = InferSchemaType<typeof FileSchema>;

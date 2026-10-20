@@ -12,6 +12,7 @@ import {
   Clock3,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 interface Notification {
   _id: string;
@@ -29,47 +30,33 @@ export default function NotificationPage() {
     Notification[]
   >([]);
 
+  const [loading, setLoading] = useState(true);
+
+  const fetchNotifications = async () => {
+    try {
+      const { data } = await axios.get("/api/notifications");
+      if (data.success) {
+        setNotifications(data.notifications);
+      }
+    } catch (error) {
+      console.log("Failed to load notifications:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    // Replace with API call
-    setNotifications([
-      {
-        _id: "1",
-        title: "Booking Confirmed",
-        message:
-          "Your booking to Ranchi has been confirmed.",
-        type: "user",
-        read: false,
-        createdAt: "2 mins ago",
-      },
-      {
-        _id: "2",
-        title: "New Ride Request",
-        message:
-          "A new ride request is waiting for approval.",
-        type: "partner",
-        read: false,
-        createdAt: "10 mins ago",
-      },
-      {
-        _id: "3",
-        title: "Partner Application",
-        message:
-          "A new partner application has been submitted.",
-        type: "admin",
-        read: true,
-        createdAt: "1 hour ago",
-      },
-      {
-        _id: "4",
-        title: "Payment Successful",
-        message:
-          "₹520 has been credited to your wallet.",
-        type: "partner",
-        read: true,
-        createdAt: "Yesterday",
-      },
-    ]);
+    fetchNotifications();
   }, []);
+
+  const markAllAsRead = async () => {
+    try {
+      await axios.patch("/api/notifications/mark-read", {});
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    } catch (error) {
+      console.log("Failed to mark notifications as read:", error);
+    }
+  };
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -174,7 +161,12 @@ export default function NotificationPage() {
 
                       <div className="flex items-center gap-2 mt-3 text-xs text-muted-foreground">
                         <Clock3 size={14} />
-                        {notification.createdAt}
+                        {new Date(notification.createdAt).toLocaleString("en-IN", {
+                          day: "numeric",
+                          month: "short",
+                          hour: "numeric",
+                          minute: "2-digit",
+                        })}
                       </div>
                     </div>
                   </div>
@@ -187,6 +179,7 @@ export default function NotificationPage() {
 
           {notifications.length > 0 && (
             <button
+              onClick={markAllAsRead}
               className="mt-8 w-full h-14 rounded-2xl bg-primary text-primary-foreground hover:bg-primary-hover transition-colors font-semibold flex items-center justify-center gap-2"
             >
               <CheckCircle2 size={20} />

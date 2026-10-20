@@ -1,6 +1,6 @@
-import connectDb from "@/lib/db";
-import Route from "@/models/route.models";
-import Location from "@/models/location.models";
+import connectDb from "../../../../../src/lib/db";
+import Route from "../../../../../src/models/route.models";
+import Location from "../../../../../src/models/location.models";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 
         const destination = req.nextUrl.searchParams.get("destination");
 
-        
+
         if (!source || !destination) {
             return NextResponse.json(
                 {
@@ -24,19 +24,24 @@ export async function GET(req: NextRequest) {
             );
         }
 
-       
         const sourceLocation = await Location.findOne({
-            name: source,
             isActive: true,
+            $or: [
+                { city: new RegExp(`^${source}$`, "i") },
+                { name: new RegExp(`^${source}$`, "i") }
+            ]
         });
 
         const destinationLocation = await Location.findOne({
-            name: destination,
             isActive: true,
+            $or: [
+                { city: new RegExp(`^${destination}$`, "i") },
+                { name: new RegExp(`^${destination}$`, "i") }
+            ]
         });
 
-        console.log("Source Location =", sourceLocation);
-        console.log("Destination Location =", destinationLocation);
+        // console.log("Source Location =", sourceLocation);
+        // console.log("Destination Location =", destinationLocation);
 
         if (!sourceLocation || !destinationLocation) {
             console.log("loaction error")

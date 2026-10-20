@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import axios from 'axios'
 
-import RevenueStats from '@/components/admin/revenue/RevenueStats'
-import RevenueChart from '@/components/admin/revenue/RevenueChart'
-import RevenueTopBar from '@/components/admin/revenue/RevenueTopBar'
-import RevenueTable from '@/components/admin/revenue/RevenueTable'
-import LoadingState from '@/components/ui/LoadingState'
-import type { RevenueChartPoint, RevenueStatsData, RevenueTransaction } from '@/components/admin/revenue/types'
+import RevenueStats from '../../../../src/components/admin/revenue/RevenueStats'
+import RevenueChart from '../../../../src/components/admin/revenue/RevenueChart'
+import RevenueTopBar from '../../../../src/components/admin/revenue/RevenueTopBar'
+import RevenueTable from '../../../../src/components/admin/revenue/RevenueTable'
+import LoadingState from '../../../../src/components/ui/LoadingState'
+import type { RevenueChartPoint, RevenueStatsData, RevenueTransaction } from '../../../../src/components/admin/revenue/types'
 
 const EMPTY_STATS: RevenueStatsData = {
     totalRevenue: 0,

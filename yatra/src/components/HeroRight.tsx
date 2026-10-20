@@ -7,8 +7,8 @@ import { useState } from "react";
 import { Bus, Route, Users } from "lucide-react";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger, } from "@/components/ui/popover";
+import { Calendar } from "../../src/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger, } from "../../src/components/ui/popover";
 import LiveMap from "./LiveMap";
 
 

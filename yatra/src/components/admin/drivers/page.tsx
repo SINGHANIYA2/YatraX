@@ -8,7 +8,7 @@ import DriverFilters from './DriverFilters'
 import DriverTable from './DriverTable'
 import DriverManagementTopBar from './DriverTopBar'
 import { getDriverStatus } from './lib'
-import LoadingState from '@/components/ui/LoadingState'
+import LoadingState from '../../../../src/components/ui/LoadingState'
 
 export default function DriversPage() {
 

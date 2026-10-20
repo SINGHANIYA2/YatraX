@@ -8,7 +8,7 @@ import {
 } from 'lucide-react'
 
 import RevenueStatCard from './RevenueStatCard'
-import { formatINR } from '@/lib/utils'
+import { formatINR } from '../../../../src/lib/utils'
 import type { RevenueStatsData } from './types'
 
 export default function RevenueStats({ stats }: { stats: RevenueStatsData }) {

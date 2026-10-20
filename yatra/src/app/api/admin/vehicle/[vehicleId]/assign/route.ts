@@ -1,11 +1,11 @@
-import connectDb from "@/lib/db";
-import Partner from "@/models/partner.models";
-import { auth } from "@/auth";
-import Route from "@/models/route.models";
-import Admin from "@/models/admin.models";
-import vehicleModels from "@/models/vehicle.models";
+import connectDb from "../../../../../../../src/lib/db";
+import Partner from "../../../../../../../src/models/partner.models";
+import { auth } from "../../../../../../../src/auth";
+import Route from "../../../../../../../src/models/route.models";
+import Admin from "../../../../../../../src/models/admin.models";
+import vehicleModels from "../../../../../../../src/models/vehicle.models";
 import { NextRequest } from "next/server";
-import Location from "@/models/location.models";
+import Location from "../../../../../../../src/models/location.models";
 
 console.log(Location)
 

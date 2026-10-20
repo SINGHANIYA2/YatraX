@@ -1,6 +1,14 @@
-import connectDb from "@/lib/db";
-import Admin from "@/models/admin.models";
-import User from "@/models/user.models";
+// app/api/admin/create-profile/route.ts
+//
+// Final step of admin onboarding: fills in organization + bank details on
+// an already OTP-verified (but profile-incomplete) Admin record created by
+// /api/auth/register-admin + /api/auth/verify-admin. This no longer
+// bridges through a temporary User document — it updates the real Admin
+// record in place.
+
+import connectDb from "../../../../../src/lib/db";
+import Admin from "../../../../../src/models/admin.models";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
@@ -25,84 +33,75 @@ export async function POST(req: Request) {
       upiId,
     } = await req.json();
 
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return Response.json(
-        {
-          success: false,
-          message: "User not found",
-        },
-        { status: 404 }
-      );
-    }
-
-    const existingAdmin = await Admin.findOne({ email });
-
-    if (existingAdmin) {
-      return Response.json(
-        {
-          success: false,
-          message: "Admin already exists",
-        },
+    if (!email) {
+      return NextResponse.json(
+        { success: false, message: "Email is required" },
         { status: 400 }
       );
     }
 
-    const admin = await Admin.create({
-      name: user.name,
-      email: user.email,
-      phone: user.mobileNumber,
-      password: user.password,
-      role:"admin",
+    const admin = await Admin.findOne({ email });
 
-      // extra admin details
-      organizationName,
-      organizationType,
-      gstNumber,
-      registrationNumber,
+    if (!admin) {
+      return NextResponse.json(
+        { success: false, message: "Admin not found. Please sign up first." },
+        { status: 404 }
+      );
+    }
 
-      panNumber,
-      address,
-      city,
-      state,
-      pincode,
+    if (!admin.isEmailVerified || !admin.isPhoneVerified) {
+      return NextResponse.json(
+        { success: false, message: "Please verify your email and mobile OTP first" },
+        { status: 403 }
+      );
+    }
 
-      totalVehicles: Number(totalVehicles),
+    if (admin.profileComplete) {
+      return NextResponse.json(
+        { success: false, message: "Admin profile is already complete" },
+        { status: 400 }
+      );
+    }
 
-      bankDetails: {
-        bankName,
-        accountHolder: accountHolderName,
-        accountNumber,
-        ifsc: ifscCode,
-        upiId,
-      },
-    });
+    admin.organizationName = organizationName;
+    admin.organizationType = organizationType;
+    admin.gstNumber = gstNumber;
+    admin.registrationNumber = registrationNumber;
+    admin.panNumber = panNumber;
+    admin.address = address;
+    admin.city = city;
+    admin.state = state;
+    admin.pincode = pincode;
+    admin.totalVehicles = Number(totalVehicles);
 
-    // delete the temporary user record
-   console.log("User before delete:", user);
+    admin.bankDetails = {
+      bankName,
+      accountHolder: accountHolderName,
+      accountNumber,
+      ifsc: ifscCode,
+      upiId,
+    };
 
-    const deletedUser =
-    await User.findByIdAndDelete(user._id);
+    admin.isVerified = true;
+    admin.profileComplete = true;
 
-    console.log("Deleted User:", deletedUser);
+    await admin.save();
 
-    return Response.json(
+    const { password: _password, ...adminSafe } = admin.toObject();
+
+    return NextResponse.json(
       {
         success: true,
         message: "Admin profile created successfully",
-        admin,
+        admin: adminSafe,
       },
       { status: 201 }
     );
   } catch (error) {
     console.log(error);
 
-    return Response.json(
-      {
-        success: false,
-        message: "Failed to create admin profile",
-      },
+    return NextResponse.json(
+      { success: false, message: "Failed to create admin profile" },
       { status: 500 }
     );
   }

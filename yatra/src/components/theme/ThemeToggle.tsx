@@ -1,7 +1,7 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react";
-import { useTheme } from "@/lib/theme/ThemeProvider";
+import { useTheme } from "../../../src/lib/theme/ThemeProvider";
 
 export default function ThemeToggle({ className = "" }: { className?: string }) {
   const { theme, toggleTheme } = useTheme();

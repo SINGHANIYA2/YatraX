@@ -1,7 +1,7 @@
-import connectDb from "@/lib/db";
-import Admin from "@/models/admin.models";
-import Partner from "@/models/partner.models";
-import User from "@/models/user.models";
+import connectDb from "../../../../../src/lib/db";
+import Admin from "../../../../../src/models/admin.models";
+import Partner from "../../../../../src/models/partner.models";
+import User from "../../../../../src/models/user.models";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
             !account.emailOtpExpiresAt ||
             account.emailOtpExpiresAt < new Date()
         ) {
+            
             return NextResponse.json(
                 {
                     success: false,

@@ -86,7 +86,13 @@ export default function RevenueChart({ data }: { data: RevenueChartPoint[] }) {
                                     borderRadius: '12px',
                                     color: 'var(--foreground)',
                                 }}
-                                formatter={(value: number) => [`₹${value.toLocaleString('en-IN')}`, 'Revenue']}
+                                formatter={(value) => {
+                                    const numericValue = Array.isArray(value)
+                                        ? Number(value[0] ?? 0)
+                                        : Number(value ?? 0)
+
+                                    return [`₹${numericValue.toLocaleString('en-IN')}`, 'Revenue']
+                                }}
                             />
 
                             <Bar

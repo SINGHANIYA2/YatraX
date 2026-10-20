@@ -2,12 +2,12 @@
 
 import { motion } from 'motion/react'
 
-import DashboardStats from '@/components/admin/dashboard/DashboardStats'
-import FleetAnalytics from '@/components/fleet/FleetAnalytics'
-import AdminTopbar from '@/components/admin/dashboard/DashboardTopbar'
-import FleetTable from '@/components/fleet/FleetTable'
+import DashboardStats from '../../../src/components/admin/dashboard/DashboardStats'
+import FleetAnalytics from '../../../src/components/fleet/FleetAnalytics'
+import AdminTopbar from '../../../src/components/admin/dashboard/DashboardTopbar'
+import FleetTable from '../../../src/components/fleet/FleetTable'
 import { useEffect, useState } from 'react'
-import LoadingState from '@/components/ui/LoadingState'
+import LoadingState from '../../../src/components/ui/LoadingState'
 
 
 export default function AdminPage() {
@@ -32,6 +32,7 @@ export default function AdminPage() {
     };
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchVehicles();
     }, []);
 
@@ -56,8 +57,6 @@ export default function AdminPage() {
                                 <FleetTable
                                     vehicles={vehicles}
                                     setVehicles={setVehicles}
-                                    loading={loading}
-                                    setLoading={setLoading}
                                 />
                             </div>
 

@@ -1,4 +1,4 @@
-import { IVehicle } from "@/models/vehicle.models"
+import { IVehicle } from "../../src/models/vehicle.models"
 import { createSlice } from "@reduxjs/toolkit"
 
 interface IVehicleState {

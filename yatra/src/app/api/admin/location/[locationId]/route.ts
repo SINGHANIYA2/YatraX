@@ -1,5 +1,5 @@
-import connectDb from "@/lib/db";
-import Admin from "@/models/admin.models";
+import connectDb from "../../../../../../src/lib/db";
+import Admin from "../../../../../../src/models/admin.models";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, { params, }: { params: Promise<{ locationId: string; }>; }) {

@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
-import connectDb from "@/lib/db";
-import { auth } from "@/auth";
+import connectDb from "../../../../../src/lib/db";
+import { auth } from "../../../../../src/auth";
 
-import Admin from "@/models/admin.models";
+import Admin from "../../../../../src/models/admin.models";
 
 import { NextRequest, NextResponse } from "next/server";
-import Vehicle from "@/models/vehicle.models";
-import Route from "@/models/route.models";
+import Vehicle from "../../../../../src/models/vehicle.models";
+import Route from "../../../../../src/models/route.models";
 
 
 const VEHICLE_TYPES = ["bike", "auto", "cab", "bus"] as const;

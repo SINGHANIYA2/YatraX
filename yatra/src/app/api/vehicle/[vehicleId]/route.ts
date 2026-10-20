@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import mongoose from "mongoose";
-import { auth } from "@/auth"; // your root auth.ts (NextAuth v5 — exports handlers, signIn, signOut, auth)
-import connectDb from "@/lib/db";
-import Vehicle, { IVehicle } from "@/models/vehicle.models";
-import Partner, { IPartner } from "@/models/partner.models";
+import { auth } from "../../../../../src/auth"; // your root auth.ts (NextAuth v5 — exports handlers, signIn, signOut, auth)
+import connectDb from "../../../../../src/lib/db";
+import Vehicle, { IVehicle } from "../../../../../src/models/vehicle.models";
+import Partner, { IPartner } from "../../../../../src/models/partner.models";
 
-export async function GET( req: NextRequest, { params }: { params: { vehicleId: string } }) {
+export async function GET(req: NextRequest,{ params }: { params: Promise<{ vehicleId: string }> }) {
   try {
     const { vehicleId } = await params;
 

@@ -1,10 +1,10 @@
-import { auth } from "@/auth";
-import connectDb from "@/lib/db";
-import Admin from "@/models/admin.models";
-import Booking from "@/models/booking.models";
-import Partner from "@/models/partner.models";
-import Vehicle from "@/models/vehicle.models";
-import PartnerApplication from "@/models/partnerApplication.models";
+import { auth } from "../../../../../src/auth";
+import connectDb from "../../../../../src/lib/db";
+import Admin from "../../../../../src/models/admin.models";
+import Booking from "../../../../../src/models/booking.models";
+import Partner from "../../../../../src/models/partner.models";
+import Vehicle from "../../../../../src/models/vehicle.models";
+import PartnerApplication from "../../../../../src/models/partnerApplication.models";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -198,23 +198,45 @@ export async function GET(req: NextRequest) {
 
 
         // recent bookings
-        const recentBookings = await Booking.find()
-            .sort({
-                createdAt: -1,
-            })
-            .limit(5)
-            .populate({
-                path: "userId",
-                select: "name",
-            })
-            .populate({
-                path: "partnerId",
-                select: "name",
-            })
-            .populate({
-                path: "vehicleId",
-                select: "vehicleNumber",
-            });
+        // const recentBookings = await Booking.find()
+        //     .sort({
+        //         createdAt: -1,
+        //     })
+        //     .limit(5)
+        //     .populate({
+        //         path: "userId",
+        //         select: "name",
+        //     })
+        //     .populate({
+        //         path: "partnerId",
+        //         select: "name",
+        //     })
+        //     .populate({
+        //         path: "vehicleId",
+        //         select: "vehicleNumber",
+        //     });
+
+        
+const recentBookings = await Booking.find()
+  .sort({ createdAt: -1 })
+  .limit(5)
+  .populate({
+    path: "userId",
+    select: "name",
+  })
+  .populate({
+    path: "tripId",
+    select: "vehicleId routeId departureDateTime arrivalDateTime scheduledDate status",
+    populate: {
+      path: "vehicleId",
+      select: "vehicleNumber assignedPartnerId",
+      populate: {
+        path: "assignedPartnerId",
+        select: "name",
+      },
+    },
+  });
+
 
 
         // recent vehicles

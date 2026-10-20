@@ -10,7 +10,7 @@ import {
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import L from 'leaflet';
-import { getSocket } from '@/lib/socket';
+import { getSocket } from '../../../src/lib/socket';
 
 interface SearchMapProps {
   source: string;
@@ -338,10 +338,10 @@ export default function SearchMap({
   }, [vehicleId]);
 
   useEffect(() => {
-    console.log("coordinates =", coordinates);
+   
 
     if (!coordinates || coordinates.length < 2) {
-      console.log("Not enough coordinates");
+     
       return;
     }
 
@@ -410,10 +410,16 @@ export default function SearchMap({
           height: '100%',
         }}
       >
-        <TileLayer
+        {/* <TileLayer
           attribution="&copy; YatraX"
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
-        />
+        /> */}/
+        
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+
 
         <FitBounds points={fitPoints} />
 

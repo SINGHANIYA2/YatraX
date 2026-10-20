@@ -10,10 +10,10 @@ import HeroLeft from './HeroLeft';
 import HeroRight from './HeroRight';
 import HeroFeature from './HeroFeature';
 import StatsSection from './StatsSection';
-import { getSocket } from '@/lib/socket';
+import { getSocket } from '../../src/lib/socket';
 import { useSession } from 'next-auth/react';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
+import { RootState } from '../../src/redux/store';
 
 export const features = [
     {

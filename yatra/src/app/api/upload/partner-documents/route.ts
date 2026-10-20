@@ -1,8 +1,8 @@
 import { NextRequest } from "next/server";
-import uploadOnCloudinary from "@/lib/cloudinary";
-import { auth } from "@/auth";
-import connectDb from "@/lib/db";
-import User from "@/models/user.models";
+import uploadOnCloudinary from "../../../../../src/lib/cloudinary";
+import { auth } from "../../../../../src/auth";
+import connectDb from "../../../../../src/lib/db";
+import User from "../../../../../src/models/user.models";
 
 export async function POST(req: NextRequest) {
   try {

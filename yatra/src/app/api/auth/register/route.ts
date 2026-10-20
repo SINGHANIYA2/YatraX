@@ -1,9 +1,9 @@
-import connectDb from "@/lib/db";
-import User from "@/models/user.models";
+import connectDb from "../../../../../src/lib/db";
+import User from "../../../../../src/models/user.models";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { sendMail } from "@/lib/sendMail";
-import { sendOtp } from "@/lib/sendOtp";
+import { sendMail } from "../../../../../src/lib/sendMail";
+import { sendOtp } from "../../../../../src/lib/sendOtp";
 
 export async function POST(req: NextRequest) {
     try {
@@ -87,16 +87,17 @@ export async function POST(req: NextRequest) {
             emailOtp
         );
 
+        //phone otp
         await sendOtp( mobileNumber.startsWith("+91")
                 ? mobileNumber
                 : `+91${mobileNumber}`,
             mobileOtp
         );
+        
         return NextResponse.json(
             {
                 success: true,
-                message:
-                    "OTP sent successfully to email and mobile",
+                message: "OTP sent successfully to email and mobile",
             },
             {
                 status: 200,

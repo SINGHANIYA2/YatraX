@@ -3,8 +3,8 @@
 import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
-import { getSocket } from '@/lib/socket';
+import { RootState } from '../../src/redux/store';
+import { getSocket } from '../../src/lib/socket';
 
 export default function PartnerLocationTracker() {
     const { data: session, status } = useSession();

@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
-import { auth } from "@/auth";
-import connectDb from "@/lib/db";
+import { auth } from "../../../../../../../src/auth";
+import connectDb from "../../../../../../../src/lib/db";
 
-import Booking from "@/models/booking.models";
-import Admin from "@/models/admin.models";
-import Partner from "@/models/partner.models";
-import Vehicle from "@/models/vehicle.models";
+import Booking from "../../../../../../../src/models/booking.models";
+import Admin from "../../../../../../../src/models/admin.models";
+import Partner from "../../../../../../../src/models/partner.models";
+import Vehicle from "../../../../../../../src/models/vehicle.models";
 
 import { NextRequest, NextResponse } from "next/server";
 

@@ -6,7 +6,8 @@ import {
     IndianRupee,
     TriangleAlert,
     Settings,
-    FileCheck
+    FileCheck,
+    CalendarClock
 } from "lucide-react"
 
 export const adminMenu = [
@@ -30,6 +31,12 @@ export const adminMenu = [
         title: "Fleet Management",
         href: "/admin/fleet",
         icon: Truck,
+    },
+
+    {
+        title: "Bus Schedules",
+        href: "/admin/schedules",
+        icon: CalendarClock,
     },
 
     {

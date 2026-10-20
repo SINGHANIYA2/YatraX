@@ -1,9 +1,9 @@
-import connectDb from "@/lib/db";
-import { auth } from "@/auth";
+import connectDb from "../../../../../../../src/lib/db";
+import { auth } from "../../../../../../../src/auth";
 
-import Admin from "@/models/admin.models";
-import Partner from "@/models/partner.models";
-import Vehicle from "@/models/vehicle.models";
+import Admin from "../../../../../../../src/models/admin.models";
+import Partner from "../../../../../../../src/models/partner.models";
+import Vehicle from "../../../../../../../src/models/vehicle.models";
 
 import { NextRequest, NextResponse } from "next/server";
 
@@ -36,7 +36,7 @@ export async function GET(
 
         const { partnerId } = await params;
 
-        console.log("Fetching details for partnerId:", partnerId);
+        // console.log("Fetching details for partnerId:", partnerId);
 
 
         const partner = await Partner.findOne({

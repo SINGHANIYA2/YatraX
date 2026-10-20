@@ -1,5 +1,5 @@
 import mongoose, { Mongoose } from "mongoose"
-import partnerApplicationModels from '@/models/partnerApplication.models';
+import partnerApplicationModels from '../../src/models/partnerApplication.models';
 import PartnerApplication from './partnerApplication.models';
 import { Phone } from 'lucide-react';
 

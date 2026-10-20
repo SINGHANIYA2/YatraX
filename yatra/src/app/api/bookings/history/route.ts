@@ -6,11 +6,11 @@
 //   - role "partner" -> bookings made on trips run by their assigned vehicle
 //   - role "admin"   -> all bookings (optionally filter by ?partnerId= or ?userId=)
 
-import connectDb from "@/lib/db";
-import Booking from "@/models/booking.models";
-import Trip from "@/models/Trip.models";
-import Partner from "@/models/partner.models";
-import { auth } from "@/auth";
+import connectDb from "../../../../../src/lib/db";
+import Booking from "../../../../../src/models/booking.models";
+import Trip from "../../../../../src/models/Trip.models";
+import Partner from "../../../../../src/models/partner.models";
+import { auth } from "../../../../../src/auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -30,23 +30,61 @@ export async function GET(req: NextRequest) {
                 .populate({ path: "alightStopId", select: "name city" })
                 .sort({ createdAt: -1 });
         }
+
         else if (session.user.role === "partner") {
-            const partner = await Partner.findOne({ userId: session.user.id });
-
-            if (!partner || !partner.assignedVehicleId) {
-                return NextResponse.json({ success: true, bookings: [] }, { status: 200 });
-            }
-
-            // Bookings live on trips, trips belong to a vehicle — find this
-            // partner's vehicle's trips, then bookings on those trips.
-            const tripIds = await Trip.find({ vehicleId: partner.assignedVehicleId }).distinct("_id");
-
-            bookings = await Booking.find({ tripId: { $in: tripIds } })
+            // Include tickets booked by the partner personally.
+            const ownBookingsPromise = Booking.find({
+                userId: session.user.id,
+            })
                 .populate({ path: "boardStopId", select: "name city" })
                 .populate({ path: "alightStopId", select: "name city" })
-                .populate({ path: "tripId", select: "departureDateTime status" })
+                .populate({
+                    path: "tripId",
+                    select: "departureDateTime status",
+                })
                 .sort({ createdAt: -1 });
-        } else if (session.user.role === "admin") {
+
+            // Also include passenger bookings on trips operated by this partner.
+            const partner = await Partner.findOne({
+                userId: session.user.id,
+            });
+
+            let vehicleBookings: any[] = [];
+
+            if (partner?.assignedVehicleId) {
+                const tripIds = await Trip.find({
+                    vehicleId: partner.assignedVehicleId,
+                }).distinct("_id");
+
+                vehicleBookings = await Booking.find({
+                    tripId: { $in: tripIds },
+                })
+                    .populate({ path: "boardStopId", select: "name city" })
+                    .populate({ path: "alightStopId", select: "name city" })
+                    .populate({
+                        path: "tripId",
+                        select: "departureDateTime status",
+                    })
+                    .sort({ createdAt: -1 });
+            }
+
+            const ownBookings = await ownBookingsPromise;
+
+            // Merge both lists and remove duplicate booking records.
+            const uniqueBookings = new Map<string, any>();
+
+            for (const booking of [...ownBookings, ...vehicleBookings]) {
+                uniqueBookings.set(booking._id.toString(), booking);
+            }
+
+            bookings = Array.from(uniqueBookings.values()).sort(
+                (a: any, b: any) =>
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime()
+            );
+        }
+
+        else if (session.user.role === "admin") {
             bookings = await Booking.find({})
                 .populate({ path: "boardStopId", select: "name city" })
                 .populate({ path: "alightStopId", select: "name city" })

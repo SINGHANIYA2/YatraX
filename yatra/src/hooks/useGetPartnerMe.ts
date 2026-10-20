@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import axios from "axios";
-import { setPartnerData } from "@/redux/partnerSlice";
+import { setPartnerData } from "../../src/redux/partnerSlice";
 
 function useGetPartnerMe(
   enabled: boolean = true

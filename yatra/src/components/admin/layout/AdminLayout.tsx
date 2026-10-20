@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import AdminSidebar from '../sidebar/AdminSidebar'
+import GoHomeButton from '../../GoHomeButton'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const [mobileOpen, setMobileOpen] = useState(false)
@@ -9,6 +10,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     return (
         <div className="flex min-h-screen bg-background">
+            {/* Top-right, vertically centred in the 72px topbar band; sits above topbars (z-50) */}
+            <GoHomeButton className="fixed top-[20px] right-3 z-[60]" />
             <AdminSidebar
                 mobileOpen={mobileOpen}
                 onMobileClose={() => setMobileOpen(false)}

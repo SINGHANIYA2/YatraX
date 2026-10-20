@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import LoadingState from "@/components/ui/LoadingState";
+import LoadingState from "../../../../src/components/ui/LoadingState";
 import {
     ArrowLeft,
     BadgeCheck,

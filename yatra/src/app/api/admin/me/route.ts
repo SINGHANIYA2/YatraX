@@ -1,6 +1,6 @@
-import { auth } from "@/auth"
-import connectDb from "@/lib/db"
-import Admin from "@/models/admin.models"
+import { auth } from "../../../../../src/auth"
+import connectDb from "../../../../../src/lib/db"
+import Admin from "../../../../../src/models/admin.models"
 
 export async function GET(req:Request){
     try{

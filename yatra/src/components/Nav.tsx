@@ -8,9 +8,9 @@ import { Bike, Bus, Car, ChevronRight, LogOut, Menu, Truck, X } from "lucide-rea
 import { useEffect, useState } from "react";
 import AuthModal from "./AuthModal";
 import { signOut, useSession } from "next-auth/react";
-import { setUserData } from "@/redux/userSlice";
-import { setAdminData } from "@/redux/adminSlice";
-import { setPartnerData } from "@/redux/partnerSlice";
+import { setUserData } from "../../src/redux/userSlice";
+import { setAdminData } from "../../src/redux/adminSlice";
+import { setPartnerData } from "../../src/redux/partnerSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from '../redux/store';
 import axios from "axios";
@@ -42,6 +42,7 @@ export default function Navbar() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [partnerStatus, setPartnerStatus] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
 
   const { userData } = useSelector(
     (state: RootState) => state.user
@@ -71,13 +72,35 @@ useEffect(() => {
     }
 }, [status, userData])
 
+  // Poll unread notification count so the dot on the profile avatar stays
+  // current without needing a websocket just for this.
+  useEffect(() => {
+    if (status !== "authenticated") {
+      setUnreadCount(0)
+      return
+    }
+
+    const fetchUnread = async () => {
+      try {
+        const { data } = await axios.get("/api/notifications")
+        if (data.success) setUnreadCount(data.unreadCount ?? 0)
+      } catch (error) {
+        console.log("Failed to fetch unread notifications:", error)
+      }
+    }
+
+    fetchUnread()
+    const interval = setInterval(fetchUnread, 60000)
+    return () => clearInterval(interval)
+  }, [status])
+
 
   useEffect(() => {
     if (status === "authenticated") {
       if (!name || !role) {
         setRole(session?.user?.role)
         setName(session?.user?.name)
-        setProfileOpen(true)
+        // setProfileOpen(true)
       }
     }
   }, [session, status]);
@@ -216,9 +239,12 @@ useEffect(() => {
                 <div className="relative">
                   <button
                     onClick={() => setProfileOpen(!profileOpen)}
-                    className="h-11 w-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg border border-primary/30"
+                    className="h-11 w-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg border border-primary/30 relative"
                   >
                     {name.charAt(0)?.toUpperCase()}
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-destructive border-2 border-background" />
+                    )}
 
                   </button>
 
@@ -257,6 +283,19 @@ useEffect(() => {
                           </div>
 
                           <div className="p-3">
+                            <Link
+                              href="/notifications"
+                              onClick={() => setProfileOpen(false)}
+                              className="flex items-center justify-between px-4 py-3 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition"
+                            >
+                              <span>Notifications</span>
+                              {unreadCount > 0 && (
+                                <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-destructive text-destructive-foreground text-xs font-semibold flex items-center justify-center">
+                                  {unreadCount > 9 ? "9+" : unreadCount}
+                                </span>
+                              )}
+                            </Link>
+
                             {/* Regular user: Dashboard  +  Become Partner */}
                             {sessionRole === "user" && (
                               <>
@@ -333,9 +372,12 @@ useEffect(() => {
               {role !== "" && (
                 <button
                   onClick={() => setProfileOpen(!profileOpen)}
-                  className="h-10 w-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-base border border-primary/30"
+                  className="h-10 w-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-base border border-primary/30 relative"
                 >
                   {name.charAt(0)?.toUpperCase()}
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full bg-destructive border-2 border-background" />
+                  )}
                 </button>
               )}
 

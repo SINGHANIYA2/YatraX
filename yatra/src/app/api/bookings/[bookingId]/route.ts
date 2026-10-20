@@ -1,8 +1,11 @@
-import { auth } from "@/auth";
-import connectDb from "@/lib/db";
-import Booking from "@/models/booking.models";
-import User from "@/models/user.models";
+
 import { NextRequest, NextResponse } from "next/server";
+import mongoose from "mongoose";
+
+import { auth } from "../../../../../src/auth";
+import connectDb from "../../../../../src/lib/db";
+import Booking from "../../../../../src/models/booking.models";
+import Partner from "../../../../../src/models/partner.models";
 
 export async function GET(
     req: NextRequest,
@@ -11,35 +14,25 @@ export async function GET(
     try {
         await connectDb();
 
-        const authSession = await auth();
+        const session = await auth();
 
-        if (!authSession?.user?.email) {
+        if (!session?.user?.id || !session.user.role) {
             return NextResponse.json(
-                {
-                    success: false,
-                    message: "Unauthorized",
-                },
+                { success: false, message: "Unauthorized" },
                 { status: 401 }
-            );
-        }
-
-        const user = await User.findOne({
-            email: authSession.user.email,
-        });
-
-        if (!user) {
-            return NextResponse.json(
-                {
-                    success: false,
-                    message: "User not found",
-                },
-                { status: 404 }
             );
         }
 
         const { bookingId } = await params;
 
-        const booking = await Booking.findById(bookingId)
+        if (!mongoose.Types.ObjectId.isValid(bookingId)) {
+            return NextResponse.json(
+                { success: false, message: "Invalid booking ID" },
+                { status: 400 }
+            );
+        }
+
+        const booking: any = await Booking.findById(bookingId)
             .populate({
                 path: "partnerId",
                 select: `
@@ -50,6 +43,7 @@ export async function GET(
                     currentLatitude
                     currentLongitude
                     isOnline
+                    userId
                 `,
             })
             .populate({
@@ -65,23 +59,11 @@ export async function GET(
             })
             .populate({
                 path: "source",
-                select: `
-                    name
-                    city
-                    state
-                    latitude
-                    longitude
-                `,
+                select: "name city state latitude longitude",
             })
             .populate({
                 path: "destination",
-                select: `
-                    name
-                    city
-                    state
-                    latitude
-                    longitude
-                `,
+                select: "name city state latitude longitude",
             })
             .populate({
                 path: "routeId",
@@ -93,43 +75,88 @@ export async function GET(
                 `,
                 populate: {
                     path: "locations",
-                    select: `
-                        name
-                        city
-                        latitude
-                        longitude
-                    `,
+                    select: "name city latitude longitude",
                 },
-            }).lean();
+            })
+            .lean();
 
         if (!booking) {
             return NextResponse.json(
-                {
-                    success: false,
-                    message: "Booking not found",
-                },
+                { success: false, message: "Booking not found" },
                 { status: 404 }
             );
         }
 
-        if (booking.userId._id.toString() !== user._id.toString()) {
+        const userId = String(session.user.id);
+        const role = session.user.role;
+
+        // Booking owner
+        const bookingUserId = String(
+            booking.userId?._id ?? booking.userId ?? ""
+        );
+
+        const isOwner = bookingUserId === userId;
+
+        // Admin access
+        const isAdmin = role === "admin";
+
+        // Partner access: assigned vehicle or partner attached to booking
+        let isAssignedPartner = false;
+
+        if (role === "partner") {
+            const partner = await Partner.findOne({
+                userId: userId,
+            })
+                .select("_id assignedVehicleId")
+                .lean();
+
+            const partnerRecord = Array.isArray(partner)
+                ? partner[0]
+                : partner;
+
+            if (partnerRecord) {
+                const bookingVehicleId = String(
+                    booking.vehicleId?._id ??
+                    booking.vehicleId ??
+                    ""
+                );
+
+                const assignedVehicleId = String(
+                    partnerRecord.assignedVehicleId ?? ""
+                );
+
+                const bookingPartnerId = String(
+                    booking.partnerId?._id ??
+                    booking.partnerId ??
+                    ""
+                );
+
+                isAssignedPartner =
+                    (!!assignedVehicleId &&
+                        assignedVehicleId === bookingVehicleId) ||
+                    bookingPartnerId === String(partnerRecord._id);
+            }
+        }
+
+        if (!isOwner && !isAdmin && !isAssignedPartner) {
             return NextResponse.json(
                 {
                     success: false,
-                    message: "Unauthorized",
+                    message: "You are not authorized to view this booking",
                 },
                 { status: 403 }
             );
         }
 
-        const timeline = [
+        const timeline: {
+            status: string;
+            time: Date | string;
+        }[] = [
             {
                 status: "Booked",
                 time: booking.createdAt,
             },
         ];
-
-
 
         if (booking.acceptedAt) {
             timeline.push({
@@ -187,12 +214,12 @@ export async function GET(
                 : null;
 
         const rideDuration =
-            booking.actualEndAt &&
-                booking.actualStartAt
+            booking.actualEndAt && booking.actualStartAt
                 ? Math.floor(
-                    (booking.actualEndAt.getTime() -
-                        booking.actualStartAt.getTime()) /
-                    60000
+                    (
+                        new Date(booking.actualEndAt).getTime() -
+                        new Date(booking.actualStartAt).getTime()
+                    ) / 60000
                 )
                 : null;
 
@@ -229,24 +256,20 @@ export async function GET(
                     tax: 0,
                     discount: 0,
                     total: booking.fare,
-                    paymentStatus: booking.paymentStatus
-                }
+                    paymentStatus: booking.paymentStatus,
+                },
             },
-            {
-                status: 200,
-            }
+            { status: 200 }
         );
     } catch (error) {
-        console.log(error);
+        console.error("GET /api/bookings/[bookingId] error:", error);
 
         return NextResponse.json(
             {
                 success: false,
                 message: "Internal server error",
             },
-            {
-                status: 500,
-            }
+            { status: 500 }
         );
     }
 }

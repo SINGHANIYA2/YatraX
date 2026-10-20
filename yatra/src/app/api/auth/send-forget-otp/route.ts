@@ -1,8 +1,8 @@
-import connectDb from "@/lib/db";
-import { sendMail } from "@/lib/sendMail";
-import Admin from "@/models/admin.models";
-import Partner from "@/models/partner.models";
-import User from "@/models/user.models";
+import connectDb from "../../../../../src/lib/db";
+import { sendMail } from "../../../../../src/lib/sendMail";
+import Admin from "../../../../../src/models/admin.models";
+import Partner from "../../../../../src/models/partner.models";
+import User from "../../../../../src/models/user.models";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {

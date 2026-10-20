@@ -21,6 +21,7 @@ export interface IAdmin extends Document {
   isEmailVerified: boolean;
   role: string
   otp: string
+  profileComplete: boolean;
   // otpExpiresAt: Date
 
   emailVerificationStatus: boolean;
@@ -274,6 +275,14 @@ const AdminSchema = new Schema({
   },
 
   isVerified: {
+    type: Boolean,
+    default: false,
+  },
+
+  // Org + bank details are collected in a later step (see
+  // /api/admin/create-profile). An Admin only becomes usable
+  // (loggable-in) once OTP is verified AND this is true.
+  profileComplete: {
     type: Boolean,
     default: false,
   },

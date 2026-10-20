@@ -1,10 +1,10 @@
-import { auth } from "@/auth";
-import connectDb from "@/lib/db";
-import Admin from "@/models/admin.models";
-import Route from "@/models/route.models";
-import Vehicle from "@/models/vehicle.models";
+import { auth } from "../../../../../../src/auth";
+import connectDb from "../../../../../../src/lib/db";
+import Admin from "../../../../../../src/models/admin.models";
+import Route from "../../../../../../src/models/route.models";
+import Vehicle from "../../../../../../src/models/vehicle.models";
 import { NextRequest, NextResponse } from "next/server";
-import Location from "@/models/location.models";
+import Location from "../../../../../../src/models/location.models";
 
 export async function DELETE(
     req: NextRequest,

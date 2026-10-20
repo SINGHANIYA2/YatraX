@@ -1,9 +1,9 @@
-import { auth } from "@/auth";
-import connectDb from "@/lib/db";
-import Admin from "@/models/admin.models";
-import Partner from "@/models/partner.models";
-import partnerApplicationModels from "@/models/partnerApplication.models";
-import User from "@/models/user.models";
+import { auth } from "../../../../../src/auth";
+import connectDb from "../../../../../src/lib/db";
+import Admin from "../../../../../src/models/admin.models";
+import Partner from "../../../../../src/models/partner.models";
+import partnerApplicationModels from "../../../../../src/models/partnerApplication.models";
+import User from "../../../../../src/models/user.models";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -102,8 +102,7 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        let application =
-            await partnerApplicationModels.findOne({
+        let application = await partnerApplicationModels.findOne({
                 userId: user._id,
                 status: {
                     $in: [
@@ -114,11 +113,11 @@ export async function POST(req: NextRequest) {
                 },
             });
 
+
         if (application) {
             return Response.json(
                 {
-                    message:
-                        "Application already submitted",
+                    message: "Application already submitted",
                 },
                 {
                     status: 400,
@@ -141,8 +140,7 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        application =
-            await partnerApplicationModels.create({
+        application =  await partnerApplicationModels.create({
                 userId: user._id,
                 adminId,
                 locationId,
@@ -218,14 +216,12 @@ export async function POST(req: NextRequest) {
             adminId,
             {
                 $addToSet: {
-                    pendingPartnerRequests:
-                        application._id,
+                    pendingPartnerRequests: application._id,
                 },
             }
         );
 
-        user.partnerApplication =
-            application._id;
+        user.partnerApplication = application._id;
 
         user.partnerStatus = "pending";
 
@@ -260,16 +256,14 @@ export async function GET() {
 
         await connectDb();
 
-        const applications =
-            await partnerApplicationModels.find()
-                .sort({ createdAt: -1 });
-
+        const applications = await partnerApplicationModels.find().sort({ createdAt: -1 });
+        
         return Response.json({
             success: true,
             applications,
         });
 
-    } catch (error) {
+    }catch (error) {
 
         console.log(error);
 

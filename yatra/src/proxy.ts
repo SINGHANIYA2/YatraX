@@ -42,6 +42,8 @@ const PUBLIC_API = [
     "/api/booking",
 ];
 
+
+
 export async function proxy(req: NextRequest) {
     const { pathname } = req.nextUrl;
 
@@ -53,9 +55,7 @@ export async function proxy(req: NextRequest) {
     }
 
     // Allow public APIs
-    if (
-        PUBLIC_API.some((api) =>
-            pathname.startsWith(api)
+    if (PUBLIC_API.some((api) =>pathname.startsWith(api)
         )
     ) {
         return NextResponse.next();

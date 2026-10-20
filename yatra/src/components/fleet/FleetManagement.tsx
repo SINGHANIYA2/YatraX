@@ -7,8 +7,8 @@ import FleetStats from './FleetStats'
 import FleetFilters from './FleetFilters'
 import FleetTable from './FleetTable'
 import FleetTopBar from './FleetTopBar'
-import AddVehicleForm from '@/components/AddVehicleForm'
-import LoadingState from '@/components/ui/LoadingState'
+import AddVehicleForm from '../../../src/components/AddVehicleForm'
+import LoadingState from '../../../src/components/ui/LoadingState'
 
 export default function FleetManagement() {
     const [vehicles, setVehicles] = useState<any[]>([])

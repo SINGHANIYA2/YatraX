@@ -52,6 +52,18 @@ export const {
 
                 let role = "admin";
 
+                if (account && (!account.isEmailVerified || !account.isPhoneVerified)) {
+                    throw Error(
+                        "Please verify your email and mobile number first"
+                    );
+                }
+
+                if (account && !account.profileComplete) {
+                    throw Error(
+                        "Please complete your organization profile to finish signing up"
+                    );
+                }
+
                 // PARTNER
                 if (!account) {
                     account =
@@ -225,4 +237,13 @@ export const {
 
     secret:
         process.env.AUTH_SECRET,
+
+    // Needed when the app is opened via a LAN IP / non-localhost host in
+    // dev (e.g. http://172.31.78.35:3000) — without this NextAuth v5
+    // rejects (or the client mis-targets) requests whose Host header
+    // doesn't match AUTH_URL, which surfaces in the browser as a raw
+    // "Failed to fetch" from signIn(). Safe to leave on for local dev;
+    // for a real production deploy behind a fixed domain this can be
+    // removed once AUTH_URL is set to that exact domain.
+    trustHost: true,
 });

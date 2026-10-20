@@ -1,8 +1,14 @@
 'use client'
 
-import { alerts } from './demo'
+import type { AlertItem } from '../../../../src/app/admin/alerts/page'
 
-export default function AlertTable() {
+export default function AlertTable({
+    alerts,
+    loading,
+}: {
+    alerts: AlertItem[]
+    loading: boolean
+}) {
     return (
         <div
             className="
@@ -50,7 +56,23 @@ export default function AlertTable() {
                 </thead>
 
                 <tbody>
-                    {alerts.map((alert) => (
+                    {loading && (
+                        <tr>
+                            <td colSpan={6} className="p-8 text-center text-muted-foreground">
+                                Loading alerts…
+                            </td>
+                        </tr>
+                    )}
+
+                    {!loading && alerts.length === 0 && (
+                        <tr>
+                            <td colSpan={6} className="p-8 text-center text-muted-foreground">
+                                No active alerts — everything looks good.
+                            </td>
+                        </tr>
+                    )}
+
+                    {!loading && alerts.map((alert) => (
                         <tr
                             key={alert.id}
                             className="

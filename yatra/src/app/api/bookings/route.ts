@@ -1,8 +1,8 @@
-import { auth } from "@/auth";
-import connectDb from "@/lib/db";
-import Booking from "@/models/booking.models";
-import User from "@/models/user.models";
-import Vehicle from "@/models/vehicle.models";
+import { auth } from "../../../../src/auth";
+import connectDb from "../../../../src/lib/db";
+import Booking from "../../../../src/models/booking.models";
+import User from "../../../../src/models/user.models";
+import Vehicle from "../../../../src/models/vehicle.models";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {

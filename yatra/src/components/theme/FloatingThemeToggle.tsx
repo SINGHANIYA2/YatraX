@@ -1,7 +1,7 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react";
-import { useTheme } from "@/lib/theme/ThemeProvider";
+import { useTheme } from "../../../src/lib/theme/ThemeProvider";
 
 // Rendered once in the root layout so a toggle is available on every
 // page, including pages that don't include the main Nav (booking,

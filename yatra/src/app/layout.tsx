@@ -5,13 +5,13 @@ import { Manrope, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import "leaflet/dist/leaflet.css";
 
-import Provider from "@/lib/Provider";
-import ReduxProvider from "@/redux/ReduxProvider";
-import InitUser from "@/InitUser";
-import PartnerLocationTracker from "@/components/PartnerLocationTracker";
-import { ThemeProvider } from "@/lib/theme/ThemeProvider";
-import ThemeScript from "@/lib/theme/ThemeScript";
-import FloatingThemeToggle from "@/components/theme/FloatingThemeToggle";
+import Provider from "../../src/lib/Provider";
+import ReduxProvider from "../../src/redux/ReduxProvider";
+import InitUser from "../../src/InitUser";
+import PartnerLocationTracker from "../../src/components/PartnerLocationTracker";
+import { ThemeProvider } from "../../src/lib/theme/ThemeProvider";
+import ThemeScript from "../../src/lib/theme/ThemeScript";
+import FloatingThemeToggle from "../../src/components/theme/FloatingThemeToggle";
 
 const manrope = Manrope({
   variable: "--font-geist-sans",

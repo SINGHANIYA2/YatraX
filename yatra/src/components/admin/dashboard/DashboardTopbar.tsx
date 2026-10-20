@@ -2,9 +2,9 @@
 
 import { Bell, Search, Settings } from 'lucide-react'
 import { useSelector } from 'react-redux'
-import { RootState } from '@/redux/store'
+import { RootState } from '../../../../src/redux/store'
 import Link from 'next/link'
-import useGetAdminMe from '@/hooks/useGetAdminMe'
+import useGetAdminMe from '../../../../src/hooks/useGetAdminMe'
 
 export default function AdminTopbar() {
     useGetAdminMe()
@@ -15,7 +15,7 @@ export default function AdminTopbar() {
         : 'A'
 
     return (
-       <div className="hidden font-sans md:flex sticky top-0 z-50 h-[72px] px-6 items-center justify-between bg-card border-b border-border shadow-sm">
+       <div className="hidden font-sans md:flex sticky top-0 z-50 h-[72px] pl-6 pr-14 items-center justify-between bg-card border-b border-border shadow-sm">
             {/* Left */}
             <div>
                 <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>

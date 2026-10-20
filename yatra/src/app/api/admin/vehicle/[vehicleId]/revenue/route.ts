@@ -1,7 +1,7 @@
-import { auth } from "@/auth";
-import connectDb from "@/lib/db";
-import Admin from "@/models/admin.models";
-import Booking from "@/models/booking.models";
+import { auth } from "../../../../../../../src/auth";
+import connectDb from "../../../../../../../src/lib/db";
+import Admin from "../../../../../../../src/models/admin.models";
+import Booking from "../../../../../../../src/models/booking.models";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {

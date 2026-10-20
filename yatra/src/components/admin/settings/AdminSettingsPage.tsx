@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
-import LoadingState from "@/components/ui/LoadingState";
+import LoadingState from "../../../../src/components/ui/LoadingState";
 import {
     User,
     Mail,
@@ -46,6 +46,10 @@ interface AdminProfile {
     city?: string;
     state?: string;
     pincode?: string;
+    standName?: string;
+    standAddress?: string;
+    standLatitude?: number | string;
+    standLongitude?: number | string;
     bankDetails?: {
         accountHolder?: string;
         accountNumber?: string;
@@ -63,7 +67,7 @@ interface AdminProfile {
 
 type Tab = "profile" | "organization" | "bank" | "security";
 
-/* ─── helpers ────────────────────────────────────────────── */
+
 function Avatar({ src, name, size = 20 }: { src?: string; name: string; size?: number }) {
     const initials = name
         .split(" ")
@@ -149,7 +153,7 @@ const TABS: { id: Tab; label: string; icon: typeof User }[] = [
     { id: "security", label: "Security", icon: Shield },
 ];
 
-/* ─── main component ─────────────────────────────────────── */
+
 export default function AdminSettingsPage() {
     const [admin, setAdmin] = useState<AdminProfile | null>(null);
     const [loading, setLoading] = useState(true);
@@ -162,8 +166,7 @@ export default function AdminSettingsPage() {
     const fileRef = useRef<HTMLInputElement>(null);
 
     /* fetch admin */
-    useEffect(() => {
-        (async () => {
+    useEffect(() => {(async () => {
             try {
                 const { data } = await axios.get("/api/admin/me");
                 setAdmin(data);
@@ -176,6 +179,7 @@ export default function AdminSettingsPage() {
         })();
     }, []);
 
+    
     function showToast(type: "success" | "error", msg: string) {
         setToast({ type, msg });
         setTimeout(() => setToast(null), 3500);
@@ -198,24 +202,105 @@ export default function AdminSettingsPage() {
         setEditing(false);
     }
 
-    async function save() {
-        if (!admin) return;
-        setSaving(true);
-        try {
-            const { data } = await axios.patch("/api/profile-update/admin", {
-                _id: admin._id,
-                ...form,
-            });
-            setAdmin(data.admin);
-            setForm(data.admin);
-            setEditing(false);
-            showToast("success", "Profile updated successfully");
-        } catch (err: any) {
-            showToast("error", err?.response?.data?.message || "Update failed");
-        } finally {
-            setSaving(false);
-        }
+    
+
+async function save() {
+    if (!admin?._id) {
+        console.error("Admin ID missing:", admin);
+        showToast("error", "Admin ID is missing. Reload the page.");
+        return;
     }
+
+    setSaving(true);
+
+    try {
+        const editableFields = [
+            "name",
+            "phone",
+            "alternatePhone",
+            "organizationName",
+            "organizationType",
+            "gstNumber",
+            "registrationNumber",
+            "aadharNumber",
+            "panNumber",
+            "address",
+            "city",
+            "state",
+            "pincode",
+            "standName",
+            "standAddress",
+            "standLatitude",
+            "standLongitude",
+        ] as const;
+
+        const payload: Record<string, unknown> = {
+            _id: admin._id,
+        };
+
+        for (const field of editableFields) {
+            if (form[field] !== admin[field]) {
+                payload[field] = form[field];
+            }
+        }
+
+        const bankFields = [
+            "accountHolder",
+            "accountNumber",
+            "ifsc",
+            "bankName",
+            "upiId",
+        ] as const;
+
+        const bankChanges: Record<string, string> = {};
+
+        for (const field of bankFields) {
+            const newValue = form.bankDetails?.[field] ?? "";
+            const oldValue = admin.bankDetails?.[field] ?? "";
+
+            if (newValue !== oldValue) {
+                bankChanges[field] = newValue;
+            }
+        }
+
+        if (Object.keys(bankChanges).length > 0) {
+            payload.bankDetails = bankChanges;
+        }
+
+        if (Object.keys(payload).length === 1) {
+            showToast("error", "No changes to save");
+            return;
+        }
+
+        console.log("Admin ID being sent:", admin._id);
+        console.log("Update payload:", payload);
+
+        const { data } = await axios.patch(
+            "/api/profile-update/admin",
+            payload
+        );
+
+        setAdmin(data.admin);
+        setForm(data.admin);
+        setEditing(false);
+
+        showToast("success", "Profile updated successfully");
+    } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+            console.error("Profile update error:", err.response?.data);
+            showToast(
+                "error",
+                err.response?.data?.message || "Update failed"
+            );
+        } else {
+            showToast("error", "Update failed");
+        }
+    } finally {
+        setSaving(false);
+    }
+}
+
+
 
     async function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0];

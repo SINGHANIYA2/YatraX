@@ -42,7 +42,7 @@ function AuthModal({ open, steps, onClose }: propType) {
 
 
     useEffect(() => {
-        if (status === "authenticated") {
+        if (status === "authenticated" && role === "") {
             // console.log("User:", session?.user);
             // console.log("Role:", session?.user?.role);
 
@@ -86,7 +86,7 @@ function AuthModal({ open, steps, onClose }: propType) {
         adminData.panNumber && adminData.pincode && adminData.state && adminData.upiId && adminData.address
     )
 
-   React.useEffect(() => {
+    React.useEffect(() => {
         if (open) {
             setStep(steps as stepType)
         }
@@ -94,8 +94,7 @@ function AuthModal({ open, steps, onClose }: propType) {
 
     const { data } = useSession()
 
-    // Resend-OTP countdown — ticks every second while on the otp step
-    // and the timer hasn't run out yet.
+   
     useEffect(() => {
         if (step !== "otp") return;
         if (resendTimer <= 0) return;
@@ -104,7 +103,7 @@ function AuthModal({ open, steps, onClose }: propType) {
         return () => clearTimeout(t);
     }, [step, resendTimer]);
 
-    // Reset the countdown whenever a fresh otp step is entered
+
     useEffect(() => {
         if (step === "otp") {
             setResendTimer(60);
@@ -118,7 +117,7 @@ function AuthModal({ open, steps, onClose }: propType) {
             console.log(steps)
             if (!email) {
                 setErr("Enter email id to reset password")
-                setLoading(false) // was setLoading(true) — bug, leaves it stuck loading
+                setLoading(false) 
                 return
             }
 
@@ -152,7 +151,7 @@ function AuthModal({ open, steps, onClose }: propType) {
 
             const { data } = await axios.post("/api/auth/verify-forget-otp", {
                 email,
-                otp: otpValue   // send joined string, not the array
+                otp: otpValue  
             })
 
             if (!data?.success) {
@@ -216,7 +215,8 @@ function AuthModal({ open, steps, onClose }: propType) {
             return
         }
         try {
-            const { data } = await axios.post("/api/auth/register", {
+            const endpoint = role === "admin" ? "/api/auth/register-admin" : "/api/auth/register"
+            const { data } = await axios.post(endpoint, {
                 name, email, mobileNumber, password, role
             })
             setErr("")
@@ -236,7 +236,8 @@ function AuthModal({ open, steps, onClose }: propType) {
         setResending(true)
         setErr("")
         try {
-            await axios.post("/api/auth/register", {
+            const endpoint = role === "admin" ? "/api/auth/register-admin" : "/api/auth/register"
+            await axios.post(endpoint, {
                 name, email, mobileNumber, password, role
             })
             setResendTimer(60)
@@ -493,6 +494,7 @@ function AuthModal({ open, steps, onClose }: propType) {
                     city: prev.city || data.CITY,
                     state: prev.state || data.STATE,
                 }));
+
             } catch {
                 if (!cancelled) setErr("Invalid IFSC code");
             }
@@ -517,8 +519,10 @@ function AuthModal({ open, steps, onClose }: propType) {
                 mobileOtp: mobileOtp.join(""),
             };
 
+            const endpoint = role === "admin" ? "/api/auth/verify-admin" : "/api/auth/verify"
+
             const { data } = await axios.post(
-                "/api/auth/verify",
+                endpoint,
                 payload
             );
 
@@ -663,10 +667,6 @@ function AuthModal({ open, steps, onClose }: propType) {
                                                     <CircleDashed size={18} className='animate-spin ml-45 text-background' />}
 
                                             </button>
-
-
-
-
                                         </div>
 
                                         <p className='mt-6 text-center text-sm text-muted-foreground'>

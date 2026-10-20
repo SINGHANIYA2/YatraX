@@ -1,4 +1,4 @@
-import DriversPage from "@/components/admin/drivers/page";
+import DriversPage from "../../../../src/components/admin/drivers/page";
 
 export default function Page() {
     return <DriversPage />;

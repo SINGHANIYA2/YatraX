@@ -1,6 +1,10 @@
 'use client'
 
+import { useState } from 'react'
+
 export default function ContactForm() {
+    const [role, setRole] = useState('user')
+
     return (
         <div
             className="
@@ -18,64 +22,15 @@ export default function ContactForm() {
 
             <form className="space-y-5">
 
-                <div className="grid grid-cols-2 gap-4">
-
-                    <div>
-                        <label className="text-sm text-muted-foreground">
-                            Your Name
-                        </label>
-
-                        <input
-                            type="text"
-                            placeholder="Enter your name"
-                            className="
-                            mt-2
-                            w-full
-                            rounded-xl
-                            border
-                            border-border
-                            bg-card
-                            px-4
-                            py-3
-                            text-foreground
-                            outline-none
-                            "
-                        />
-                    </div>
-
-                    <div>
-                        <label className="text-sm text-muted-foreground">
-                            Email
-                        </label>
-
-                        <input
-                            type="email"
-                            placeholder="Enter your email"
-                            className="
-                            mt-2
-                            w-full
-                            rounded-xl
-                            border
-                            border-border
-                            bg-card
-                            px-4
-                            py-3
-                            text-foreground
-                            outline-none
-                            "
-                        />
-                    </div>
-
-                </div>
-
+                {/* Who's contacting */}
                 <div>
                     <label className="text-sm text-muted-foreground">
-                        Subject
+                        I am contacting as
                     </label>
 
-                    <input
-                        type="text"
-                        placeholder="Enter subject"
+                    <select
+                        value={role}
+                        onChange={(e) => setRole(e.target.value)}
                         className="
                         mt-2
                         w-full
@@ -88,45 +43,54 @@ export default function ContactForm() {
                         text-foreground
                         outline-none
                         "
+                    >
+                        <option value="user">A User / Traveler</option>
+                        <option value="partner">A Business / Partner (hotels, agencies, vendors)</option>
+                        <option value="admin">An Existing YatraX Admin (internal issue)</option>
+                    </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="text-sm text-muted-foreground">Your Name</label>
+                        <input
+                            type="text"
+                            placeholder="Enter your name"
+                            className="mt-2 w-full rounded-xl border border-border bg-card px-4 py-3 text-foreground outline-none"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="text-sm text-muted-foreground">Email</label>
+                        <input
+                            type="email"
+                            placeholder="Enter your email"
+                            className="mt-2 w-full rounded-xl border border-border bg-card px-4 py-3 text-foreground outline-none"
+                        />
+                    </div>
+                </div>
+
+                <div>
+                    <label className="text-sm text-muted-foreground">Subject</label>
+                    <input
+                        type="text"
+                        placeholder="Enter subject"
+                        className="mt-2 w-full rounded-xl border border-border bg-card px-4 py-3 text-foreground outline-none"
                     />
                 </div>
 
                 <div>
-                    <label className="text-sm text-muted-foreground">
-                        Message
-                    </label>
-
+                    <label className="text-sm text-muted-foreground">Message</label>
                     <textarea
                         rows={5}
                         placeholder="Type your message..."
-                        className="
-                        mt-2
-                        w-full
-                        rounded-xl
-                        border
-                        border-border
-                        bg-card
-                        px-4
-                        py-3
-                        text-foreground
-                        outline-none
-                        resize-none
-                        "
+                        className="mt-2 w-full rounded-xl border border-border bg-card px-4 py-3 text-foreground outline-none resize-none"
                     />
                 </div>
 
                 <button
                     type="submit"
-                    className="
-                    w-full
-                    rounded-xl
-                    bg-primary
-                    py-3
-                    font-medium
-                    text-foreground
-                    transition
-                    hover:bg-primary
-                    "
+                    className="w-full rounded-xl bg-primary py-3 font-medium text-foreground transition hover:bg-primary"
                 >
                     Send Message
                 </button>

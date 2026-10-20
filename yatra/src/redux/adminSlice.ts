@@ -1,4 +1,4 @@
-import { IAdmin } from "@/models/admin.models"
+import { IAdmin } from "../../src/models/admin.models"
 
 import {createSlice} from "@reduxjs/toolkit"
 

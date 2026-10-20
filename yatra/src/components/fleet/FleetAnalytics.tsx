@@ -1,6 +1,5 @@
 'use client'
 
-import vehicles from "../vehicles"
 import { generateAnalytics } from "./lib"
 import {
     ResponsiveContainer,

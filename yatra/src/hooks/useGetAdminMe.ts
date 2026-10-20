@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import axios from "axios";
-import { setAdminData } from "@/redux/adminSlice";
+import { setAdminData } from "../../src/redux/adminSlice";
 
 function useGetAdminMe(
   enabled: boolean = true

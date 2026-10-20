@@ -1,8 +1,8 @@
-import connectDb from "@/lib/db";
-import Partner from "@/models/partner.models";
-import { auth } from "@/auth";
+import connectDb from "../../../../../src/lib/db";
+import Partner from "../../../../../src/models/partner.models";
+import { auth } from "../../../../../src/auth";
 import { NextRequest, NextResponse } from "next/server";
-import Vehicle from "@/models/vehicle.models";
+import Vehicle from "../../../../../src/models/vehicle.models";
 
 export async function POST(req: NextRequest) {
   try {

@@ -1,7 +1,7 @@
-import { auth } from "@/auth";
-import connectDb from "@/lib/db";
-import Admin from "@/models/admin.models";
-import Vehicle from "@/models/vehicle.models";
+import { auth } from "../../../../../../../src/auth";
+import connectDb from "../../../../../../../src/lib/db";
+import Admin from "../../../../../../../src/models/admin.models";
+import Vehicle from "../../../../../../../src/models/vehicle.models";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(

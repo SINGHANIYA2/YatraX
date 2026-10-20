@@ -1,9 +1,9 @@
 // app/api/booking/[bookingId]/cancel/route.ts
 
-import connectDb from "@/lib/db";
-import Booking from "@/models/booking.models";
-import Trip from "@/models/Trip.models";
-import { auth } from "@/auth";
+import connectDb from "../../../../../../src/lib/db";
+import Booking from "../../../../../../src/models/booking.models";
+import Trip from "../../../../../../src/models/Trip.models";
+import { auth } from "../../../../../../src/auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest,{ params }: { params: Promise<{ bookingId: string }> }) {
