@@ -1,11 +1,13 @@
 import connectDb from "../../../../../../../src/lib/db";
 import Partner from "../../../../../../../src/models/partner.models";
 import { auth } from "../../../../../../../src/auth";
-import Route from "../../../../../../../src/models/route.models";
+import Route from "../../../../../../../src/models/Route.models";
 import Admin from "../../../../../../../src/models/admin.models";
 import vehicleModels from "../../../../../../../src/models/vehicle.models";
 import { NextRequest } from "next/server";
 import Location from "../../../../../../../src/models/location.models";
+import { FARE_CONFIG, calcFarePerPassenger } from "../../../../../../../src/lib/fare";
+
 
 console.log(Location)
 
@@ -134,6 +136,34 @@ export async function PATCH(
             );
         }
 
+        // Calculate the fare for this route based on distance (km) and the
+        // per-km rate for this vehicle's type.
+        const vehicleType = vehicle.vehicleType as keyof typeof FARE_CONFIG;
+        const fareConfig = FARE_CONFIG[vehicleType];
+
+        if (!fareConfig) {
+            return Response.json(
+                { success: false, message: "Unsupported vehicle type" },
+                { status: 400 }
+            );
+        }
+
+        const distanceInKm = Number(route.distanceInKm);
+
+        if (!Number.isFinite(distanceInKm) || distanceInKm <= 0) {
+            return Response.json(
+                { success: false, message: "Route distance is invalid" },
+                { status: 400 }
+            );
+        }
+
+        const farePerKm = fareConfig.farePerKm;
+        const estimatedFare = calcFarePerPassenger(vehicleType, distanceInKm);
+
+        route.farePerKm = farePerKm;
+        route.estimatedFare = estimatedFare;
+        await route.save();
+
         vehicle.assignedAt = new Date();
         vehicle.assignedPartnerId = partner._id;
         vehicle.routeId = route._id;
@@ -159,7 +189,9 @@ export async function PATCH(
                 message: "Vehicle assigned successfully",
                 vehicleId: vehicle._id,
                 partnerId: partner._id,
-                routeId: route._id
+                routeId: route._id,
+                estimatedFare,
+                farePerKm
             },
             {
                 status: 200,

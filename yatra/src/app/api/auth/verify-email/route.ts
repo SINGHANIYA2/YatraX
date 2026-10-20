@@ -60,7 +60,10 @@ export async function POST(req: NextRequest) {
         account.otpExpiresAt = undefined;
 
         account.emailVerificationStatus = true;
-        
+        if (role === "admin") {
+            account.isEmailVerified = true;
+        }
+
         await account.save()
 
         return NextResponse.json({

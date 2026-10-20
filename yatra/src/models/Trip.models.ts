@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
-import "./route.models";
+import "./Route.models";
 import "./vehicle.models";
 import "./location.models";
 import "./Tripschedule.models";

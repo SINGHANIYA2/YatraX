@@ -2,7 +2,7 @@ import { auth } from "../../../../../src/auth";
 import connectDb from "../../../../../src/lib/db";
 import Admin from "../../../../../src/models/admin.models";
 import Location from "../../../../../src/models/location.models";
-import Route from "../../../../../src/models/route.models";
+import Route from "../../../../../src/models/Route.models";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {

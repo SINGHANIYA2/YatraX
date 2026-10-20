@@ -1,6 +1,9 @@
 import { auth } from "../../../../../src/auth"
 import connectDb from "../../../../../src/lib/db"
 import Admin from "../../../../../src/models/admin.models"
+import Partner from "../../../../models/partner.models"
+import Vehicle from "../../../../models/vehicle.models"
+
 
 export async function GET(req:Request){
     try{
@@ -21,8 +24,20 @@ export async function GET(req:Request){
             )
         }
 
+        // Live counts: total vehicles/partners owned by this admin
+        // (available + assigned + maintenance covers every vehicle status,
+        // so this is simply every vehicle/partner document linked to the admin)
+        const [totalVehicles, totalPartners] = await Promise.all([
+            Vehicle.countDocuments({ adminId: admin._id }),
+            Partner.countDocuments({ adminId: admin._id }),
+        ])
+
+        const adminObj = admin.toObject()
+        adminObj.totalVehicles = totalVehicles
+        adminObj.totalPartners = totalPartners
+
         return Response.json(
-            admin,
+            adminObj,
             {status:200}
         )
         

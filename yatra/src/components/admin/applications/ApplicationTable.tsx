@@ -1,12 +1,10 @@
 'use client'
 
-import { Eye, CheckCircle2, XCircle } from 'lucide-react'
+import { Eye } from 'lucide-react'
 
 interface Props {
     data: any[]
     onView: (app: any) => void
-    onApprove: (app: any) => void
-    onReject: (app: any) => void
 }
 
 function StatusBadge({ status }: { status: string }) {
@@ -32,13 +30,9 @@ function StatusBadge({ status }: { status: string }) {
 function DesktopRow({
     app,
     onView,
-    onApprove,
-    onReject,
 }: {
     app: any
     onView: (a: any) => void
-    onApprove: (a: any) => void
-    onReject: (a: any) => void
 }) {
     return (
         <tr className="border-b border-border last:border-0 hover:bg-secondary/20 transition-colors">
@@ -64,59 +58,27 @@ function DesktopRow({
             </td>
 
             <td className="py-5">
-                <div className="flex items-center gap-1.5 whitespace-nowrap">
+                <div className="flex items-center justify-center gap-1.5 whitespace-nowrap">
                     <button
                         onClick={() => onView(app)}
                         title="View details"
-                        className="p-1.5 cursor-pointer rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-primary flex-shrink-0"
+                        className="flex items-center gap-1.5 cursor-pointer px-2.5 py-1.5 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-primary flex-shrink-0 text-xs font-medium"
                     >
-                        <Eye size={16} />
+                        <Eye size={14} />
+                        View
                     </button>
-
-                    {app.status === 'pending' && (
-                        <>
-                            <button
-                                onClick={() => onApprove(app)}
-                                className="flex cursor-pointer items-center gap-1 px-2.5 py-1.5 rounded-lg bg-success/15 text-success text-xs font-medium hover:bg-success/25 transition-colors flex-shrink-0"
-                            >
-                                <CheckCircle2 size={13} />
-                                Approve
-                            </button>
-
-                            <button
-                                onClick={() => onReject(app)}
-                                className="flex cursor-pointer items-center gap-1 px-2.5 py-1.5 rounded-lg bg-destructive/15 text-destructive text-xs font-medium hover:bg-destructive/25 transition-colors flex-shrink-0"
-                            >
-                                <XCircle size={13} />
-                                Reject
-                            </button>
-                        </>
-                    )}
-
-                    {app.status === 'approved' && (
-                        <span className="text-success text-sm font-medium">Approved</span>
-                    )}
-
-                    {app.status === 'rejected' && (
-                        <span className="text-destructive text-sm font-medium">Rejected</span>
-                    )}
                 </div>
             </td>
         </tr>
     )
 }
 
-/* ── Mobile card ── */
 function MobileCard({
     app,
     onView,
-    onApprove,
-    onReject,
 }: {
     app: any
     onView: (a: any) => void
-    onApprove: (a: any) => void
-    onReject: (a: any) => void
 }) {
     return (
         <div className="p-4 border-b border-border last:border-0">
@@ -148,26 +110,6 @@ function MobileCard({
                     <Eye size={14} />
                     View
                 </button>
-
-                {app.status === 'pending' && (
-                    <>
-                        <button
-                            onClick={() => onApprove(app)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-success/15 text-success text-sm font-medium"
-                        >
-                            <CheckCircle2 size={14} />
-                            Approve
-                        </button>
-
-                        <button
-                            onClick={() => onReject(app)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-destructive/15 text-destructive text-sm font-medium"
-                        >
-                            <XCircle size={14} />
-                            Reject
-                        </button>
-                    </>
-                )}
             </div>
         </div>
     )
@@ -176,8 +118,6 @@ function MobileCard({
 export default function ApplicationTable({
     data,
     onView,
-    onApprove,
-    onReject
 }: Props) {
 
     if (data.length === 0) {
@@ -218,8 +158,6 @@ export default function ApplicationTable({
                                 key={app._id}
                                 app={app}
                                 onView={onView}
-                                onApprove={onApprove}
-                                onReject={onReject}
                             />
                         ))}
                     </tbody>
@@ -233,8 +171,6 @@ export default function ApplicationTable({
                         key={app._id}
                         app={app}
                         onView={onView}
-                        onApprove={onApprove}
-                        onReject={onReject}
                     />
                 ))}
             </div>

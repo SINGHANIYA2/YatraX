@@ -67,6 +67,9 @@ export async function POST(req: NextRequest) {
         account.mobileOtp = undefined;
         account.mobileOtpExpiresAt = undefined;
         account.mobileVerificationStatus = true;
+        if (role === "admin") {
+            account.isPhoneVerified = true;
+        }
 
         await account.save();
 

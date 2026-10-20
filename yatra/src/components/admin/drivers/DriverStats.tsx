@@ -3,7 +3,7 @@
 import {
     Users,
     UserCheck,
-    UserX,
+    UserCog,
 } from 'lucide-react'
 
 import DriverStatsCard from './DriverStatsCard'
@@ -26,8 +26,8 @@ export default function DriverStats({
         partner => getDriverStatus(partner) === 'available'
     ).length
 
-    const offlineDrivers = partners.filter(
-        partner => !partner.isOnline
+    const assignedDrivers = partners.filter(
+        partner => getDriverStatus(partner) === 'assigned'
     ).length
 
     return (
@@ -48,10 +48,10 @@ export default function DriverStats({
             />
 
             <DriverStatsCard
-                title="Offline Drivers"
-                value={offlineDrivers}
-                icon={UserX}
-                color="text-destructive"
+                title="Assigned Drivers"
+                value={assignedDrivers}
+                icon={UserCog}
+                color="text-warning"
             />
 
         </div>

@@ -1,7 +1,7 @@
 import connectDb from "../../../../../src/lib/db";
 import Vehicle from "../../../../../src/models/vehicle.models";
 
-import "../../../../../src/models/route.models";
+import "../../../../../src/models/Route.models";
 import "../../../../../src/models/location.models";
 import "../../../../../src/models/partner.models";
 

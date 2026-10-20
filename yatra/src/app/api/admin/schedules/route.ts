@@ -2,7 +2,7 @@ import { auth } from "../../../../../src/auth";
 import connectDb from "../../../../../src/lib/db";
 import Admin from "../../../../../src/models/admin.models";
 import TripSchedule from "../../../../../src/models/Tripschedule.models";
-import Route from "../../../../../src/models/route.models";
+import Route from "../../../../../src/models/Route.models";
 import Vehicle from "../../../../../src/models/vehicle.models";
 import { NextRequest, NextResponse } from "next/server";
 

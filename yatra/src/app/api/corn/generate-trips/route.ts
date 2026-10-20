@@ -14,7 +14,7 @@
 import connectDb from "../../../../../src/lib/db";
 import TripSchedule from "../../../../../src/models/Tripschedule.models";
 import Trip from "../../../../../src/models/Trip.models";
-import Route from "../../../../../src/models/route.models";
+import Route from "../../../../../src/models/Route.models";
 import Vehicle from "../../../../../src/models/vehicle.models";
 import { NextRequest, NextResponse } from "next/server";
 
