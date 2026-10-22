@@ -127,30 +127,22 @@ Authentication is configured with NextAuth/Auth.js using credentials and Google 
 
 ## Architecture
 
-```text
-┌──────────────────────────────┐
-│ Browser                      │
-│ Passenger / Partner / Admin  │
-└──────────────┬───────────────┘
-               │ HTTP(S)
-               ▼
-┌──────────────────────────────┐
-│ Next.js application          │
-│ Pages + App Router API routes│
-└──────────────┬───────────────┘
-               │
-        ┌──────┴─────────┐
-        ▼                ▼
-┌───────────────┐  ┌────────────────────┐
-│ MongoDB       │  │ Socket.IO server   │
-│ via Mongoose  │  │ live event channel  │
-└───────────────┘  └──────────┬─────────┘
-                             ▼
-                    Vehicle-room subscribers
-                    and tracking maps
-```
+The diagram below shows how YatraX's passenger, partner, and admin experiences connect to the Next.js application, trip and booking workflows, MongoDB, and the Socket.IO live-tracking service. It also highlights partner onboarding, admin operations, payment integration, and the separate data/live services layer.
+
+<p align="center">
+  <img src="docs/architecture.png" alt="YatraX system architecture diagram" width="100%"/>
+</p>
+
+**Architecture overview**
+- **Web experience:** Next.js application and map-tracking UI.
+- **Partner and admin operations:** Partner onboarding, partner trip operations, admin operations UI, and admin management APIs.
+- **Trip and booking:** Trip search, scheduled-trip generation, fare calculation, booking management, and payment workflows.
+- **Data and live services:** Role-based authentication, MongoDB connection and domain models, Socket.IO client, and live event server.
+- **External integration:** Razorpay payment processing.
 
 The web app owns the main UI and HTTP APIs. The Socket.IO server handles persistent client connections and broadcasts. Both services need correct database configuration and compatible model/collection expectations.
+
+> **Diagram file:** Keep the image at `docs/architecture.png` in the repository so GitHub can render it in this README.
 
 ## Repository Structure
 
